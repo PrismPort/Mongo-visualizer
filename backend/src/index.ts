@@ -1,8 +1,12 @@
 require('dotenv').config();
+import { count } from 'console';
 import app from './app.js';
 import { Request, Response, NextFunction } from 'express';
 import { Db } from 'mongodb';
+import { it } from 'node:test';
+import { any } from 'webidl-conversions';
 const { MongoClient } = require("mongodb");
+const { parseSchema } = require('mongodb-schema');
 
 const PORT = process.env.EXPRESS_PORT;
 const DOCKER = process.env.DOCKER;
@@ -145,10 +149,47 @@ app.get('/query/:database/:collection/:limit', mongoURL, async (req: Request, re
     console.error('Error querying data from MongoDB:', error);
     res.status(500).json({ error: 'Failed to query data from MongoDB' });
   }
-
-
-
 });
+
+app.get('/analyze/:database/:collection', mongoURL, async (req: Request, res: Response) => {
+  const { database } = req.params;
+  const { collection } = req.params;
+  const client: typeof MongoClient = req.client;
+
+  try {
+
+    // Access the specified collection and query data with limit
+    const db: Db = client.db(database);
+    const collections = await db.collection(collection).find();
+
+    const parsedSchema = await parseSchema(collections, {storeValues : false});
+
+    interface Item { // TODO: make a model out of this
+      count: number;
+      type: string;
+      name: string;
+      probability: number;
+    }
+
+    let schema = parsedSchema.fields.map((item: Item) => ({ // TODO: this should go into controllers
+      count: item.count,
+      type: item.type,
+      name: item.name,
+      probability: item.probability
+    }))
+
+    console.log(schema);
+    
+
+    res.json(schema);
+
+  } catch (error) {
+    console.error('Error querying data from MongoDB:', error);
+    res.status(500).json({ error: 'Failed to query data from MongoDB' });
+  } finally {
+    await client.close();
+  }
+})
 
 
 app.post('/connect-to-mongodb', async (req: Request, res: Response) => {
