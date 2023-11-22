@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './MongoREST.css';
 import { useState } from 'react';
+import StatsFetcher from './fetchStats.tsx';
+import { StatsContext } from './fetchStats.tsx';
+
 
 interface MongoLoginProps {
     username: string;
@@ -112,6 +115,18 @@ const MongoLogin = () => {
 
 const MongoOptions = () => {
     const [databases, setDatabases] = useState<string[]>([]);
+    const [collections, setCollections] = useState<Record<string, string[]>>({});
+
+    const context = useContext(StatsContext);
+
+    if (!context) {
+        // handle the case where context is undefined
+        return null;
+    }
+    const { stats, handleAnalyzeCollections } = context;
+
+
+
     const mongoURL = localStorage.getItem('mongoURL');
 
     const handleShowDatabases = async () => {
@@ -130,6 +145,34 @@ const MongoOptions = () => {
         }
     };
 
+    const handleLoadCollections = async (database: string) => {
+        try {
+            const response = await fetch(`http://localhost:4000/query/${database}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'mongoURL': mongoURL as string,
+                },
+            });
+            const data = await response.json();
+            setCollections(prevState => ({ ...prevState, [database]: data }));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleAnalyze = async (database: string, collection: string) => {
+        try {
+            await handleAnalyzeCollections(mongoURL as string, database, collection);
+            // handle success
+
+            console.log(stats);
+        } catch (error) {
+            console.error(error);
+            // handle error
+        }
+    };
+
     if (!mongoURL) {
         return null;
     }
@@ -141,12 +184,6 @@ const MongoOptions = () => {
 
                     <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
                         <p className='text-center text-gray-900'>URL: {mongoURL}</p>
-                        <button
-                            onClick={handleShowDatabases}
-                            className='flex w-full justify-center rounded-md bg-blue-500 text-white py-2 px-4 mt-4 hover:bg-blue-700'
-                        >
-                            Show all databases
-                        </button>
                         {databases.length > 0 && (
                             <ul className='mt-4'>
                                 {databases.map((database) => (
@@ -154,14 +191,35 @@ const MongoOptions = () => {
                                         <a
                                             href={`#${database}`}
                                             className='hover:underline text-blue-500 hover:text-blue-700'
+                                            onClick={() => handleLoadCollections(database)}
                                         >
-                                            {database}
+                                            ├─ {database}
                                         </a>
+                                        <ul className='ml-4'>
+                                            {collections[database]?.map((collection, index, arr) => (
+                                                <li key={collection} className='mb-2'>
+                                                    <a
+                                                        href={`#${collection}`}
+                                                        className='hover:underline text-blue-500 hover:text-blue-700'
+                                                        onClick={() => handleAnalyze(database, collection)}
+                                                    >
+                                                        {index === arr.length - 1 ? '└─ ' : '│─ '}{collection}
+                                                    </a>
+
+
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </li>
                                 ))}
                             </ul>
                         )}
-
+                        <button
+                            onClick={handleShowDatabases}
+                            className='flex w-full justify-center rounded-md bg-blue-500 text-white py-2 px-4 mt-4 hover:bg-blue-700'
+                        >
+                            Show all databases
+                        </button>
                         <button
                             onClick={deleteMongoURL}
                             className='flex w-full justify-center rounded-md bg-red-500 text-white py-2 px-4 mt-4 hover:bg-red-700'
@@ -175,6 +233,29 @@ const MongoOptions = () => {
     }
 };
 
+
+const SchemaStats = () => {
+    const context = useContext(StatsContext);
+
+    if (!context) {
+        // handle the case where context is undefined
+        return null;
+    }
+    const { stats, handleAnalyzeCollections } = context;
+    return (
+        <>
+            {stats.map((item) => (
+                <p key={item.name}><b>Key:</b> {item.name} |<b>Type:</b> {item.type} | <b>Count:</b> {item.count.toString()} | <b>Probability:</b> {item.probability.toString()}</p>
+            ))}
+
+
+
+
+        </>
+    )
+}
+
+
 const deleteMongoURL = () => {
     localStorage.removeItem('mongoURL');
     window.location.reload();
@@ -183,9 +264,16 @@ const deleteMongoURL = () => {
 const MongoREST = () => {
     return (
         <>
-            <div className='MongoREST'>
-                <MongoLogin />
-                <MongoOptions />
+            <div className='flex'>
+                <StatsFetcher>
+                    <div className='w-1/4'>
+                        <MongoLogin />
+                        <MongoOptions />
+                    </div>
+                    <div className='w-1/2'>
+                        <SchemaStats />
+                    </div>
+                </StatsFetcher>
             </div>
         </>
     );
