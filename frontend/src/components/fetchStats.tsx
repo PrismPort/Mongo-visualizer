@@ -3,7 +3,8 @@ import React, { createContext, useState } from 'react';
 interface Stat {
     name: string;
     count: Number;
-    type: string;
+    type: Array<string>;
+    values: Array<any>;
     probability: Number;
     // include other properties as needed
   }
@@ -12,6 +13,8 @@ interface Stat {
 interface StatsContextType {
     stats: Stat[]; // replace any with the actual type of stats
     handleAnalyzeCollections: (mongoURL: string, database: string, collection: string) => Promise<void>;
+    updateStats: (newStats: Stat[]) => void; // Add a new function to update the stats
+
 }
 
 export const StatsContext = createContext<StatsContextType | undefined>(undefined);
@@ -36,10 +39,15 @@ const StatsFetcher = ({ children }) => {
         }
     }
 
+    const updateStats = (newStats: typeof stats) => {
+        setStats(newStats); // Define the function to update the stats
+    }
+
     // Pass the fetchDataAndUpdateContext function to the children
     const contextValue = {
         stats,
         handleAnalyzeCollections,
+        updateStats
     };
 
     return (

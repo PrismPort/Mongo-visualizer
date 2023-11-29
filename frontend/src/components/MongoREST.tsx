@@ -46,6 +46,7 @@ const MongoLogin = () => {
             adress: data.get('adress') as string,
             port: data.get('port') as string,
         };
+        console.log(loginData);
         try {
             const response = await fetch('http://localhost:4000/connect-to-mongodb', {
                 method: 'POST',
@@ -91,7 +92,7 @@ const MongoLogin = () => {
                             </label>
                             <label className='block text-sm font-medium leading-6 text-gray-900'>
                                 Password:
-                                <input type="text" name="password" className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6' />
+                                <input type="password" name="password" className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6' />
                             </label>
                             <label className='block text-sm font-medium leading-6 text-gray-900'>
                                 Address:
@@ -236,21 +237,136 @@ const MongoOptions = () => {
 
 const SchemaStats = () => {
     const context = useContext(StatsContext);
+    const [queries, setQueries] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [queriesCopy, setQueriesCopy] = useState({});
 
     if (!context) {
         // handle the case where context is undefined
         return null;
     }
-    const { stats, handleAnalyzeCollections } = context;
+    const { stats, handleAnalyzeCollections, updateStats } = context;
+
+    const handleRowClick = (name) => {
+        if (selectedRows.includes(name)) {
+            setSelectedRows(selectedRows.filter(row => row !== name));
+        } else {
+            setSelectedRows([...selectedRows, name]);
+        }
+    };
+
+    const getColorBasedOnProbability = (probability: Number) => {
+        // change hsl based on probability
+        const hue = probability * 120;
+        const saturation = 100;
+        const lightness = 50;
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
+
+    const getWidthBasedOnProbability = (probability: Number) => {
+        return `${probability * 100}%`;
+    }
+
+    /* const queryToJSON = () => {
+        const query = { $and: queries };
+        return query;
+    } */
+
+    const addToQuery = (key) => {
+        handleRowClick(key);
+    
+        const newQuery = { [key]: { $exists: true } };
+        setQueries((prevQueries) => {
+            let updatedQueries;
+            const existingQueryIndex = prevQueries.findIndex(query => JSON.stringify(query) === JSON.stringify(newQuery));
+    
+            if (existingQueryIndex !== -1) {
+                // Query exists, remove it
+                updatedQueries = [...prevQueries];
+                updatedQueries.splice(existingQueryIndex, 1);
+            } else {
+                // Query doesn't exist, add it
+                updatedQueries = [...prevQueries, newQuery];
+            }
+    
+            // Send the updated query
+            if (updatedQueries.length > 1) {
+                sendQuery({ $and: updatedQueries });
+                setQueriesCopy({ $and: updatedQueries }); // deep copy for printing
+            } else if (updatedQueries.length === 1) { // only one query, no need for an $and
+                sendQuery(updatedQueries[0]);
+                setQueriesCopy(updatedQueries[0]); // deep copy for printing
+            } else {
+                // Handle case when there are no queries
+                sendQuery({});
+            }
+    
+            return updatedQueries;
+        });
+    };
+
+    const sendQuery = async (query) => {
+        console.log(query);
+        try {
+            const response = await fetch('http://localhost:4000/query/addresses/entries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'mongoURL': localStorage.getItem('mongoURL') as string,
+                },
+                body: JSON.stringify(query),
+            });
+            const data = await response.json();
+            console.log(data.schema);
+            updateStats(data.schema);
+        } catch (error) {
+            console.error(error);
+        }
+
+    };
+
     return (
         <>
-            {stats.map((item) => (
-                <p key={item.name}><b>Key:</b> {item.name} |<b>Type:</b> {item.type} | <b>Count:</b> {item.count.toString()} | <b>Probability:</b> {item.probability.toString()}</p>
-            ))}
+            <table className="m-5">
+                <thead>
+                    <tr>
+                        <th className="text-left">Name</th>
+                        <th className="text-left">Type</th>
+                        <th className="text-right">Count</th>
+                        <th className="text-right">Probability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {stats.map((item, index) => (
+                        <tr
+                            key={item.name}
 
+                            className={`${index % 2 === 0 ? 'even-row' : 'odd-row'} ${selectedRows.includes(item.name) ? 'selected-row' : ''}`}
+                            onClick={() => addToQuery(item.name)}
+                        >
+                            <td className="text-left monospace p-2">{item.name}</td>
+                            <td className="text-left monospace p-2">{item.type[0].name}</td>
+                            <td className="text-right monospace p-2">{item.count.toString()}</td>
+                            <td
+                                className="text-right monospace p-2"
+                            >
+                                <div style={{
+                                    width: getWidthBasedOnProbability(item.probability),
+                                    backgroundColor: getColorBasedOnProbability(item.probability),
+                                    height: '100%'
+                                }}>{item.probability.toString()}</div>
+                            </td>
 
-
-
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            <div className="m-5">
+                <b>Query:</b>
+                <p style={{ fontSize: 'small' }} className='monospace'>
+                    {JSON.stringify(queriesCopy, null, 2)}
+                </p>
+            </div>
         </>
     )
 }

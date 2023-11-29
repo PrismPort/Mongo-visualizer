@@ -166,19 +166,19 @@ app.get('/analyze/:database/:collection', mongoURL, async (req: Request, res: Re
 
     interface Item { // TODO: make a model out of this
       count: number;
-      type: string;
+      types: object[];
       name: string;
       probability: number;
     }
 
     let schema = parsedSchema.fields.map((item: Item) => ({ // TODO: this should go into controllers
       count: item.count,
-      type: item.type,
+      type: item.types,
       name: item.name,
       probability: item.probability
     }))
 
-    console.log(schema);
+    //console.log(schema);
     
 
     res.json(schema);
@@ -192,11 +192,58 @@ app.get('/analyze/:database/:collection', mongoURL, async (req: Request, res: Re
 })
 
 
+// send query to mongodb, get back collection and new schema as json
+app.post('/query/:database/:collection', mongoURL, async (req: Request, res: Response) => {
+  const { database } = req.params;
+  const { collection } = req.params;
+  const query  = req.body;
+  const client: typeof MongoClient = req.client;
+
+  try {
+
+    //console.dir(query);
+
+    // Access the specified collection and query data with limit
+    const db: Db = client.db(database);
+    const collections = await db.collection(collection).find(query).toArray();
+    const parsedSchema = await parseSchema(collections, {storeValues : false});
+    // console.log(parsedSchema);
+
+    interface Item { // TODO: make a model out of this
+      count: number;
+      types: object[];
+      name: string;
+      probability: number;
+    }
+
+    let schema = parsedSchema.fields.map((item: Item) => ({ // TODO: this should go into controllers
+      count: item.count,
+      type: item.types,
+      name: item.name,
+      probability: item.probability
+    }))
+
+    const response = {
+      collections,
+      schema
+    }
+    // Close the MongoDB connection
+    await client.close();
+
+    res.json(response);
+
+  } catch (error) {
+    console.error('Error querying data from MongoDB:', error);
+    res.status(500).json({ error: 'Failed to query data from MongoDB' });
+  }
+});
+
+
 app.post('/connect-to-mongodb', async (req: Request, res: Response) => {
   let mongoURL = null;
 
   // construct mongo url
-  const user = req.body.name;
+  const user = req.body.username;
   const password = req.body.password;
   const port = req.body.port;
   let adress = req.body.adress;
@@ -206,7 +253,7 @@ app.post('/connect-to-mongodb', async (req: Request, res: Response) => {
     adress = "host.docker.internal";
   }
 
-  if (user == null || password == null) {
+  if (user == null || user == "" || password == null || password == "") {
     mongoURL = `mongodb://${adress}:${port}`;
   } else {
     mongoURL = `mongodb://${user}:${password}@${adress}:${port}`;
