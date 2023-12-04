@@ -115,7 +115,7 @@ const MongoLogin = () => {
 
 
 const MongoOptions = () => {
-    const [databases, setDatabases] = useState<string[]>([]);
+    const [databases, setDatabases] = useState<string[]>([]); // should be a global context
     const [collections, setCollections] = useState<Record<string, string[]>>({});
 
     const context = useContext(StatsContext);
@@ -125,8 +125,6 @@ const MongoOptions = () => {
         return null;
     }
     const { stats, handleAnalyzeCollections } = context;
-
-
 
     const mongoURL = localStorage.getItem('mongoURL');
 
@@ -234,10 +232,19 @@ const MongoOptions = () => {
     }
 };
 
+const LoadingOverlay = () => {
+    return (
+        <div className='fixed flex items-center justify-center w-full h-full'>
+            <div className='w-32 h-32 slow-spin bg-opacity-0'>LADEANIMATION!!</div>
+        </div>
+    );
+}
+
 
 const SchemaStats = () => {
     const context = useContext(StatsContext);
     const [queries, setQueries] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [queriesCopy, setQueriesCopy] = useState({});
 
@@ -245,7 +252,7 @@ const SchemaStats = () => {
         // handle the case where context is undefined
         return null;
     }
-    const { stats, handleAnalyzeCollections, updateStats } = context;
+    const { stats, database, collection, handleAnalyzeCollections, updateStats } = context;
 
     const handleRowClick = (name) => {
         if (selectedRows.includes(name)) {
@@ -274,12 +281,12 @@ const SchemaStats = () => {
 
     const addToQuery = (key) => {
         handleRowClick(key);
-    
+
         const newQuery = { [key]: { $exists: true } };
         setQueries((prevQueries) => {
             let updatedQueries;
             const existingQueryIndex = prevQueries.findIndex(query => JSON.stringify(query) === JSON.stringify(newQuery));
-    
+
             if (existingQueryIndex !== -1) {
                 // Query exists, remove it
                 updatedQueries = [...prevQueries];
@@ -288,27 +295,30 @@ const SchemaStats = () => {
                 // Query doesn't exist, add it
                 updatedQueries = [...prevQueries, newQuery];
             }
-    
+
             // Send the updated query
             if (updatedQueries.length > 1) {
-                sendQuery({ $and: updatedQueries });
+                sendQuery({ $and: updatedQueries }, database, collection);
                 setQueriesCopy({ $and: updatedQueries }); // deep copy for printing
             } else if (updatedQueries.length === 1) { // only one query, no need for an $and
-                sendQuery(updatedQueries[0]);
+                sendQuery(updatedQueries[0], database, collection);
                 setQueriesCopy(updatedQueries[0]); // deep copy for printing
             } else {
                 // Handle case when there are no queries
-                sendQuery({});
+                sendQuery({}, database, collection);
             }
-    
+
             return updatedQueries;
         });
     };
 
-    const sendQuery = async (query) => {
-        console.log(query);
+    const sendQuery = async (query, database, collection) => {
+        // console.log(query);
+        console.log(database, collection);
+        const url = `http://localhost:4000/query/${database}/${collection}`;
         try {
-            const response = await fetch('http://localhost:4000/query/addresses/entries', {
+            setLoading(true);
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -317,30 +327,41 @@ const SchemaStats = () => {
                 body: JSON.stringify(query),
             });
             const data = await response.json();
+
+            // show loading overlay
+            // setLoading(true);
+            // hide loading overlay when data is received
+            // setLoading(false);
             console.log(data.schema);
+            //console.log(data.collections);
             updateStats(data.schema);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
 
     };
+
+    if (loading) {
+        return <LoadingOverlay />;
+    }
 
     return (
         <>
             <table className="m-5">
                 <thead>
                     <tr>
-                        <th className="text-left">Name</th>
-                        <th className="text-left">Type</th>
-                        <th className="text-right">Count</th>
-                        <th className="text-right">Probability</th>
+                        <th className="text-left">key</th>
+                        <th className="text-left">type</th>
+                        <th className="text-right">count</th>
+                        <th className="text-right">probability</th>
                     </tr>
                 </thead>
                 <tbody>
                     {stats.map((item, index) => (
                         <tr
                             key={item.name}
-
                             className={`${index % 2 === 0 ? 'even-row' : 'odd-row'} ${selectedRows.includes(item.name) ? 'selected-row' : ''}`}
                             onClick={() => addToQuery(item.name)}
                         >
@@ -354,7 +375,7 @@ const SchemaStats = () => {
                                     width: getWidthBasedOnProbability(item.probability),
                                     backgroundColor: getColorBasedOnProbability(item.probability),
                                     height: '100%'
-                                }}>{item.probability.toString()}</div>
+                                }}>{item.probability.toFixed(2).toString()}</div>
                             </td>
 
                         </tr>
@@ -369,6 +390,30 @@ const SchemaStats = () => {
             </div>
         </>
     )
+}
+
+const DataDetails = () => {
+    const context = useContext(StatsContext);
+    if (!context) {
+        // handle the case where context is undefined
+        return null;
+    }
+    const { stats, handleAnalyzeCollections, updateStats } = context;
+    console.log(stats.values)
+
+    return (
+        <>
+            <div className='flex min-h-full flex-col justify-start px-6 py-12 lg:px-8'>
+                <h1 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>Data Details</h1>
+                {stats.map((item, index) => (
+                    <div key={item.name} className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
+                        <p className='text-center text-gray-900'>key: {item.name}</p>
+                        
+                    </div>
+                ))}
+            </div>
+        </>
+    );
 }
 
 
@@ -386,8 +431,11 @@ const MongoREST = () => {
                         <MongoLogin />
                         <MongoOptions />
                     </div>
-                    <div className='w-1/2'>
+                    <div className='w-1/3'>
                         <SchemaStats />
+                    </div>
+                    <div className='w-1/3'>
+                        <DataDetails />
                     </div>
                 </StatsFetcher>
             </div>
