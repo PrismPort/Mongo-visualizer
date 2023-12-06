@@ -5,12 +5,33 @@ import { Request, Response, NextFunction } from 'express';
 import { Db } from 'mongodb';
 import { it } from 'node:test';
 import { any } from 'webidl-conversions';
+import { type } from 'os';
 const { MongoClient } = require("mongodb");
 const { parseSchema } = require('mongodb-schema');
+
+// middleware
+import { mongoURL } from './middleware/mongoURL.middleware.js';
+
+
+// controller
+import {
+  analyzeDatabase,
+  queryDatabase,
+  getCollections,
+  getDatabases,
+  connectMongoDB,
+  getDocumentsFromCollection
+}
+  from './controllers/database.controller.js';
+
+
+
 
 const PORT = process.env.EXPRESS_PORT;
 const DOCKER = process.env.DOCKER;
 
+
+// experiments with mongodb local service autodetect
 const os = require('os');
 const networkInterfaces = os.networkInterfaces();
 const localhostIP = networkInterfaces.lo ? networkInterfaces.lo[0].address : '127.0.0.1';
@@ -37,246 +58,20 @@ app.use((req: Request, res: Response, next) => {
 });
 
 
-// extract the mongo URL through middleware
-const mongoURL = async (req: Request, res: Response, next: NextFunction) => {
-  const mongoURL = req.header('mongoURL');
-  if (!mongoURL) {
-    return res.status(400).json({ error: 'MongoDB URL is required in the request header' });
-  }
-  try {
-    const client = new MongoClient(mongoURL, { useUnifiedTopology: true });
-    await client.connect();
-
-    // Add the client object to the req object
-    req.client = client;
-    next();
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    res.status(500).json({ error: 'Failed to connect to MongoDB' });
-  }
-}
-
-
-
-
-// mongodb connection string for static tests
-/* const mongo_url = process.env.MONGO_URL;
-const mongo_port = process.env.MONGO_PORT;
-const database = process.env.MONGO_DB;
-const uri = `mongodb://${mongo_url}:${mongo_port}`; */
-
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from the backend!");
-});
-
-app.get('/query-databases', async (req: Request, res: Response) => {
-  // const { mongoURL } = req.body; // Access the MongoDB URL from the request body
-  const mongoURL = req.header('mongoURL');
-
-  if (!mongoURL) {
-    return res.status(400).json({ error: 'MongoDB URL is required in the request header' });
-  }
-
-  try {
-    // Establish the MongoDB connection using the provided URL
-    const client = new MongoClient(mongoURL, { useUnifiedTopology: true });
-    await client.connect();
-
-    // Access the specified collection and query data
-    const adminDb: Db = client.db('admin'); // Access the 'admin' database
-    const databases = await adminDb.admin().listDatabases();
-
-    // Close the MongoDB connection
-    await client.close();
-
-    const databaseNames = databases.databases.map(db => db.name);
-    res.json(databaseNames);
-  } catch (error) {
-    console.error('Error querying data from MongoDB:', error);
-    res.status(500).json({ error: 'Failed to query data from MongoDB' });
-  }
-});
-
-app.get('/query/:database', async (req: Request, res: Response) => {
-  const mongoURL = req.header('mongoURL');
-  const { database } = req.params;
-  const { collection } = req.params;
-
-  if (!mongoURL) {
-    return res.status(400).json({ error: 'MongoDB URL is required in the request header' });
-  }
-
-  try {
-    // Establish the MongoDB connection using the provided URL
-    const client = new MongoClient(mongoURL, { useUnifiedTopology: true });
-    await client.connect();
-
-    // Access the specified database and query data
-    const db: Db = client.db(database);
-    const collections = await db.listCollections().toArray();
-
-
-    // Close the MongoDB connection
-    await client.close();
-
-    const collectionNames = collections.map(collection => collection.name);
-    res.json(collectionNames);
-
-  } catch (error) {
-    console.error('Error querying data from MongoDB:', error);
-    res.status(500).json({ error: 'Failed to query data from MongoDB' });
-  }
-
-});
-
-app.get('/query/:database/:collection/:limit', mongoURL, async (req: Request, res: Response) => {
-  const { database } = req.params;
-  const { collection } = req.params;
-
-  try {
-    const client: typeof MongoClient = req.client;
-
-    // Access the specified collection and query data with limit
-    const db: Db = client.db(database);
-    const collections = await db.collection(collection).find().limit(10).toArray();
-
-    // Close the MongoDB connection
-    await client.close();
-
-    res.json(collections);
-
-  } catch (error) {
-    console.error('Error querying data from MongoDB:', error);
-    res.status(500).json({ error: 'Failed to query data from MongoDB' });
-  }
-});
-
-app.get('/analyze/:database/:collection', mongoURL, async (req: Request, res: Response) => {
-  const { database } = req.params;
-  const { collection } = req.params;
-  const client: typeof MongoClient = req.client;
-
-  try {
-
-    // Access the specified collection and query data with limit
-    const db: Db = client.db(database);
-    const collections = await db.collection(collection).find();
-
-    const parsedSchema = await parseSchema(collections, {storeValues : false});
-
-    interface Item { // TODO: make a model out of this
-      count: number;
-      types: object[];
-      name: string;
-      probability: number;
-    }
-
-    let schema = parsedSchema.fields.map((item: Item) => ({ // TODO: this should go into controllers
-      count: item.count,
-      type: item.types,
-      name: item.name,
-      probability: item.probability
-    }))
-
-    //console.log(schema);
-    
-
-    res.json(schema);
-
-  } catch (error) {
-    console.error('Error querying data from MongoDB:', error);
-    res.status(500).json({ error: 'Failed to query data from MongoDB' });
-  } finally {
-    await client.close();
-  }
-})
-
-
-// send query to mongodb, get back collection and new schema as json
-app.post('/query/:database/:collection', mongoURL, async (req: Request, res: Response) => {
-  const { database } = req.params;
-  const { collection } = req.params;
-  const query  = req.body;
-  const client: typeof MongoClient = req.client;
-
-  try {
-
-    //console.dir(query);
-
-    // Access the specified collection and query data with limit
-    const db: Db = client.db(database);
-    const collections = await db.collection(collection).find(query).toArray();
-    const parsedSchema = await parseSchema(collections, {storeValues : false});
-    // console.log(parsedSchema);
-
-    interface Item { // TODO: make a model out of this
-      count: number;
-      types: object[];
-      name: string;
-      probability: number;
-    }
-
-    let schema = parsedSchema.fields.map((item: Item) => ({ // TODO: this should go into controllers
-      count: item.count,
-      type: item.types,
-      name: item.name,
-      probability: item.probability
-    }))
-
-    const response = {
-      collections,
-      schema
-    }
-    // Close the MongoDB connection
-    await client.close();
-
-    res.json(response);
-
-  } catch (error) {
-    console.error('Error querying data from MongoDB:', error);
-    res.status(500).json({ error: 'Failed to query data from MongoDB' });
-  }
+  res.send("Welcome to the Visual MongoDB Backend!");
 });
 
 
-app.post('/connect-to-mongodb', async (req: Request, res: Response) => {
-  let mongoURL = null;
+// TODO: rename to just "/query"
+app.get('/query-databases', mongoURL, getDatabases);
 
-  // construct mongo url
-  const user = req.body.username;
-  const password = req.body.password;
-  const port = req.body.port;
-  let adress = req.body.adress;
+app.get('/query/:database', mongoURL, getCollections);
 
-  // Docker config for mongoDB on localhost
-  if (DOCKER === "true" && (adress == "localhost" || adress == "127.0.0.1")) {
-    adress = "host.docker.internal";
-  }
+app.get('/query/:database/:collection/:limit', mongoURL, getDocumentsFromCollection);
 
-  if (user == null || user == "" || password == null || password == "") {
-    mongoURL = `mongodb://${adress}:${port}`;
-  } else {
-    mongoURL = `mongodb://${user}:${password}@${adress}:${port}`;
-  }
+app.get('/analyze/:database/:collection', mongoURL, analyzeDatabase);
 
-  console.log(mongoURL);
+app.post('/query/:database/:collection', mongoURL, queryDatabase);
 
-
-  if (!mongoURL === null) {
-    return res.status(400).json({ error: 'MongoDB URL is required' });
-  }
-
-  try {
-    const client = new MongoClient(mongoURL, { useUnifiedTopology: true });
-    await client.connect();
-    // Close the MongoDB connection
-    await client.close();
-
-    // respond with the provided URL as json and a success message
-    res.json({ mongoURL, message: 'Successfully connected to MongoDB' });
-
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    res.status(500).json({ error: 'Failed to connect to MongoDB' });
-  }
-});
+app.post('/connect-to-mongodb', (req: Request, res: Response) => connectMongoDB(req, res, DOCKER));

@@ -332,7 +332,7 @@ const SchemaStats = () => {
             // setLoading(true);
             // hide loading overlay when data is received
             // setLoading(false);
-            console.log(data.schema);
+            //console.log(data.schema);
             //console.log(data.collections);
             updateStats(data.schema);
         } catch (error) {
@@ -366,7 +366,7 @@ const SchemaStats = () => {
                             onClick={() => addToQuery(item.name)}
                         >
                             <td className="text-left monospace p-2">{item.name}</td>
-                            <td className="text-left monospace p-2">{item.type[0].name}</td>
+                            <td className="text-left monospace p-2">{item.type.toString()}</td>
                             <td className="text-right monospace p-2">{item.count.toString()}</td>
                             <td
                                 className="text-right monospace p-2"
@@ -399,7 +399,7 @@ const DataDetails = () => {
         return null;
     }
     const { stats, handleAnalyzeCollections, updateStats } = context;
-    console.log(stats.values)
+    console.log(stats)
 
     return (
         <>

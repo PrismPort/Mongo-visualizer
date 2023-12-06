@@ -4,7 +4,7 @@ interface Stat {
     name: string;
     count: Number;
     type: Array<string>;
-    values: Array<any>;
+    values: object;
     probability: Number;
     // include other properties as needed
   }
@@ -52,6 +52,7 @@ const StatsFetcher = ({ children }) => {
                 },
             });
             const data = await response.json();
+            console.log(data);
             setStats(data);
         } catch (error) {
             console.error(error);
