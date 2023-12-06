@@ -82,3 +82,100 @@ The Backend is used to communicate to a mongoDB server through the official mong
   "users"
   ]
   ```
+
+### Analyze a given collection
+
+- **URL:** `/analyze/:database/:collection`
+- **Method:** GET
+- **Description:** Returns a schema description object _without_ concrete values for every occuring type
+- **Request Parameters:**
+  - database [name of the database where the collection is from]
+  - collection [collection to be analyzed]
+
+- **Response:**
+
+  ```json
+  [
+      {
+        count: 108000, // how many documents have this particullar key?
+        type: 'ObjectId', // datatype(s)
+        name: '_id', // key name
+        probability: 1 // how many documents have this particullar key, but now in percent [0.0, 1.0]
+      },
+      {
+        count: 34529,
+        type: [ 'String', 'Undefined' ],
+        name: 'address',
+        probability: 0.319712962962963
+      },
+      {
+        count: 34360,
+        type: [ 'String', 'Undefined' ],
+        name: 'company',
+        probability: 0.3181481481481481
+      },
+      {
+        count: 34099,
+        type: [ 'Date', 'Undefined' ],
+        name: 'date',
+        probability: 0.3157314814814815
+      },
+  ...
+  ]
+  ```
+
+### Query a given collection
+
+- **URL:** `/query/:database/:collection`
+- **Method:** POST
+- **Description:** Returns a schema description object _with_ concrete values for every occuring type
+- **Request Parameters:**
+  - database [name of the database where the collection is from]
+  - collection [collection to be analyzed]
+  - mongo query in post request body:
+
+  ```json
+  { 
+    "$and": [ 
+    { "email": { "$exists": true } }, 
+    { "name": { "$exists": true } }, 
+    { "company": { "$exists": true } } 
+    ] 
+  }
+  ```
+
+- **Response:**
+
+  ```json
+  [
+      {
+        count: 108000, // how many documents have this particullar key?
+        type: 'ObjectId', // datatype(s)
+        name: '_id', // key name
+        probability: 1, // how many documents have this particullar key, but now in percent [0.0, 1.0]
+        types: { ObjectId: [Array] } // every datatype of the given key and an array with all occuring concrete values for this particular key
+      },
+      {
+        count: 34529,
+        type: [ 'String', 'Undefined' ],
+        name: 'address',
+        probability: 0.319712962962963,
+        types: { String: [Array], Undefined: undefined }
+      },
+      {
+        count: 34360,
+        type: [ 'String', 'Undefined' ],
+        name: 'company',
+        probability: 0.3181481481481481,
+        types: { String: [Array], Undefined: undefined }
+      },
+      {
+        count: 34099,
+        type: [ 'Date', 'Undefined' ],
+        name: 'date',
+        probability: 0.3157314814814815,
+        types: { Date: [Array], Undefined: undefined }
+      },
+  ...
+  ]
+  ```

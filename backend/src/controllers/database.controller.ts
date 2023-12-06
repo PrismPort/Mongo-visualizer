@@ -3,9 +3,11 @@ import { Db } from 'mongodb';
 const { MongoClient } = require("mongodb");
 const { parseSchema } = require('mongodb-schema');
 
+// services
+import { analyzeCollection } from '../services/analyzeSchema.service.js';
 
 
-export const connectMongoDB = async (req: Request, res: Response, DOCKER: string|undefined) => {
+export const connectMongoDB = async (req: Request, res: Response, DOCKER: string | undefined) => {
   let mongoURL = null;
 
   // construct mongo url
@@ -94,7 +96,26 @@ export const getCollections = async (req: Request, res: Response) => {
 
 }
 
-export const getDocumentsFromCollection = {};
+export const getDocumentsFromCollection = async (req: Request, res: Response) => {
+  const { database, collection, limit } = req.params;
+
+  try {
+    const client: typeof MongoClient = req.client;
+
+    // Access the specified collection and query data with limit
+    const db: Db = client.db(database);
+    const collections = await db.collection(collection).find().limit(parseInt(limit)).toArray();
+
+    // Close the MongoDB connection
+    await client.close();
+
+    res.json(collections);
+
+  } catch (error) {
+    console.error('Error querying data from MongoDB:', error);
+    res.status(500).json({ error: 'Failed to query data from MongoDB' });
+  }
+};
 
 export const analyzeDatabase = async (req: Request, res: Response) => {
   const { database, collection } = req.params;
@@ -105,18 +126,11 @@ export const analyzeDatabase = async (req: Request, res: Response) => {
 
   try {
     const db: Db = client.db(database);
-    const collections = await db.collection(collection).find();
+    const collections = await db.collection(collection).find().toArray();
 
-    const parsedSchema = await parseSchema(collections, { storeValues: false });
+    let schema = await analyzeCollection(collections, false)
 
-    let schema = parsedSchema.fields.map((item: Item) => ({
-      count: item.count,
-      type: item.type,
-      name: item.name,
-      probability: item.probability
-    }))
-
-    console.log(schema);
+    console.dir(schema);
 
     res.json(schema);
 
@@ -133,34 +147,20 @@ export const queryDatabase = async (req: Request, res: Response) => {
   const query = req.body;
   const client: typeof MongoClient = req.client;
 
+  console.log("analyze schema");
+  console.log("database: " + database + " " + "collection: " + collection);
+
   try {
 
     const db: Db = client.db(database);
     const collections = await db.collection(collection).find(query).toArray();
-    const parsedSchema = await parseSchema(collections, { storeValues: true });
-    // console.log(parsedSchema);
 
-    // TODO: mapping the types to keys and the actual values to arrays with the values
-    let typeValue: { [key: string]: any[] } = {};
-
-    //console.dir(parsedSchema);
-
-    let schema = parsedSchema.fields.map((item: Item) => ({ // TODO: this should go into controllers
-      count: item.count,
-      type: item.type,
-      name: item.name,
-      probability: item.probability,
-    }))
+    let schema = await analyzeCollection(collections, true)
 
     //console.dir(schema);
 
-    /* const response = {
-      collections,
-      schema
-    } */
     const response: QueryResponse = {
       schema,
-      //typeValue
     }
     // Close the MongoDB connection
     await client.close();

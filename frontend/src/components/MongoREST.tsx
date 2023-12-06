@@ -163,9 +163,7 @@ const MongoOptions = () => {
     const handleAnalyze = async (database: string, collection: string) => {
         try {
             await handleAnalyzeCollections(mongoURL as string, database, collection);
-            // handle success
-
-            console.log(stats);
+            // console.log(stats);
         } catch (error) {
             console.error(error);
             // handle error
@@ -399,16 +397,26 @@ const DataDetails = () => {
         return null;
     }
     const { stats, handleAnalyzeCollections, updateStats } = context;
-    console.log(stats)
+    // console.log(stats)
+
 
     return (
         <>
             <div className='flex min-h-full flex-col justify-start px-6 py-12 lg:px-8'>
-                <h1 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>Data Details</h1>
+                <h1 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>Key Values</h1>
                 {stats.map((item, index) => (
                     <div key={item.name} className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
                         <p className='text-center text-gray-900'>key: {item.name}</p>
-                        
+                        {item.types && Object.entries(item.types).map(([typeKey, typeValues], typeIndex) => (
+                            <div key={typeIndex}>
+                                <b><h2>type: {typeKey}</h2></b>
+                                <ul>
+                                    {typeValues.map((value, valueIndex) => (
+                                        <li key={valueIndex}>{value}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
                     </div>
                 ))}
             </div>

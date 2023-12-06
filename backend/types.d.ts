@@ -8,19 +8,22 @@ declare global {
             client: MongoClient;
         }
     }
+
+    interface Type {
+        name: string;
+        values: any[];
+    }
+
     // used for infered schema statistics: every Item is associated with a distinct key
     export interface Item {
         count: number;
-        type: string [];
+        type: string[];
         name: string;
         probability: number;
+        types?: Type[];
     }
     export interface QueryResponse {
         schema: Item[];
         collection?: any[];
     }
-
-    export interface TypeValuesPair {
-        type: { [key: string]: any[] };
-      }
 }

@@ -1,12 +1,17 @@
 import React, { createContext, useState } from 'react';
 
+interface Type {
+    name: string;
+    values: any[];
+}
+
+
 interface Stat {
     name: string;
     count: Number;
     type: Array<string>;
-    values: object;
     probability: Number;
-    // include other properties as needed
+    types?: Type[];
   }
 
 
