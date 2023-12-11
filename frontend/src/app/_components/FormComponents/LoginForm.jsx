@@ -4,8 +4,7 @@ import React, { useState } from "react";
 
 import InputField from "./InputField";
 
-import { handleLogin } from "@/app/utils/LoginHandler";
-import { Container } from "postcss";
+import { handleLogin } from "../../utils/LoginHandler";
 import ContainerSelector from "./ContainerSelector";
 
 export default function LoginForm() {
