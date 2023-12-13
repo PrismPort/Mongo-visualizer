@@ -1,0 +1,16 @@
+# MongoDB url string
+
+MONGO_URL=localhost
+MONGO_PORT=27017
+DB_NAME=admin
+MONGO_USER=null
+MONGO_PASS=null
+
+# Express config
+
+EXPRESS_PORT=4000
+
+# Docker config
+
+DOCKER="true" # turn it to false, if you intend to use it outside Docker
+
