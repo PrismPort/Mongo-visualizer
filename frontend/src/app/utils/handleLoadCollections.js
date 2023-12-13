@@ -1,6 +1,6 @@
 // returns an object with key value pairs of database and an array of collections of it
 export const handleLoadCollections = async (database) => {
-    const [collections, setCollections] = useState({});
+    //const [collections, setCollections] = useState({});
     try {
         const response = await fetch(`http://localhost:4000/query/${database}`, {
             method: 'GET',
