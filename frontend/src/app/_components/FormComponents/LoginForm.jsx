@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import InputField from "./InputField";
 
-import { handleLogin } from "../../utils/LoginHandler";
+import { handleLogin } from "../../utils/handleLogin";
 import ContainerSelector from "./ContainerSelector";
 
 export default function LoginForm() {
@@ -16,7 +16,12 @@ export default function LoginForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const loginData = { username, password, address, port };
-    await handleLogin(loginData);
+    const success = await handleLogin(loginData);
+    if (success) {
+      window.location.href = "/mongoVisualizer";
+    } else {
+      console.log("Error: Login not successful!");
+    }
   };
 
   return (
