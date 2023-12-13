@@ -1,0 +1,57 @@
+.MongoREST {
+    position: fixed;
+    top: 50%;
+    right: 50%;
+}
+
+.LoginForm label {
+    margin: 10px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.odd-row, .even-row {
+    cursor: pointer;
+    font-size: 14px; /* Adjust as needed */
+    font-family: 'Courier New', monospace;
+    box-sizing: border-box;
+}
+
+.odd-row {
+    background-color: #f2f2f2;
+    
+}
+
+.even-row {
+    background-color: #ffffff;
+    
+}
+
+.even-row:hover,
+.odd-row:hover {
+    border-color: black;
+    border-width: 1px;
+    border-top-width: 1px; /* Add this line to maintain the top border */
+    height: 30px;
+}
+
+.selected-row {
+    background-color: #f2f2f2;
+    border-color: black;
+    border-width: 1px;
+    border-top-width: 1px; /* Add this line to maintain the top border */
+    height: 30px;
+}
+
+.slow-spin {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.transparent {
+    opacity: 0.5;
+}
