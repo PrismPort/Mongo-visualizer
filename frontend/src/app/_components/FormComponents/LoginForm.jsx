@@ -25,7 +25,7 @@ export default function LoginForm() {
   };
 
   return (
-    <main className="flex flex-col justify-center items-center">
+    <main className=" h-screen flex flex-col justify-center items-center">
       <form
         onSubmit={handleSubmit}
         className="  w-auto flex flex-col items-center mt-12"
@@ -83,8 +83,6 @@ export default function LoginForm() {
           </p>
         </div>
       </form>
-
-      <ContainerSelector></ContainerSelector>
     </main>
   );
 }
