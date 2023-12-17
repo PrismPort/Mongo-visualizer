@@ -6,9 +6,14 @@ export default function UserImage({ imageUrl, altText, size }) {
   return (
     <div
       style={{ width: size, height: size }}
-      className="relative rounded-full h-full w-full"
+      className="relative h-full w-full"
     >
-      <Image src={imageSrc} alt={altText} layout="fill"></Image>
+      <Image
+        className="rounded-full"
+        src={imageSrc}
+        alt={altText}
+        layout="fill"
+      ></Image>
     </div>
   );
 }
