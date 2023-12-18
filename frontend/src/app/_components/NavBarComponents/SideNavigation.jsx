@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AppContext } from "../../_context/AppContext";
 
 import Logo from "../AtomarComponents/Logo";
 import CustomButton from "../NavBarComponents/CustomButton";
@@ -8,9 +9,23 @@ import Divider from "../AtomarComponents/Divider";
 import { HiOutlineChevronDown, HiOutlineChevronRight } from "react-icons/hi";
 
 export default function SideNavigation() {
+  const {
+    database,
+    databases,
+    updateDatabase,
+    collections,
+    fetchCollectionsForDatabase,
+  } = useContext(AppContext);
+
+  const handleDatabaseClick = (selectedDatabase) => {
+    updateDatabase(selectedDatabase);
+    fetchCollectionsForDatabase(selectedDatabase);
+  };
+
   const [loginIsActive, setLoginIsActive] = useState(false); // State to track active/inactive
   const [allDatabasesIsActive, setAlldatabasesIsActive] = useState(false); // State to track active/inactive
   const [allCollectionsIsActive, setAllCollectionsIsActive] = useState(false); // State to track active/inactive
+
   const username = "testuser";
   const LoginIconComponent = loginIsActive
     ? HiOutlineChevronDown
@@ -47,6 +62,7 @@ export default function SideNavigation() {
         <CustomButton
           text={username}
           imageSrc="/images/sampleUser.jpg"
+          rounded={true}
           IconComponent={LoginIconComponent}
           variant={loginIsActive ? "active" : "inactive"}
           onClick={toggleLoginState} // Add onClick event handler
@@ -63,17 +79,37 @@ export default function SideNavigation() {
           onMouseEnter={toggleDatabaseSelection}
           onMouseLeave={toggleDatabaseSelection}
         ></CustomButton>
+        {databases.map((eachDatabase, index) => {
+          return (
+            <CustomButton
+              key={eachDatabase} // Adding a key for list items
+              text={eachDatabase}
+              variant={database === eachDatabase ? "active" : "inactive"}
+              onClick={() => handleDatabaseClick(eachDatabase)}
+            ></CustomButton>
+          );
+        })}
         <h4 className="bold p-4">collections</h4>
         <CustomButton
           text={"all collections"}
           IconComponent={CollectionsIconComponent}
-          imageSrc="/images/allDBIcon.svg"
-          imageSize={25}
+          imageSrc="/images/collectionsIcon.svg"
+          imageSize={18}
+          rounded={false}
           variant={allCollectionsIsActive ? "active" : "inactive"}
-          onClick={toggleCollectionsSelection}
-          onMouseEnter={toggleCollectionsSelection}
-          onMouseLeave={toggleCollectionsSelection}
-        ></CustomButton>
+          onClick={() => setAllCollectionsIsActive(!allCollectionsIsActive)}
+        />
+
+        {/* Render collections for the selected database under "all collections" */}
+        {allCollectionsIsActive &&
+          collections[database] &&
+          collections[database].map((collection) => (
+            <div key={collection} className="pl-4">
+              {" "}
+              {/* Add appropriate styling */}
+              {collection}
+            </div>
+          ))}
       </nav>
     </aside>
   );

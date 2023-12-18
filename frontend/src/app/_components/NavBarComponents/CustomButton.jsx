@@ -32,10 +32,10 @@ export default function CustomButton({
       {imageSrc && (
         <Image
           src={imageSrc}
-          alt="user Picture"
+          alt="props.text"
           width={imageSize || 50}
           height={imageSize || 50}
-          className="rounded-full mr-1"
+          className={props.rounded ? "rounded-full mr-1" : "mr-1"}
         />
       )}
 

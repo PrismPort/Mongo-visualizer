@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import { AppContext } from "../_context/AppContext";
 
 const DatabaseList = () => {
   const { databases } = useContext(AppContext);
