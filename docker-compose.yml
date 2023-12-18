@@ -1,9 +1,17 @@
 version: "3.8"
 services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
   backend:
     build: ./backend
     ports:
       - "4000:4000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend:/src/app
       - /src/app/node_modules
@@ -11,6 +19,8 @@ services:
     environment:
       - NODE_ENV=development
     command: npm run dev
+    depends_on:
+      - mongo
 
   frontend:
     build: ./frontend
@@ -22,6 +32,8 @@ services:
     environment:
       - NODE_ENV=development
     command: npm run dev
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:latest
@@ -32,3 +44,11 @@ services:
     depends_on:
       - backend
       - frontend
+
+networks:
+  backend:
+    driver: bridge
+
+
+volumes:
+  mongodb-data:

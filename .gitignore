@@ -1,11 +1,8 @@
-# Frontend - Ignore only node_modules
-frontend/node_modules/
-
-# Backend - Ignore only node_modules
-backend/node_modules/
+# All directories called "node_modules"
+node_modules/
 
 # Next.js build output
-frontend/.next/
+.next/
 
 # Environment files
 **/.env

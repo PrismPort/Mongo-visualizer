@@ -11,7 +11,7 @@ export const connectMongoDB = async (req, res) => {
   const password = req.body.password;
   const port = req.body.port;
   let address = req.body.address;
-  const DOCKER = process.env.DOCKER;
+  const DOCKER = "true";
 
   // Docker config for MongoDB on localhost
   if (
