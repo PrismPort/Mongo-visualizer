@@ -3,7 +3,6 @@ import { MongoClient } from "mongodb";
 // services
 import { analyzeCollection } from "../services/analyzeSchema.service.js";
 
-// Removed all type annotations and TypeScript-specific code
 export const connectMongoDB = async (req, res) => {
   let mongoURL = null;
   const user = req.body.username;
