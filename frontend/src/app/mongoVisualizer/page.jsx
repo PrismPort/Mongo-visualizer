@@ -8,6 +8,7 @@ import ToggleSwitch from "../_components/AtomarComponents/ToggleSwitch";
 import DatabaseList from "../_components/DatabaseList";
 import SideNavigation from "../_components/NavBarComponents/SideNavigation";
 import CollectionDashboard from "../_components/SchemaSidebarComponents/CollectionDashboard";
+import ChartExample from "../charts/chart_example";
 
 import { AppContext } from "../_context/AppContext";
 
