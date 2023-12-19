@@ -2,7 +2,7 @@
 
 import React from "react";
 import ExampleDoughnut from './components/doughnut'
-import AppProvider from './../context/AppContext'
+import AppProvider from '../context/AppContext'
 import { handleLoadCollections, handleShowDatabases } from "./adapter";
 
 class DoughnutFactory {
@@ -10,7 +10,7 @@ class DoughnutFactory {
     this.flavours = new Map();
   }
   register(doughnut) {
-
+    
   }
   getDoughnutFor() {
 

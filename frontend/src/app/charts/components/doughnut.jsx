@@ -9,6 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 async function dbs(ctx) {
   const arr = [];
   let dbs = await handleShowDatabases();
+  console.log(dbs)
   dbs.forEach(async (db) => {
     let collections = await handleLoadCollections(db);
     collections?.forEach(async (collection) => {
@@ -55,7 +56,7 @@ function ExampleDoughnut() {
   const ctx = useContext(AppContext)
   console.log("doughnut:", ctx);
   setTimeout(async function () {
-    console.log(await dbs(ctx));
+    console.log("all",await dbs(ctx));
   }, 0);
   const data = {
     labels: [

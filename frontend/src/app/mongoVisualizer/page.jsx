@@ -3,7 +3,7 @@ import React from "react";
 import ToggleSwitch from "../_components/AtomarComponents/ToggleSwitch";
 import DatabaseList from "../_components/DatabaseList";
 import SideNavigation from "../_components/NavBarComponents/SideNavigation";
-import ChartExample from "../charts/all_of_them";
+import ChartExample from "../charts/chart_example";
 
 export default function mongovisualizer() {
   return (
