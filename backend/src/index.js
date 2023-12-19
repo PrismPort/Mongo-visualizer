@@ -3,9 +3,6 @@ dotenv.config();
 
 import app from "./app.js";
 
-// middleware
-import { mongoURL } from "./middleware/mongoURL.middleware.js";
-
 // controller
 import {
   analyzeDatabase,
@@ -14,6 +11,7 @@ import {
   getDatabases,
   connectMongoDB,
   getDocumentsFromCollection,
+  logout,
 } from "./controllers/database.controller.js";
 
 import {
@@ -21,9 +19,7 @@ import {
   getContainerNetworkSettings,
 } from "./controllers/docker.controller.js";
 
-
 import os from "os";
-
 
 const PORT = process.env.EXPRESS_PORT;
 const DOCKER = process.env.DOCKER;
@@ -59,21 +55,19 @@ app.get("/", (req, res) => {
 });
 
 // TODO: rename to just "/query"
-app.get("/query-databases", mongoURL, getDatabases);
+app.get("/query-databases", getDatabases);
 
-app.get("/query/:database", mongoURL, getCollections);
+app.get("/query/:database", getCollections);
 
-app.get(
-  "/query/:database/:collection/:limit",
-  mongoURL,
-  getDocumentsFromCollection
-);
+app.get("/query/:database/:collection/:limit", getDocumentsFromCollection);
 
-app.get("/analyze/:database/:collection", mongoURL, analyzeDatabase);
+app.get("/analyze/:database/:collection", analyzeDatabase);
 
-app.post("/query/:database/:collection", mongoURL, queryDatabase);
+app.post("/query/:database/:collection", queryDatabase);
 
 app.post("/connect-to-mongodb", (req, res) => connectMongoDB(req, res, DOCKER));
+
+app.get("/disconnect-mongodb", logout);
 
 // experiments with docker api
 // TODO: routes should be deactivated if 'DOCKER = false' in .env
@@ -81,4 +75,6 @@ app.get("/docker/list-containers", (res) => listDockerContainers(res));
 
 // path execution
 // get docker container network settings
-app.post("/docker/run-command", (req, res) => getContainerNetworkSettings(req, res));
+app.post("/docker/run-command", (req, res) =>
+  getContainerNetworkSettings(req, res)
+);
