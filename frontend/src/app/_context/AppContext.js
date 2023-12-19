@@ -34,7 +34,6 @@ const AppProvider = ({ children }) => {
     if (!collections[database]) {
       try {
         if (database === "all") {
-          console.log("databases in conext", databases);
           let allCollections = []; // Initialize as an empty array
           for (const db of databases) {
             const collectionsData = await handleLoadCollections(db, mongoURL);
@@ -42,7 +41,6 @@ const AppProvider = ({ children }) => {
               allCollections = [...allCollections, ...collectionsData];
             }
           }
-          console.log(allCollections);
           setCollections((prevState) => ({
             ...prevState,
             [database]: allCollections,
