@@ -2,7 +2,6 @@
 
 import React, { useState, useContext } from "react";
 import { AppContext } from "../../_context/AppContext";
-
 import Logo from "../AtomarComponents/Logo";
 import CustomButton from "../NavBarComponents/CustomButton";
 import Divider from "../AtomarComponents/Divider";
@@ -19,10 +18,10 @@ export default function SideNavigation() {
     fetchCollectionsForDatabase,
   } = useContext(AppContext);
 
-  const [loginIsActive, setLoginIsActive] = useState(false); // State to track active/inactive
-  const [allDatabasesIsExpanded, setAlldatabasesIsExpanded] = useState(false); // State to track active/inactive
+  const [loginIsActive, setLoginIsActive] = useState(false);
+  const [allDatabasesIsExpanded, setAllDatabasesIsExpanded] = useState(false);
   const [allCollectionsIsExpanded, setAllCollectionsIsExpanded] =
-    useState(false); // State to track active/inactive
+    useState(false);
 
   const username = "testuser";
 
@@ -39,34 +38,41 @@ export default function SideNavigation() {
     : HiOutlineChevronRight;
 
   const toggleLoginState = () => {
-    setLoginIsActive(!loginIsActive); // Toggle the state
+    setLoginIsActive(!loginIsActive);
   };
 
   const handleDatabaseClick = (selectedDatabase) => {
-    console.log("Selected database:", selectedDatabase); // Check if this is correctly logged
     updateDatabase(selectedDatabase);
-    fetchCollectionsForDatabase(selectedDatabase);
+
+    fetchCollectionsForDatabase(selectedDatabase).then(() => {
+      // Check if collections data for selectedDatabase is available
+      if (collections[selectedDatabase]) {
+        if (!collections[selectedDatabase].includes(collection)) {
+          updateCollection("all");
+        }
+      } else {
+        // Optionally, reset the collection as a fallback
+        updateCollection("all");
+      }
+    });
   };
 
   const handleCollectionClick = (selectedCollection) => {
-    console.log("Selected collection:", selectedCollection); // Check if this is correctly logged
     updateCollection(selectedCollection);
   };
 
   const toggleDatabaseExpansion = () => {
-    setAlldatabasesIsExpanded(!allDatabasesIsExpanded); // Toggle the state
+    setAllDatabasesIsExpanded(!allDatabasesIsExpanded); // Toggle the state
   };
 
   const toggleCollectionsExpansion = () => {
+    fetchCollectionsForDatabase(database);
     setAllCollectionsIsExpanded(!allCollectionsIsExpanded); // Toggle the state
   };
 
   return (
-    <aside
-      className="absolute h-screen w-auto bg-sidebar-bg rounded-r-3xl left-0
-    "
-    >
-      <nav className="flex justify-center flex-col">
+    <aside className="absolute h-screen w-auto bg-sidebar-bg rounded-r-3xl left-0">
+      <nav className="flex flex-col h-full">
         <Logo></Logo>
         <Divider></Divider>
         <CustomButton
@@ -75,13 +81,15 @@ export default function SideNavigation() {
           rounded={true}
           IconComponent={LoginIconComponent}
           variant={loginIsActive ? "active" : "inactive"}
-          onClick={toggleLoginState} // Add onClick event handler
+          onClick={toggleLoginState}
         />
         <Divider></Divider>
         <div
           onMouseEnter={toggleDatabaseExpansion}
           onMouseLeave={toggleDatabaseExpansion}
-          className="flex justify-center flex-col"
+          className={`flex justify-center max-h-auto flex-col ${
+            allDatabasesIsExpanded ? "overflow-y-scroll" : "overflow-y-visible"
+          }`}
         >
           <CustomButton
             text={"all databases"}
@@ -91,38 +99,43 @@ export default function SideNavigation() {
             variant={database === `all` ? "dbSelected" : "inactive"}
             onClick={() => handleDatabaseClick(`all`)}
           ></CustomButton>
-
-          {allDatabasesIsExpanded
-            ? databases.map((eachDatabase, index) => {
+          {allDatabasesIsExpanded ? (
+            <div className="flex flex-col max-h-full overflow-y-auto">
+              {databases.map((eachDatabase, index) => (
+                <CustomButton
+                  key={index}
+                  text={eachDatabase}
+                  onClick={() => handleDatabaseClick(eachDatabase)}
+                  variant={
+                    database === eachDatabase ? "dbSelected" : "inactive"
+                  }
+                ></CustomButton>
+              ))}
+            </div>
+          ) : (
+            databases.map((eachDB, index) => {
+              if (eachDB === database) {
                 return (
                   <CustomButton
                     key={index}
-                    text={eachDatabase}
-                    onClick={() => handleDatabaseClick(eachDatabase)}
-                    variant={
-                      database === eachDatabase ? "dbSelected" : "inactive"
-                    }
+                    text={eachDB}
+                    onClick={() => handleDatabaseClick(eachDB)}
+                    variant={database === eachDB ? "dbSelected" : "inactive"}
                   ></CustomButton>
                 );
-              })
-            : databases.map((eachDB, index) => {
-                if (eachDB === database) {
-                  return (
-                    <CustomButton
-                      key={index}
-                      text={eachDB}
-                      onClick={() => handleDatabaseClick(eachDB)}
-                      variant={database === eachDB ? "dbSelected" : "inactive"}
-                    ></CustomButton>
-                  );
-                }
-              })}
+              }
+            })
+          )}
         </div>
         <Divider></Divider>
         <div
           onMouseEnter={toggleCollectionsExpansion}
           onMouseLeave={toggleCollectionsExpansion}
-          className="flex justify-center flex-col"
+          className={`flex justify-center flex-col max-h-auto ${
+            allCollectionsIsExpanded
+              ? "overflow-y-scroll"
+              : "overflow-y-visible"
+          }`}
         >
           <CustomButton
             text={"all collections"}
@@ -133,10 +146,9 @@ export default function SideNavigation() {
             variant={collection === "all" ? "collectionSelected" : "inactive"}
             onClick={() => handleCollectionClick(`all`)}
           />
-
-          {
-            collections[database]
-              ? allCollectionsIsExpanded
+          {collections[database] && (
+            <div className="flex flex-col max-h-full overflow-y-auto">
+              {allCollectionsIsExpanded
                 ? collections[database].map((currentCollection, index) => (
                     <CustomButton
                       key={index}
@@ -166,12 +178,9 @@ export default function SideNavigation() {
                         ></CustomButton>
                       );
                     }
-                  })
-              : null
-            // collections[database].map((currentCol, index) => {
-            //     <div>{currentCol}</div>;
-            //   })
-          }
+                  })}
+            </div>
+          )}
         </div>
       </nav>
     </aside>
