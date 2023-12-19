@@ -13,29 +13,28 @@ export default function SideNavigation() {
     database,
     databases,
     updateDatabase,
+    updateCollection,
+    collection,
     collections,
     fetchCollectionsForDatabase,
   } = useContext(AppContext);
 
-  const handleDatabaseClick = (selectedDatabase) => {
-    updateDatabase(selectedDatabase);
-    fetchCollectionsForDatabase(selectedDatabase);
-  };
-
   const [loginIsActive, setLoginIsActive] = useState(false); // State to track active/inactive
-  const [allDatabasesIsActive, setAlldatabasesIsActive] = useState(false); // State to track active/inactive
-  const [allCollectionsIsActive, setAllCollectionsIsActive] = useState(false); // State to track active/inactive
+  const [allDatabasesIsExpanded, setAlldatabasesIsExpanded] = useState(false); // State to track active/inactive
+  const [allCollectionsIsExpanded, setAllCollectionsIsExpanded] =
+    useState(false); // State to track active/inactive
 
   const username = "testuser";
+
   const LoginIconComponent = loginIsActive
     ? HiOutlineChevronDown
     : HiOutlineChevronRight;
 
-  const DBIconComponent = allDatabasesIsActive
+  const DBIconComponent = allDatabasesIsExpanded
     ? HiOutlineChevronDown
     : HiOutlineChevronRight;
 
-  const CollectionsIconComponent = allCollectionsIsActive
+  const CollectionsIconComponent = allCollectionsIsExpanded
     ? HiOutlineChevronDown
     : HiOutlineChevronRight;
 
@@ -43,12 +42,23 @@ export default function SideNavigation() {
     setLoginIsActive(!loginIsActive); // Toggle the state
   };
 
-  const toggleDatabaseSelection = () => {
-    setAlldatabasesIsActive(!allDatabasesIsActive); // Toggle the state
+  const handleDatabaseClick = (selectedDatabase) => {
+    console.log("Selected database:", selectedDatabase); // Check if this is correctly logged
+    updateDatabase(selectedDatabase);
+    fetchCollectionsForDatabase(selectedDatabase);
   };
 
-  const toggleCollectionsSelection = () => {
-    setAllCollectionsIsActive(!allCollectionsIsActive); // Toggle the state
+  const handleCollectionClick = (selectedCollection) => {
+    console.log("Selected collection:", selectedCollection); // Check if this is correctly logged
+    updateCollection(selectedCollection);
+  };
+
+  const toggleDatabaseExpansion = () => {
+    setAlldatabasesIsExpanded(!allDatabasesIsExpanded); // Toggle the state
+  };
+
+  const toggleCollectionsExpansion = () => {
+    setAllCollectionsIsExpanded(!allCollectionsIsExpanded); // Toggle the state
   };
 
   return (
@@ -68,48 +78,101 @@ export default function SideNavigation() {
           onClick={toggleLoginState} // Add onClick event handler
         />
         <Divider></Divider>
-        <h4 className="bold p-4">databases</h4>
-        <CustomButton
-          text={"all databases"}
-          IconComponent={DBIconComponent}
-          imageSrc="/images/allDBIcon.svg"
-          imageSize={25}
-          variant={allDatabasesIsActive ? "active" : "inactive"}
-          onClick={toggleDatabaseSelection}
-          onMouseEnter={toggleDatabaseSelection}
-          onMouseLeave={toggleDatabaseSelection}
-        ></CustomButton>
-        {databases.map((eachDatabase, index) => {
-          return (
-            <CustomButton
-              key={eachDatabase} // Adding a key for list items
-              text={eachDatabase}
-              variant={database === eachDatabase ? "active" : "inactive"}
-              onClick={() => handleDatabaseClick(eachDatabase)}
-            ></CustomButton>
-          );
-        })}
-        <h4 className="bold p-4">collections</h4>
-        <CustomButton
-          text={"all collections"}
-          IconComponent={CollectionsIconComponent}
-          imageSrc="/images/collectionsIcon.svg"
-          imageSize={18}
-          rounded={false}
-          variant={allCollectionsIsActive ? "active" : "inactive"}
-          onClick={() => setAllCollectionsIsActive(!allCollectionsIsActive)}
-        />
+        <div
+          onMouseEnter={toggleDatabaseExpansion}
+          onMouseLeave={toggleDatabaseExpansion}
+          className="flex justify-center flex-col"
+        >
+          <CustomButton
+            text={"all databases"}
+            IconComponent={DBIconComponent}
+            imageSrc="/images/allDBIcon.svg"
+            imageSize={25}
+            variant={database === `all` ? "dbSelected" : "inactive"}
+            onClick={() => handleDatabaseClick(`all`)}
+          ></CustomButton>
 
-        {/* Render collections for the selected database under "all collections" */}
-        {allCollectionsIsActive &&
-          collections[database] &&
-          collections[database].map((collection) => (
-            <div key={collection} className="pl-4">
-              {" "}
-              {/* Add appropriate styling */}
-              {collection}
-            </div>
-          ))}
+          {allDatabasesIsExpanded
+            ? databases.map((eachDatabase, index) => {
+                return (
+                  <CustomButton
+                    key={index}
+                    text={eachDatabase}
+                    onClick={() => handleDatabaseClick(eachDatabase)}
+                    variant={
+                      database === eachDatabase ? "dbSelected" : "inactive"
+                    }
+                  ></CustomButton>
+                );
+              })
+            : databases.map((eachDB, index) => {
+                if (eachDB === database) {
+                  return (
+                    <CustomButton
+                      key={index}
+                      text={eachDB}
+                      onClick={() => handleDatabaseClick(eachDB)}
+                      variant={database === eachDB ? "dbSelected" : "inactive"}
+                    ></CustomButton>
+                  );
+                }
+              })}
+        </div>
+        <Divider></Divider>
+        <div
+          onMouseEnter={toggleCollectionsExpansion}
+          onMouseLeave={toggleCollectionsExpansion}
+          className="flex justify-center flex-col"
+        >
+          <CustomButton
+            text={"all collections"}
+            IconComponent={CollectionsIconComponent}
+            imageSrc="/images/collectionsIcon.svg"
+            imageSize={18}
+            rounded={false}
+            variant={collection === "all" ? "collectionSelected" : "inactive"}
+            onClick={() => handleCollectionClick(`all`)}
+          />
+
+          {
+            collections[database]
+              ? allCollectionsIsExpanded
+                ? collections[database].map((currentCollection, index) => (
+                    <CustomButton
+                      key={index}
+                      text={currentCollection}
+                      onClick={() => handleCollectionClick(currentCollection)}
+                      variant={
+                        collection === currentCollection
+                          ? "collectionSelected"
+                          : "inactive"
+                      }
+                    ></CustomButton>
+                  ))
+                : collections[database].map((currentCollection, index) => {
+                    if (currentCollection === collection) {
+                      return (
+                        <CustomButton
+                          key={index}
+                          text={currentCollection}
+                          onClick={() =>
+                            handleCollectionClick(currentCollection)
+                          }
+                          variant={
+                            collection === currentCollection
+                              ? "collectionSelected"
+                              : "inactive"
+                          }
+                        ></CustomButton>
+                      );
+                    }
+                  })
+              : null
+            // collections[database].map((currentCol, index) => {
+            //     <div>{currentCol}</div>;
+            //   })
+          }
+        </div>
       </nav>
     </aside>
   );

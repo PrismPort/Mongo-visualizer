@@ -17,15 +17,15 @@ export default function CustomButton({
     active:
       "text-white flex justify-center items-center flex-row m-2 bg-gray-500",
     inactive: "bg-transparent text-white text-black",
+    dbSelected: "bg-green-800 text-white",
+    collectionSelected: "bg-green-600 text-white",
     // Add more variants as needed
   };
 
   return (
     <button
-      className={` hover:bg-buttonHoverBg ${baseStyles} ${
-        variantStyles[variant] || " "
-      }`}
-      onClick={onClick} // Use the onClick prop
+      className={` ${baseStyles} ${variantStyles[variant] || " "}`}
+      onClick={onClick}
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}
     >

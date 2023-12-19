@@ -1,4 +1,5 @@
 "use client";
+
 import React, { createContext, useState, useEffect } from "react";
 
 // EXPERIMENTAL: importing utility functions into global state
@@ -14,16 +15,15 @@ const AppProvider = ({ children }) => {
   const [databases, setDatabases] = useState([]);
   const [collection, setCollection] = useState("all");
   const [collections, setCollections] = useState({});
-
-  const mongoURL = localStorage.getItem("mongoURL");
+  const [mongoURL, setMongoURL] = useState("");
 
   useEffect(() => {
+    const mongo = localStorage.getItem("mongoURL");
+    setMongoURL(mongo);
     const fetchDatabases = async () => {
-      if (mongoURL) {
-        const dbList = await handleShowDatabases(mongoURL);
-        if (dbList) {
-          setDatabases(dbList);
-        }
+      const dbList = await handleShowDatabases(mongo);
+      if (dbList) {
+        setDatabases(dbList);
       }
     };
 
@@ -33,12 +33,26 @@ const AppProvider = ({ children }) => {
   const fetchCollectionsForDatabase = async (database) => {
     if (!collections[database]) {
       try {
-        const collectionsData = await handleLoadCollections(database, mongoURL);
-        if (collectionsData) {
-          setCollections((prevState) => ({
-            ...prevState,
-            [database]: collectionsData,
-          }));
+        if (database === "all") {
+          const allCollections = {};
+          for (const db of databases) {
+            const collectionsData = await handleLoadCollections(db, mongoURL);
+            if (collectionsData) {
+              allCollections[db] = collectionsData;
+            }
+          }
+          setCollections(allCollections);
+        } else {
+          const collectionsData = await handleLoadCollections(
+            database,
+            mongoURL
+          );
+          if (collectionsData) {
+            setCollections((prevState) => ({
+              ...prevState,
+              [database]: collectionsData,
+            }));
+          }
         }
       } catch (error) {
         console.error("Failed to load collections:", error);

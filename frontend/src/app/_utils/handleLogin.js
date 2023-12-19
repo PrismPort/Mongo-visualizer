@@ -1,8 +1,3 @@
-import { useContext } from "react";
-import { AppContext } from "../../_context/AppContext";
-
-const { mongoURL } = (useContext = { AppContext });
-
 export const handleLogin = async (loginData) => {
   console.log(loginData);
   try {
@@ -17,7 +12,7 @@ export const handleLogin = async (loginData) => {
       // consume response body as json
       const body = await response.json();
       // save token to local storage
-      mongoURL = body.mongoURL;
+      localStorage.setItem("mongoURL", body.mongoURL);
       return true;
     } else {
       console.error("Login failed");
