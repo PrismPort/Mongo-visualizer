@@ -1,5 +1,5 @@
 // services
-import { listContainers } from "../services/listDockerContainers.service";
+import { listContainers } from "../services/listDockerContainers.service.js";
 
 export const listDockerContainers = async (res) => {
   try {
