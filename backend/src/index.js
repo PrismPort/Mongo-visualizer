@@ -15,9 +15,15 @@ import {
   connectMongoDB,
   getDocumentsFromCollection,
 } from "./controllers/database.controller.js";
+
+import {
+  listDockerContainers,
+  getContainerNetworkSettings,
+} from "./controllers/docker.controller.js";
+
+
 import os from "os";
 
-import listContainers from "./middleware/dockerAPI.middleware.js";
 
 const PORT = process.env.EXPRESS_PORT;
 const DOCKER = process.env.DOCKER;
@@ -70,31 +76,9 @@ app.post("/query/:database/:collection", mongoURL, queryDatabase);
 app.post("/connect-to-mongodb", (req, res) => connectMongoDB(req, res, DOCKER));
 
 // experiments with docker api
-
-app.get("/api/containers", async (req, res) => {
-  try {
-    const containers = await listContainers();
-    res.json(containers); // Send the containers as a JSON response
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// TODO: routes should be deactivated if 'DOCKER = false' in .env
+app.get("/docker/list-containers", (res) => listDockerContainers(res));
 
 // path execution
-app.post("/run-command", (req, res) => {
-  const containerName = req.body.containerName; // Get container name from request body
-
-  exec(
-    `docker inspect ${containerName} -f '{{json .NetworkSettings.Networks}}'`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return res
-          .status(500)
-          .send(`Error executing command: ${error.message}`);
-      }
-      res.send(`Command output: ${stdout}`);
-    }
-  );
-});
+// get docker container network settings
+app.post("/docker/run-command", (req, res) => getContainerNetworkSettings(req, res));
