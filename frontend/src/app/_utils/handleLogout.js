@@ -1,4 +1,4 @@
-export const handleLogin = () => {
+export const handleLogout = () => {
     localStorage.removeItem('mongoURL');
     window.location.href = "/";
 };
