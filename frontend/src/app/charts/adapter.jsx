@@ -1,7 +1,7 @@
-import { AppContext as app_context } from '../context/AppContext';
-import { default as app_provider } from '../context/AppContext';
-import { handleShowDatabases as handle_show_databases } from '../utils/handleShowDatabases';
-import { handleLoadCollections as handle_load_collections } from '../utils/handleLoadCollections';
+import { AppContext as app_context } from '../_context/AppContext';
+import { default as app_provider } from '../_context/AppContext';
+import { handleShowDatabases as handle_show_databases } from '../_utils/handleShowDatabases';
+import { handleLoadCollections as handle_load_collections } from '../_utils/handleLoadCollections';
 
 export {
     app_context as AppContext,
