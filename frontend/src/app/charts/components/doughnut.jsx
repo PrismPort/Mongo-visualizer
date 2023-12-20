@@ -55,9 +55,9 @@ function AExampleDoughnut() {
 function ExampleDoughnut() {
   const ctx = useContext(AppContext)
   console.log("doughnut:", ctx);
-  setTimeout(async function () {
-    console.log("all",await dbs(ctx));
-  }, 0);
+  // setTimeout(async function () {
+  //   console.log("all",await dbs(ctx));
+  // }, 0);
   const data = {
     labels: [
       'Red',
