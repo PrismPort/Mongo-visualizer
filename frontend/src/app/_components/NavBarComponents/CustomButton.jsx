@@ -12,7 +12,7 @@ export default function CustomButton({
 }) {
   // Define base styles and conditional styles based on the variant
   const baseStyles =
-    "flex justify-center items-center flex-row m-4 gap-3 px-4 py-2 rounded focus:outline-none";
+    "flex justify-center items-center flex-row mx-4 my-1 gap-3 px-4 py-4 rounded focus:outline-none";
   const variantStyles = {
     active:
       "text-white flex justify-center items-center flex-row m-2 bg-gray-500",
