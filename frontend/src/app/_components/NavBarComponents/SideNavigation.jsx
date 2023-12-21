@@ -18,14 +18,14 @@ export default function SideNavigation() {
     fetchCollectionsForDatabase,
   } = useContext(AppContext);
 
-  const [loginIsActive, setLoginIsActive] = useState(false);
+  const [loginIsExpanded, setLoginIsExpanded] = useState(false);
   const [allDatabasesIsExpanded, setAllDatabasesIsExpanded] = useState(false);
   const [allCollectionsIsExpanded, setAllCollectionsIsExpanded] =
     useState(false);
 
   const username = "testuser";
 
-  const LoginIconComponent = loginIsActive
+  const LoginIconComponent = loginIsExpanded
     ? HiOutlineChevronDown
     : HiOutlineChevronRight;
 
@@ -37,8 +37,8 @@ export default function SideNavigation() {
     ? HiOutlineChevronDown
     : HiOutlineChevronRight;
 
-  const toggleLoginState = () => {
-    setLoginIsActive(!loginIsActive);
+  const toggleLoginExpansion = () => {
+    setLoginIsExpanded(!loginIsExpanded);
   };
 
   const handleDatabaseClick = (selectedDatabase) => {
@@ -76,115 +76,153 @@ export default function SideNavigation() {
     setAllCollectionsIsExpanded(!allCollectionsIsExpanded); // Toggle the state
   };
 
+  const handleLogout = () => {
+    console.log("Logout");
+  };
+
   return (
-    <aside className="absolute h-screen w-auto bg-sidebar-bg py-5 rounded-r-3xl left-0">
-      <nav className="flex flex-col h-full">
-        <Logo></Logo>
-        <Divider></Divider>
-        <CustomButton
-          text={username}
-          imageSrc="/images/sampleUser.jpg"
-          rounded={true}
-          IconComponent={LoginIconComponent}
-          variant={loginIsActive ? "active" : "inactive"}
-          onClick={toggleLoginState}
-        />
-        <Divider></Divider>
-        <div
-          onMouseEnter={toggleDatabaseExpansion}
-          onMouseLeave={toggleDatabaseExpansion}
-          className={`flex justify-center max-h-auto flex-col ${
-            allDatabasesIsExpanded ? "overflow-auto" : "overflow-y-visible"
-          }`}
-        >
-          <CustomButton
-            text={"all databases"}
-            IconComponent={DBIconComponent}
-            imageSrc="/images/allDBIcon.svg"
-            imageSize={25}
-            variant={database === `all` ? "dbSelected" : "inactive"}
-            onClick={() => handleDatabaseClick(`all`)}
-          ></CustomButton>
-          {allDatabasesIsExpanded ? (
-            <div className="flex flex-col max-h-full overflow-y-auto">
-              {databases.map((eachDatabase, index) => (
-                <CustomButton
-                  key={index}
-                  text={eachDatabase}
-                  onClick={() => handleDatabaseClick(eachDatabase)}
-                  variant={
-                    database === eachDatabase ? "dbSelected" : "inactive"
-                  }
-                ></CustomButton>
-              ))}
-            </div>
-          ) : (
-            databases.map((eachDB, index) => {
-              if (eachDB === database) {
-                return (
+    <aside className=" h-screen w-vw25 min-w-max bg-sidebar-bg py-5 rounded-r-3xl ">
+      <nav className="flex justify-between flex-col h-full">
+        <div className="flex flex-col h-full">
+          <Logo></Logo>
+          <Divider></Divider>
+          <div
+            className="flex justify-center flex-col"
+            onMouseEnter={toggleLoginExpansion}
+            onMouseLeave={toggleLoginExpansion}
+          >
+            <CustomButton
+              text={username}
+              imageSrc="/images/sampleUser.jpg"
+              rounded={true}
+              IconComponent={LoginIconComponent}
+              variant={loginIsExpanded ? "active" : "inactive"}
+            />
+            {loginIsExpanded ? (
+              <CustomButton
+                variant={"inactive"}
+                text={"Logout"}
+                onClick={handleLogout}
+              ></CustomButton>
+            ) : null}
+          </div>
+          <Divider></Divider>
+          <div
+            onMouseEnter={toggleDatabaseExpansion}
+            onMouseLeave={toggleDatabaseExpansion}
+            className={`flex justify-center max-h-auto flex-col ${
+              allDatabasesIsExpanded ? "overflow-auto" : "overflow-y-visible"
+            }`}
+          >
+            <CustomButton
+              text={"all databases"}
+              IconComponent={DBIconComponent}
+              imageSrc="/images/allDBIcon.svg"
+              imageSize={25}
+              variant={database === `all` ? "dbSelected" : "inactive"}
+              onClick={() => handleDatabaseClick(`all`)}
+            ></CustomButton>
+            {allDatabasesIsExpanded ? (
+              <div className="flex flex-col max-h-full overflow-y-auto">
+                {databases.map((eachDatabase, index) => (
                   <CustomButton
                     key={index}
-                    text={eachDB}
-                    onClick={() => handleDatabaseClick(eachDB)}
-                    variant={database === eachDB ? "dbSelected" : "inactive"}
+                    text={eachDatabase}
+                    onClick={() => handleDatabaseClick(eachDatabase)}
+                    variant={
+                      database === eachDatabase ? "dbSelected" : "inactive"
+                    }
                   ></CustomButton>
-                );
-              }
-            })
-          )}
-        </div>
-        <Divider></Divider>
-        <div
-          onMouseEnter={toggleCollectionsExpansion}
-          onMouseLeave={toggleCollectionsExpansion}
-          className={`flex justify-center flex-col max-h-auto ${
-            allCollectionsIsExpanded ? "overflow-auto" : "overflow-y-visible"
-          }`}
-        >
-          <CustomButton
-            text={"all collections"}
-            IconComponent={CollectionsIconComponent}
-            imageSrc="/images/collectionsIcon.svg"
-            imageSize={18}
-            rounded={false}
-            variant={collection === "all" ? "collectionSelected" : "inactive"}
-            onClick={() => handleCollectionClick(`all`)}
-          />
-          {collections[database] && (
-            <div className="flex flex-col max-h-full overflow-y-auto">
-              {allCollectionsIsExpanded
-                ? collections[database].map((currentCollection, index) => (
+                ))}
+              </div>
+            ) : (
+              databases.map((eachDB, index) => {
+                if (eachDB === database) {
+                  return (
                     <CustomButton
                       key={index}
-                      text={currentCollection}
-                      onClick={() => handleCollectionClick(currentCollection)}
-                      variant={
-                        collection === currentCollection
-                          ? "collectionSelected"
-                          : "inactive"
-                      }
+                      text={eachDB}
+                      onClick={() => handleDatabaseClick(eachDB)}
+                      variant={database === eachDB ? "dbSelected" : "inactive"}
                     ></CustomButton>
-                  ))
-                : collections[database].map((currentCollection, index) => {
-                    if (currentCollection === collection) {
-                      return (
-                        <CustomButton
-                          key={index}
-                          text={currentCollection}
-                          onClick={() =>
-                            handleCollectionClick(currentCollection)
-                          }
-                          variant={
-                            collection === currentCollection
-                              ? "collectionSelected"
-                              : "inactive"
-                          }
-                        ></CustomButton>
-                      );
-                    }
-                  })}
+                  );
+                }
+              })
+            )}
+          </div>
+          <Divider></Divider>
+          <div
+            onMouseEnter={toggleCollectionsExpansion}
+            onMouseLeave={toggleCollectionsExpansion}
+            className={`flex justify-center flex-col max-h-auto ${
+              allCollectionsIsExpanded ? "overflow-auto" : "overflow-y-visible"
+            }`}
+          >
+            <CustomButton
+              text={"all collections"}
+              IconComponent={CollectionsIconComponent}
+              imageSrc="/images/collectionsIcon.svg"
+              imageSize={18}
+              rounded={false}
+              variant={collection === "all" ? "collectionSelected" : "inactive"}
+              onClick={() => handleCollectionClick(`all`)}
+            />
+            {collections[database] && (
+              <div className="flex flex-col max-h-full overflow-y-auto">
+                {allCollectionsIsExpanded
+                  ? collections[database].map((currentCollection, index) => (
+                      <CustomButton
+                        key={index}
+                        text={currentCollection}
+                        onClick={() => handleCollectionClick(currentCollection)}
+                        variant={
+                          collection === currentCollection
+                            ? "collectionSelected"
+                            : "inactive"
+                        }
+                      ></CustomButton>
+                    ))
+                  : collections[database].map((currentCollection, index) => {
+                      if (currentCollection === collection) {
+                        return (
+                          <CustomButton
+                            key={index}
+                            text={currentCollection}
+                            onClick={() =>
+                              handleCollectionClick(currentCollection)
+                            }
+                            variant={
+                              collection === currentCollection
+                                ? "collectionSelected"
+                                : "inactive"
+                            }
+                          ></CustomButton>
+                        );
+                      }
+                    })}
+              </div>
+            )}
+          </div>
+
+          <div className=" mt-auto">
+            <Divider></Divider>
+            <div className="flex justify-center flex-col mr-pz5">
+              <CustomButton
+                text={"Settings"}
+                imageSrc="/images/settings.svg"
+                imageSize={25}
+                rounded={false}
+                variant={"inactive"}
+              />
+              <CustomButton
+                text={"Readme"}
+                imageSrc="/images/Readme.svg"
+                imageSize={25}
+                rounded={false}
+                variant={"inactive"}
+              />
             </div>
-          )}
+          </div>
         </div>
       </nav>
     </aside>

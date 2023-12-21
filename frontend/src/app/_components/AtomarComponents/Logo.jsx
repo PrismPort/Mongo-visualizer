@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Logo() {
   return (
-    <div className=" p-5 flex gap-2 justify-center items-center flex-row">
+    <div className=" text-white p-5 flex gap-2 justify-center items-center flex-row">
       <Image
         src={"/images/logo.svg"}
         alt="MongoVisualizer Logo"
