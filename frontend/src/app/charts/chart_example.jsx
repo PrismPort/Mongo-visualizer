@@ -1,10 +1,9 @@
 "use client"
 
-import React from "react";
-import ExampleDoughnut from './components/doughnut'
-import {AppProvider} from './adapter'
+import React, { useContext } from "react";
+import ExampleDoughnut from './components/doughnut';
+import { AppProvider, AppContext } from './adapter'
 import { handleLoadCollections, handleShowDatabases } from "./adapter";
-
 class DoughnutFactory {
   constructor() {
     this.flavours = new Map();
@@ -17,8 +16,9 @@ class DoughnutFactory {
   }
 }
 
-function ExampleCollection(database, collection) {
-  
+function ChartFactory() {
+  const ctx = useContext(AppContext);
+  console.log(ctx)
 }
 
 function ChartExample() {
@@ -37,10 +37,8 @@ function ChartExample() {
   //   ), 0);
   return (
     <AppProvider>
+      <ChartFactory />
       <ExampleDoughnut />
-      <ExampleCollection
-        database={'TestDB'}
-        collection={'TestUserData'} />
     </AppProvider>
   )
 }

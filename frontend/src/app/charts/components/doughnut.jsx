@@ -5,11 +5,15 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { AppContext, handleShowDatabases, handleLoadCollections } from '../adapter';
 ChartJS.register(ArcElement, Tooltip, Legend);
-
+let used = 0;
 async function dbs(ctx) {
   const arr = [];
+  used += 1;
+  if (used > 20) {
+    return "used"
+  }
   let dbs = await handleShowDatabases();
-  console.log(dbs)
+  //console.log(dbs)
   dbs.forEach(async (db) => {
     let collections = await handleLoadCollections(db);
     collections?.forEach(async (collection) => {
@@ -19,6 +23,29 @@ async function dbs(ctx) {
   })
   return arr;
 };
+function BarChart() {
+
+}
+function AChartFor(data) {
+
+}
+function DoughnutChart(...numbers) {
+  const data = {
+    labels: [
+      'true',
+      'false'
+    ],
+    datasets: [{
+      data: [numbers],
+      backgroundColor: [
+        '#B2DF8A',
+        '#2A5639',
+      ],
+      hoverOffset: 4
+    }]
+  };
+  return (<Doughnut data={data} />);
+}
 
 function AExampleDoughnut() {
   const ctx = useContext(AppContext);
@@ -51,13 +78,18 @@ function AExampleDoughnut() {
   }
 }
 
+const myPromise = (ctx) => new Promise((resolve, reject) => {
+  resolve(dbs(ctx))
+});
 
 function ExampleDoughnut() {
-  const ctx = useContext(AppContext)
+  const ctx = useContext(AppContext);
   console.log("doughnut:", ctx);
+  myPromise(ctx).then((value) => (console.log(value)))
   // setTimeout(async function () {
   //   console.log("all",await dbs(ctx));
   // }, 0);
+
   const data = {
     labels: [
       'Red',
