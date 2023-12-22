@@ -3,6 +3,7 @@ import React from "react";
 import ToggleSwitch from "../_components/AtomarComponents/ToggleSwitch";
 import DatabaseList from "../_components/DatabaseList";
 import SideNavigation from "../_components/NavBarComponents/SideNavigation";
+import CollectionDashboard from "../_components/SchemaSidebarComponents/CollectionDashboard";
 
 export default function mongovisualizer() {
   return (
@@ -16,6 +17,8 @@ export default function mongovisualizer() {
           <ToggleSwitch />
         </div>
       </main>
+
+      <CollectionDashboard />
     </>
   );
 }

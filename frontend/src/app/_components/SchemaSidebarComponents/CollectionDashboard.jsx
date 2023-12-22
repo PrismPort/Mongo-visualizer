@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import './CollectionDashboard.css';
 import Sidebar from './Sidebar.jsx'
@@ -20,4 +22,4 @@ const CollectionDashboard= () => {
 
 }
 
-export { CollectionDashboard };
+export default CollectionDashboard;

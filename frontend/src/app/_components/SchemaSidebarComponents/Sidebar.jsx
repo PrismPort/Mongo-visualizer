@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState } from 'react';
 import SidebarItem from "./SidebarItem.jsx"
-import items from "../data/sidebar.json"
+import items from "../../_dummyData/sidebar.json"
 import './Sidebar.css';
 
 export default function Sidebar(){

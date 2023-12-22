@@ -1,0 +1,54 @@
+[
+    {
+      "count": 108000, 
+      "type": "ObjectId", 
+      "name": "_test", 
+      "probability": 1 
+    },
+    {
+      "count": 34529,
+      "type": [ "Object", "Undefined" ],
+      "name": "address",
+      "probability": 0.919712962962963,
+      "children":[
+        {
+            "count": 34360,
+            "type": [ "Object", "Undefined" ],
+            "name": "house",
+            "probability": 0.63481481481481,
+            "children":[
+              {
+                "count": 34360,
+                "type": [ "String", "Undefined" ],
+                "name": "street",
+                "probability": 0.581481481481481
+              },
+              {
+                "count": 34099,
+                "type": [ "Number", "Undefined" ],
+                "name": "number",
+                "probability": 0.5157314814814815
+              }
+            ]
+          },
+          {
+            "count": 34099,
+            "type": [ "String", "Undefined" ],
+            "name": "name",
+            "probability": 0.2157314814814815
+          }
+        ]
+    },
+    {
+      "count": 34360,
+      "type": [ "String", "Undefined" ],
+      "name": "company",
+      "probability": 0.3181481481481481
+    },
+    {
+      "count": 34099,
+      "type": [ "Date", "Undefined" ],
+      "name": "date",
+      "probability": 0.8157314814814815
+    }
+]

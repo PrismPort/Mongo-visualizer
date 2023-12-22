@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import './EyeIcon.css';
 import { LuEye } from "react-icons/lu";
@@ -23,7 +25,7 @@ const EyeIcon = ({label, name, id, setVisibility}) => {
                       setVisibility(isToggled); //change visibility state for parent (SchemaTable)
                     }}
                 />
-                <label for={label}> {/* label = eye-icon */}
+                <label htmlFor={label}> {/* label = eye-icon */}
                     {isToggled ? isToggledIcon : isNotToggledIcon}
                 </label>
             </div>

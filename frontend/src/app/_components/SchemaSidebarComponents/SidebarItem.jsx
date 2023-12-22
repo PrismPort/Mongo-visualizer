@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import './SidebarItem.css';
 import { EyeIcon } from './EyeIcon.jsx';
@@ -24,11 +26,11 @@ export default function SidebarItem({item}){
             <div className={open ? "sidebar-item open" : "sidebar-item"}>
                 <div className="sidebar-title">
                     <span>
-                        <div class="flex-item"><EyeIcon label={eyeId} name={eyeId} id={eyeId} setVisibility={setVisibility}/></div>
-                        <div class={visibility ? "flex-item key-name toggledOff" : "flex-item key-name"} >{item.name}</div>
-                        <div class={visibility ? "flex-item type-name toggledOff" : "flex-item type-name"}>{Array.isArray(item.type) ? <label>{item.type[0]}</label> : <label>{item.type}</label>}</div>
-                        <div class={visibility ? "flex-item probability toggledOff" : "flex-item probability"}>{Math.round(item.probability*100)}%</div>
-                        <div class="flex-item"><i className="bi-chevron-down toggle-btn" onClick={() => setOpen(!open)}></i></div>
+                        <div className="flex-item"><EyeIcon label={eyeId} name={eyeId} id={eyeId} setVisibility={setVisibility}/></div>
+                        <div className={visibility ? "flex-item key-name toggledOff" : "flex-item key-name"} >{item.name}</div>
+                        <div className={visibility ? "flex-item type-name toggledOff" : "flex-item type-name"}>{Array.isArray(item.type) ? <label>{item.type[0]}</label> : <label>{item.type}</label>}</div>
+                        <div className={visibility ? "flex-item probability toggledOff" : "flex-item probability"}>{Math.round(item.probability*100)}%</div>
+                        <div className="flex-item"><i className="bi-chevron-down toggle-btn" onClick={() => setOpen(!open)}></i></div>
                     </span>
                 </div>
                 <div className="sidebar-content">
@@ -42,10 +44,10 @@ export default function SidebarItem({item}){
             <div className={open ? "sidebar-item open" : "sidebar-item"}>
                 <div className="sidebar-title">
                     <span>
-                        <div class="flex-item"><EyeIcon label={eyeId} name={eyeId} id={eyeId} setVisibility={setVisibility}/></div>
-                        <div class={visibility ? "flex-item key-name toggledOff" : "flex-item key-name"} >{item.name}</div>
-                        <div class={visibility ? "flex-item type-name toggledOff" : "flex-item type-name"}>{Array.isArray(item.type) ? <label>{item.type[0]}</label> : <label>{item.type}</label>}</div>
-                        <div class={visibility ? "flex-item probability toggledOff" : "flex-item probability"}>{Math.round(item.probability*100)}%</div>
+                        <div className="flex-item"><EyeIcon label={eyeId} name={eyeId} id={eyeId} setVisibility={setVisibility}/></div>
+                        <div className={visibility ? "flex-item key-name toggledOff" : "flex-item key-name"} >{item.name}</div>
+                        <div className={visibility ? "flex-item type-name toggledOff" : "flex-item type-name"}>{Array.isArray(item.type) ? <label>{item.type[0]}</label> : <label>{item.type}</label>}</div>
+                        <div className={visibility ? "flex-item probability toggledOff" : "flex-item probability"}>{Math.round(item.probability*100)}%</div>
                     </span>
                 </div>
             </div>
