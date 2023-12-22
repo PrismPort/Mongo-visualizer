@@ -3,9 +3,6 @@ dotenv.config();
 
 import app from "./app.js";
 
-// middleware
-import { mongoURL } from "./middleware/mongoURL.middleware.js";
-
 // controller
 import {
   analyzeDatabase,
@@ -14,10 +11,15 @@ import {
   getDatabases,
   connectMongoDB,
   getDocumentsFromCollection,
+  logout,
 } from "./controllers/database.controller.js";
-import os from "os";
 
-import listContainers from "./middleware/dockerAPI.middleware.js";
+import {
+  listDockerContainers,
+  getContainerNetworkSettings,
+} from "./controllers/docker.controller.js";
+
+import os from "os";
 
 const PORT = process.env.EXPRESS_PORT;
 const DOCKER = process.env.DOCKER;
@@ -53,48 +55,26 @@ app.get("/", (req, res) => {
 });
 
 // TODO: rename to just "/query"
-app.get("/query-databases", mongoURL, getDatabases);
+app.get("/query-databases", getDatabases);
 
-app.get("/query/:database", mongoURL, getCollections);
+app.get("/query/:database", getCollections);
 
-app.get(
-  "/query/:database/:collection/:limit",
-  mongoURL,
-  getDocumentsFromCollection
-);
+app.get("/query/:database/:collection/:limit", getDocumentsFromCollection);
 
-app.get("/analyze/:database/:collection", mongoURL, analyzeDatabase);
+app.get("/analyze/:database/:collection", analyzeDatabase);
 
-app.post("/query/:database/:collection", mongoURL, queryDatabase);
+app.post("/query/:database/:collection", queryDatabase);
 
 app.post("/connect-to-mongodb", (req, res) => connectMongoDB(req, res, DOCKER));
 
-// experiments with docker api
+app.get("/disconnect-mongodb", logout);
 
-app.get("/api/containers", async (req, res) => {
-  try {
-    const containers = await listContainers();
-    res.json(containers); // Send the containers as a JSON response
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// experiments with docker api
+// TODO: routes should be deactivated if 'DOCKER = false' in .env
+app.get("/docker/list-containers", (res) => listDockerContainers(res));
 
 // path execution
-app.post("/run-command", (req, res) => {
-  const containerName = req.body.containerName; // Get container name from request body
-
-  exec(
-    `docker inspect ${containerName} -f '{{json .NetworkSettings.Networks}}'`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return res
-          .status(500)
-          .send(`Error executing command: ${error.message}`);
-      }
-      res.send(`Command output: ${stdout}`);
-    }
-  );
-});
+// get docker container network settings
+app.post("/docker/run-command", (req, res) =>
+  getContainerNetworkSettings(req, res)
+);

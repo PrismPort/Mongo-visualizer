@@ -3,7 +3,8 @@ import { MongoClient } from "mongodb";
 // services
 import { analyzeCollection } from "../services/analyzeSchema.service.js";
 
-// Removed all type annotations and TypeScript-specific code
+let clientInstance = null; // mongo client instance, which will be reused throughout a session
+
 export const connectMongoDB = async (req, res) => {
   let mongoURL = null;
   const user = req.body.username;
@@ -32,9 +33,11 @@ export const connectMongoDB = async (req, res) => {
   }
 
   try {
-    const client = new MongoClient(mongoURL, { useUnifiedTopology: true });
-    await client.connect();
-    await client.close();
+    if (!clientInstance) {
+      clientInstance = new MongoClient(mongoURL, { useUnifiedTopology: true });
+      await clientInstance.connect();
+    }
+    console.log("Successfully connected to MongoDB");
     res.json({ mongoURL, message: "Successfully connected to MongoDB" });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -42,17 +45,30 @@ export const connectMongoDB = async (req, res) => {
   }
 };
 
+export const logout = async (req, res) => {
+  if (clientInstance) {
+    await clientInstance.close();
+    clientInstance = null;
+  }
+  res.json({ message: "Successfully disconnected from mongoDB" });
+};
+
+export const getClientInstance = () => {
+  return clientInstance;
+};
+
 export const getDatabases = async (req, res) => {
   try {
-    const client = req.client;
-    await client.connect();
+    const client = getClientInstance();
+
+    //console.log("getDatabases: " + client);
 
     // Access the specified collection and query data
     const adminDb = client.db("admin"); // Access the 'admin' database
-    const databases = await adminDb.admin().listDatabases();
+    console.log("getDatabases: " + adminDb);
 
-    // Close the MongoDB connection
-    await client.close();
+
+    const databases = await adminDb.admin().listDatabases();
 
     const databaseNames = databases.databases.map((db) => db.name);
     res.json(databaseNames);
@@ -66,15 +82,11 @@ export const getCollections = async (req, res) => {
   const database = req.params.database;
 
   try {
-    const client = req.client;
-    await client.connect();
+    const client = getClientInstance();
 
     // Access the specified database and query data
     const db = client.db(database);
     const collections = await db.listCollections().toArray();
-
-    // Close the MongoDB connection
-    await client.close();
 
     const collectionNames = collections.map((collection) => collection.name);
     res.json(collectionNames);
@@ -88,7 +100,7 @@ export const getDocumentsFromCollection = async (req, res) => {
   const { database, collection, limit } = req.params;
 
   try {
-    const client = req.client;
+    const client = getClientInstance();
 
     // Access the specified collection and query data with limit
     const db = client.db(database);
@@ -97,9 +109,6 @@ export const getDocumentsFromCollection = async (req, res) => {
       .find()
       .limit(parseInt(limit))
       .toArray();
-
-    // Close the MongoDB connection
-    await client.close();
 
     res.json(collections);
   } catch (error) {
@@ -110,7 +119,7 @@ export const getDocumentsFromCollection = async (req, res) => {
 
 export const analyzeDatabase = async (req, res) => {
   const { database, collection } = req.params;
-  const client = req.client;
+  const client = getClientInstance();
 
   console.log("Analyze schema");
   console.log("Database: " + database + ", Collection: " + collection);
@@ -121,21 +130,19 @@ export const analyzeDatabase = async (req, res) => {
 
     const schema = await analyzeCollection(collections, false);
 
-    console.dir(schema);
+    //console.dir(schema);
 
     res.json(schema);
   } catch (error) {
     console.error("Error querying data from MongoDB:", error);
     res.status(500).json({ error: "Failed to query data from MongoDB" });
-  } finally {
-    await client.close();
   }
 };
 
 export const queryDatabase = async (req, res) => {
   const { database, collection } = req.params;
   const query = req.body;
-  const client = req.client;
+  const client = getClientInstance();
 
   console.log("Analyze schema");
   console.log("Database: " + database + ", Collection: " + collection);
@@ -149,10 +156,6 @@ export const queryDatabase = async (req, res) => {
     const response = {
       schema,
     };
-
-    // Close the MongoDB connection
-    await client.close();
-
     res.json(response);
   } catch (error) {
     console.error("Error querying data from MongoDB:", error);

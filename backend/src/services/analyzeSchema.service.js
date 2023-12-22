@@ -6,10 +6,6 @@ export const analyzeCollection = async (collection, returnValues) => {
     storeValues: returnValues,
   });
 
-  //console.log(parsedSchema);
-
-  //console.dir(parsedSchema);
-
   // parsing the schema could be a service and reused both in queryDatabase and analyzeDatabase
   let schema = parsedSchema.fields.map((item) => {
     return {
