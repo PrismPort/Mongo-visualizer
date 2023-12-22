@@ -79,10 +79,12 @@ const AppProvider = ({ children }) => {
     setCollection(newCollection);
   };
 
+  const [loading, setLoading] = useState(false);
+
   const handleAnalyzeCollections = async (mongoURL, database, collection) => {
     updateDatabase(database);
     updateCollection(collection);
-    //setLoading(true);
+    setLoading(true);
     try {
       const response = await fetch(
         `http://localhost:4000/analyze/${database}/${collection}`,
@@ -101,7 +103,7 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       console.error(error);
     } finally { 
-      //setLoading(false);
+      setLoading(false);
     }
   };
 
