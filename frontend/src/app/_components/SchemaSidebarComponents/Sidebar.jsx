@@ -17,9 +17,9 @@ export default function Sidebar(){
         handleAnalyzeCollections,
       } = useContext(AppContext);
 
-
       const [items, setItems] = useState([]);
 
+    
       useEffect(() => {
         const fetchData = async () => {
           handleAnalyzeCollections(mongoURL, database, collection);
@@ -31,6 +31,7 @@ export default function Sidebar(){
       useEffect(() => {
         setItems(data || []);
       }, []);
+      
 
     return (
         <>

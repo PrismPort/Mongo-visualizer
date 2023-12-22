@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import './SidebarItem.css';
 import { EyeIcon } from './EyeIcon.jsx';
+import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 
 export default function SidebarItem({item}){
     const [open, setOpen] = useState(false);
@@ -30,7 +32,7 @@ export default function SidebarItem({item}){
                         <div className={visibility ? "flex-item key-name toggledOff" : "flex-item key-name"} >{item.name}</div>
                         <div className={visibility ? "flex-item type-name toggledOff" : "flex-item type-name"}>{Array.isArray(item.type) ? <label>{item.type[0]}</label> : <label>{item.type}</label>}</div>
                         <div className={visibility ? "flex-item probability toggledOff" : "flex-item probability"}>{Math.round(item.probability*100)}%</div>
-                        <div className="flex-item"><i className="bi-chevron-down toggle-btn" onClick={() => setOpen(!open)}></i></div>
+                        <div className="flex-item" onClick={() => setOpen(!open)}>{open ? <IoIosArrowDown /> : <IoIosArrowForward />}</div>
                     </span>
                 </div>
                 <div className="sidebar-content">
