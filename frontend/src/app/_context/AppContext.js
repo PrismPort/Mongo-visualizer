@@ -16,6 +16,7 @@ const AppProvider = ({ children }) => {
   const [collection, setCollection] = useState("all");
   const [collections, setCollections] = useState({});
   const [mongoURL, setMongoURL] = useState("");
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const mongo = localStorage.getItem("mongoURL");
@@ -81,7 +82,7 @@ const AppProvider = ({ children }) => {
   const handleAnalyzeCollections = async (mongoURL, database, collection) => {
     updateDatabase(database);
     updateCollection(collection);
-    setLoading(true);
+    //setLoading(true);
     try {
       const response = await fetch(
         `http://localhost:4000/analyze/${database}/${collection}`,
@@ -93,13 +94,14 @@ const AppProvider = ({ children }) => {
           },
         }
       );
-      const data = await response.json();
-      console.log(data);
-      setStats(data);
+      const datalocal = await response.json();
+      setData(datalocal);
+      console.log(datalocal);
+      setStats(datalocal);
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
+    } finally { 
+      //setLoading(false);
     }
   };
 

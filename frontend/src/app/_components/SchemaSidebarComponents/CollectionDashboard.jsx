@@ -10,7 +10,7 @@ const CollectionDashboard= () => {
         <>
             <div className="main">
                 <div className="container">
-                    test
+                    test haaaallooo
                 </div>
                 <div className="sidebar">
                     <Sidebar />
