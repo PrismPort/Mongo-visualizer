@@ -1,37 +1,36 @@
 "use client";
 
-import React, { useState } from 'react';
-import './EyeIcon.css';
-import { LuEye } from "react-icons/lu";
-import { LuEyeOff } from "react-icons/lu";
+import React, { useState } from "react";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 
-const EyeIcon = ({label, name, id, setVisibility}) => {
-    const [isToggled, setIsToggled] = useState(true);
+const EyeIcon = ({ label, name, id, setVisibility }) => {
+  const [isToggled, setIsToggled] = useState(true);
 
-    // set the toggle icons
-    const isToggledIcon = <LuEye />;
-    const isNotToggledIcon = <LuEyeOff />;
+  // set the toggle icons
+  const isToggledIcon = <LuEye className="text-gray-400" />;
+  const isNotToggledIcon = <LuEyeOff className="text-gray-600" />;
 
-    return (
-        <>
-            <div className="checkbox"> {/* EyeIcon is a checkbox you can toggle */}
-                <input
-                    type="checkbox"
-                    name={name}
-                    id={id}
-                    className="sr-only"
-                    checked={isToggled} onChange={ () =>{ //when you press the eye (toggle)
-                      setIsToggled(!isToggled); //change toggle state
-                      setVisibility(isToggled); //change visibility state for parent (SchemaTable)
-                    }}
-                />
-                <label htmlFor={label}> {/* label = eye-icon */}
-                    {isToggled ? isToggledIcon : isNotToggledIcon}
-                </label>
-            </div>
-     
-        </>
-    );
-}
+  return (
+    <div className="relative">
+      <input
+        type="checkbox"
+        name={name}
+        id={id}
+        className="sr-only peer"
+        checked={isToggled}
+        onChange={() => {
+          setIsToggled(!isToggled);
+          setVisibility(isToggled);
+        }}
+      />
+      <label
+        htmlFor={label}
+        className="peer-checked:text-gray-600 text-gray-400 cursor-pointer"
+      >
+        {isToggled ? isToggledIcon : isNotToggledIcon}
+      </label>
+    </div>
+  );
+};
 
 export { EyeIcon };

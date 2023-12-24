@@ -1,25 +1,19 @@
 "use client";
 
-import React, { useState } from 'react';
-import './CollectionDashboard.css';
-import Sidebar from './Sidebar.jsx'
+import React from "react";
+import Sidebar from "./Sidebar.jsx";
 
-const CollectionDashboard= () => {
-
-    return (
-        <>
-            <div className="main">
-                <div className="container">
-                    test haaaallooo
-                </div>
-                <div className="sidebar">
-                    <Sidebar />
-                </div>
-            </div>
-        </>
-    );
-
-
-}
+const CollectionDashboard = () => {
+  return (
+    <>
+      <div className="flex h-screen justify-end">
+        <div className="flex-1 p-4">test haaaallooo</div>
+        <div className="w-64">
+          <Sidebar />
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default CollectionDashboard;

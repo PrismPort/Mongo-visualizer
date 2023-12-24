@@ -1,7 +1,0 @@
-input[type="checkbox"] + label {
-    color: #D2D2D2;
-}
-
-input[type="checkbox"]:checked + label {
-    color: #ABABAB;
-}

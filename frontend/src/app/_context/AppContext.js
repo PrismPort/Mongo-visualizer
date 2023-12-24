@@ -16,7 +16,7 @@ const AppProvider = ({ children }) => {
   const [collection, setCollection] = useState("all");
   const [collections, setCollections] = useState({});
   const [mongoURL, setMongoURL] = useState("");
-  const [data, setData] = useState([]);
+  const [data, setData] = useState();
 
   useEffect(() => {
     const mongo = localStorage.getItem("mongoURL");
@@ -77,11 +77,12 @@ const AppProvider = ({ children }) => {
 
   const updateCollection = (newCollection) => {
     setCollection(newCollection);
+    console.log(`collection updated to: ${newCollection}`);
   };
 
   const [loading, setLoading] = useState(false);
 
-  const handleAnalyzeCollections = async (mongoURL, database, collection) => {
+  const handleAnalyzeCollections = async (database, collection) => {
     updateDatabase(database);
     updateCollection(collection);
     setLoading(true);
@@ -92,23 +93,24 @@ const AppProvider = ({ children }) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            mongoURL: mongoURL,
           },
         }
       );
-      const datalocal = await response.json();
-      setData(datalocal);
-      console.log(datalocal);
-      setStats(datalocal);
+      // const datalocal = await response.json();
+      const responseData = await response.json();
+      console.log("Parsed response data:", responseData);
+      setData(responseData);
+      setStats(responseData);
     } catch (error) {
       console.error(error);
-    } finally { 
+    } finally {
       setLoading(false);
     }
   };
 
   // Pass the fetchDataAndUpdateContext function to the children
   const contextValue = {
+    data,
     mongoURL,
     stats,
     database,

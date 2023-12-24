@@ -43,6 +43,7 @@ module.exports = {
         "brand-accent-2": "#1A6577",
         "brand-accent-3": "#333333",
         "brand-accent-4": "#fcd539",
+
         success: "#0070f3",
         alert: "#0070f3",
       },
