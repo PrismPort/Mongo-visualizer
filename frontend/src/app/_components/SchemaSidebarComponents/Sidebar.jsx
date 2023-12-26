@@ -6,29 +6,42 @@ import SidebarItem from "./SidebarItem.jsx";
 import { AppContext } from "../../_context/AppContext";
 
 export default function Sidebar() {
-  const { database, collection, data, handleAnalyzeCollections } =
-    useContext(AppContext);
+  const {
+    database,
+    collection,
+    collections,
+    data,
+    handleAnalyzeCollections,
+    collectionDbMap,
+  } = useContext(AppContext);
 
   const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    if (collection !== "all" && database !== "all") {
-      const fetchData = async () => {
-        handleAnalyzeCollections(database, collection);
-      };
+  const findDatabaseForCollection = (collectionName) => {
+    return collectionDbMap[collectionName] || null; // Use the mapping to find the database
+  };
 
-      fetchData();
+  useEffect(() => {
+    if (collection !== "all") {
+      const selectedDatabase =
+        database !== "all" ? database : findDatabaseForCollection(collection);
+      if (selectedDatabase) {
+        handleAnalyzeCollections(selectedDatabase, collection);
+      }
     }
-  }, [collection, database]); // Add collection and database as dependencies
+  }, [collection, database, collections, collectionDbMap]); // Include collectionDbMap in dependencies
 
   useEffect(() => {
-    console.log("data", data);
     setItems(data || []);
   }, [data]);
 
+  if (collection === "all") {
+    return null;
+  }
+  console.log("sidebar items", items);
   return (
     <>
-      <div className="w-64 flex-shrink-0 bg-white h-full overflow-auto text-sm rounded-lg border-2 border-black">
+      <div className="w-64 flex-shrink-0 bg-gray-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black">
         <div className="p-2">
           <u>
             <b>SCHEMA</b>

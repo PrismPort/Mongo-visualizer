@@ -8,7 +8,7 @@ const CollectionDashboard = () => {
     <>
       <div className="flex h-screen justify-end">
         <div className="flex-1 p-4">test haaaallooo</div>
-        <div className="w-64">
+        <div className="w-full">
           <Sidebar />
         </div>
       </div>

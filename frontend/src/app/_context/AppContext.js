@@ -17,6 +17,7 @@ const AppProvider = ({ children }) => {
   const [collections, setCollections] = useState({});
   const [mongoURL, setMongoURL] = useState("");
   const [data, setData] = useState();
+  const [collectionDbMap, setCollectionDbMap] = useState({});
 
   useEffect(() => {
     const mongo = localStorage.getItem("mongoURL");
@@ -32,23 +33,25 @@ const AppProvider = ({ children }) => {
   }, []); // Empty dependency array means this runs once on component mount
 
   const fetchCollectionsForDatabase = async (database) => {
-    if (!collections[database]) {
-      try {
-        if (database === "all") {
-          console.log("databases in conext", databases);
-          let allCollections = []; // Initialize as an empty array
-          for (const db of databases) {
-            const collectionsData = await handleLoadCollections(db, mongoURL);
-            if (collectionsData) {
-              allCollections = [...allCollections, ...collectionsData];
-            }
+    try {
+      let newCollectionDbMap = { ...collectionDbMap }; // Copy current collectionDbMap
+      if (database === "all") {
+        let allCollectionsList = []; // Initialize as an array for all collections
+        for (const db of databases) {
+          const collectionsData = await handleLoadCollections(db, mongoURL);
+          if (collectionsData) {
+            allCollectionsList = [...allCollectionsList, ...collectionsData]; // Concatenate all collections
+            collectionsData.forEach((coll) => {
+              newCollectionDbMap[coll] = db; // Update collectionDbMap
+            });
           }
-          console.log(allCollections);
-          setCollections((prevState) => ({
-            ...prevState,
-            [database]: allCollections,
-          }));
-        } else {
+        }
+        setCollections((prevState) => ({
+          ...prevState,
+          all: allCollectionsList, // Set 'all' to the list of all collections
+        }));
+      } else {
+        if (!collections[database]) {
           const collectionsData = await handleLoadCollections(
             database,
             mongoURL
@@ -58,12 +61,15 @@ const AppProvider = ({ children }) => {
               ...prevState,
               [database]: collectionsData,
             }));
+            collectionsData.forEach((coll) => {
+              newCollectionDbMap[coll] = database; // Update collectionDbMap
+            });
           }
         }
-      } catch (error) {
-        console.error("Failed to load collections:", error);
-        // Handle the error appropriately
       }
+      setCollectionDbMap(newCollectionDbMap); // Update the collectionDbMap state
+    } catch (error) {
+      console.error("Failed to load collections:", error);
     }
   };
 
@@ -73,6 +79,7 @@ const AppProvider = ({ children }) => {
 
   const updateDatabase = (newDatabase) => {
     setDatabase(newDatabase);
+    console.log(`database updated to: ${newDatabase}`);
   };
 
   const updateCollection = (newCollection) => {
@@ -83,8 +90,6 @@ const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   const handleAnalyzeCollections = async (database, collection) => {
-    updateDatabase(database);
-    updateCollection(collection);
     setLoading(true);
     try {
       const response = await fetch(
@@ -122,6 +127,7 @@ const AppProvider = ({ children }) => {
     fetchCollectionsForDatabase,
     handleAnalyzeCollections,
     updateStats,
+    collectionDbMap,
   };
 
   return (

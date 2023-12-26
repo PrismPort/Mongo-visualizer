@@ -6,16 +6,23 @@ export const analyzeCollection = async (collection, returnValues) => {
     storeValues: returnValues,
   });
 
-  // parsing the schema could be a service and reused both in queryDatabase and analyzeDatabase
-  let schema = parsedSchema.fields.map((item) => {
-    return {
+  const processField = (item) => {
+    const field = {
       count: item.count,
       type: item.type,
       name: item.name,
       probability: item.probability,
-      ...(returnValues && { types: types }),
+      ...(returnValues && item.types && { types: item.types }),
     };
-  });
+
+    if (item.type === "object" && item.fields) {
+      field.fields = item.fields.map(processField);
+    }
+
+    return field;
+  };
+
+  let schema = parsedSchema.fields.map(processField);
 
   return schema;
 };

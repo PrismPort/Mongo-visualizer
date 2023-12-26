@@ -67,7 +67,6 @@ export const getDatabases = async (req, res) => {
     const adminDb = client.db("admin"); // Access the 'admin' database
     console.log("getDatabases: " + adminDb);
 
-
     const databases = await adminDb.admin().listDatabases();
 
     const databaseNames = databases.databases.map((db) => db.name);
@@ -128,9 +127,9 @@ export const analyzeDatabase = async (req, res) => {
     const db = client.db(database);
     const collections = await db.collection(collection).find().toArray();
 
-    const schema = await analyzeCollection(collections, false);
+    console.log("Collections Data:", JSON.stringify(collections, null, 2)); // Debugging: Inspect the raw collection data
 
-    //console.dir(schema);
+    const schema = await analyzeCollection(collections, true);
 
     res.json(schema);
   } catch (error) {
