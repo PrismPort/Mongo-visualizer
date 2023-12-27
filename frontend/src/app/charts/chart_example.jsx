@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useContext } from "react";
-import ExampleDoughnut from './components/doughnut';
+import ExampleDoughnut from './components/old/doughnut';
 import { AppProvider, AppContext } from './adapter'
 import { handleLoadCollections, handleShowDatabases } from "./adapter";
 class DoughnutFactory {
