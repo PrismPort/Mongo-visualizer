@@ -1,6 +1,9 @@
-
-
-
+import StringListChart from './components/string_list_chart';
+import NumberBarChart from './components/number_bar_chart';
+import DateBarChart from './components/date_bar_chart';
+import BooleanDoughnutChart from './components/boolean_doughnut_chart';
+import ArrayListChart from './components/array_list_chart';
+import ObjectListChart from './components/object_list_chart';
 
 class ChartSelector {
     constructor() {
@@ -34,3 +37,4 @@ selector.register((data) => (data.type === "Boolean"), BooleanDoughnutChart);
 selector.register((data) => (data.type === "Array"), ArrayListChart);
 selector.register((data) => (data.type === "Object"), ObjectListChart);
 
+export default selector;

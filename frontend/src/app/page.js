@@ -13,6 +13,11 @@ export default function Home() {
       </ClientSessionProvider>
       {/* <NumberBarChart /> */}
       <DateBarChart />
+    <div className=" w-screen h-screen">
+      <NumberBarChart
+        labels={["ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy"]}
+        numbers={[10, 20, 30, 40, 50, 60, 70]} />
+      {/* <DateBarChart /> */}
     </div>
   );
 }
