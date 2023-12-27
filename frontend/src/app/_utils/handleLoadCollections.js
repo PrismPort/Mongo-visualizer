@@ -1,10 +1,9 @@
-export const handleLoadCollections = async (database, mongoURL) => {
+export const handleLoadCollections = async (database) => {
   try {
     const response = await fetch(`http://localhost:4000/query/${database}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        mongoURL: mongoURL,
       },
     });
 

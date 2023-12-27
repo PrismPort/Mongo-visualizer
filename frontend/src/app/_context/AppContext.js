@@ -15,21 +15,22 @@ const AppProvider = ({ children }) => {
   const [databases, setDatabases] = useState([]);
   const [collection, setCollection] = useState("all");
   const [collections, setCollections] = useState({});
-  const [mongoURL, setMongoURL] = useState("");
   const [data, setData] = useState();
   const [collectionDbMap, setCollectionDbMap] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const mongo = localStorage.getItem("mongoURL");
-    setMongoURL(mongo);
     const fetchDatabases = async () => {
-      const dbList = await handleShowDatabases(mongo);
+      const dbList = await handleShowDatabases();
       if (dbList) {
         setDatabases(dbList);
       }
     };
 
     fetchDatabases();
+    console.log("Fetching databases...");
+    console.log("database", database);
+    fetchCollectionsForDatabase(database);
   }, []); // Empty dependency array means this runs once on component mount
 
   const fetchCollectionsForDatabase = async (database) => {
@@ -38,7 +39,7 @@ const AppProvider = ({ children }) => {
       if (database === "all") {
         let allCollectionsList = []; // Initialize as an array for all collections
         for (const db of databases) {
-          const collectionsData = await handleLoadCollections(db, mongoURL);
+          const collectionsData = await handleLoadCollections(db);
           if (collectionsData) {
             allCollectionsList = [...allCollectionsList, ...collectionsData]; // Concatenate all collections
             collectionsData.forEach((coll) => {
@@ -52,10 +53,7 @@ const AppProvider = ({ children }) => {
         }));
       } else {
         if (!collections[database]) {
-          const collectionsData = await handleLoadCollections(
-            database,
-            mongoURL
-          );
+          const collectionsData = await handleLoadCollections(database);
           if (collectionsData) {
             setCollections((prevState) => ({
               ...prevState,
@@ -115,8 +113,9 @@ const AppProvider = ({ children }) => {
 
   // Pass the fetchDataAndUpdateContext function to the children
   const contextValue = {
+    isLoggedIn,
+    setIsLoggedIn,
     data,
-    mongoURL,
     stats,
     database,
     databases,

@@ -38,10 +38,9 @@ export default function Sidebar() {
   if (collection === "all") {
     return null;
   }
-  console.log("sidebar items", items);
   return (
     <>
-      <div className="w-64 flex-shrink-0 bg-gray-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black">
+      <div className="w-full flex-shrink-0 bg-gray-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black">
         <div className="p-2">
           <u>
             <b>SCHEMA</b>

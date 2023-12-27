@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AppContext } from "../../_context/AppContext";
 import Logo from "../AtomarComponents/Logo";
 import CustomButton from "../NavBarComponents/CustomButton";
@@ -16,12 +16,14 @@ export default function SideNavigation() {
     collection,
     collections,
     fetchCollectionsForDatabase,
+    setIsLoggedIn,
   } = useContext(AppContext);
 
   const [loginIsExpanded, setLoginIsExpanded] = useState(false);
   const [allDatabasesIsExpanded, setAllDatabasesIsExpanded] = useState(false);
   const [allCollectionsIsExpanded, setAllCollectionsIsExpanded] =
     useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false); // New state variable
 
   const username = "testuser";
 
@@ -72,14 +74,29 @@ export default function SideNavigation() {
   };
 
   const toggleCollectionsExpansion = () => {
-    fetchCollectionsForDatabase(database);
     setAllCollectionsIsExpanded(!allCollectionsIsExpanded); // Toggle the state
   };
 
   const handleLogout = () => {
     console.log("Logout");
+    setIsLoggedIn(false);
   };
 
+  useEffect(() => {
+    if (databases.length === 0) {
+      return; // If databases are not loaded yet, do nothing
+    }
+    fetchCollectionsForDatabase(database);
+    // Mark data as loaded when this useEffect runs
+    setDataLoaded(true);
+  }, [databases]);
+
+  // Render a loading message or a spinner while data is being fetched
+  if (!dataLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  // Render your component content here once data is loaded
   return (
     <aside className=" h-screen w-vw25 min-w-max bg-sidebar-bg py-5 rounded-r-3xl ">
       <nav className="flex justify-between flex-col h-full">

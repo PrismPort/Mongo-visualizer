@@ -11,8 +11,7 @@ export const handleLogin = async (loginData) => {
     if (response.ok) {
       // consume response body as json
       const body = await response.json();
-      // save token to local storage
-      localStorage.setItem("mongoURL", body.mongoURL);
+
       return true;
     } else {
       console.error("Login failed");

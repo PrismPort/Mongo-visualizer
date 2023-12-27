@@ -1,6 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { useRouter } from "next/navigation";
+
+import { AppContext } from "../../_context/AppContext";
 
 import InputField from "./InputField";
 
@@ -8,6 +11,10 @@ import { handleLogin } from "../../_utils/handleLogin";
 import ContainerSelector from "./ContainerSelector";
 
 export default function LoginForm() {
+  const router = useRouter();
+
+  const { isLoggedIn, setIsLoggedIn } = useContext(AppContext);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
@@ -18,7 +25,8 @@ export default function LoginForm() {
     const loginData = { username, password, address, port };
     const success = await handleLogin(loginData);
     if (success) {
-      window.location.href = "/mongoVisualizer";
+      setIsLoggedIn(true);
+      router.push("/mongoVisualizer");
     } else {
       console.log("Error: Login not successful!");
     }

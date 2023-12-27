@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { EyeIcon } from "./EyeIcon.jsx";
+import { EyeIcon } from "./EyeIcon.jsx"; // Make sure this import is correct
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 
 export default function SidebarItem({ item }) {
   const [open, setOpen] = useState(false);
-  const [visibility, setVisibility] = useState(false);
+  const [visibility, setVisibility] = useState(true);
 
-  // Check if the current item has nested fields within its types array
-  const hasNestedFields = item.types && item.types[0] && item.types[0].fields;
+  const toggleOpen = () => setOpen(!open);
 
-  // Function to generate a unique ID for each eye icon
+  // Generate random ID for the EyeIcon
   function generateRandomString(length) {
     let result = "";
     const characters =
@@ -25,57 +24,59 @@ export default function SidebarItem({ item }) {
 
   const eyeId = generateRandomString(10);
 
+  // Function to determine if the item has nested fields or nested documents in arrays
+  const hasNestedFields = (item) => {
+    if (item.types && item.types[0]) {
+      if (item.types[0].bsonType === "Document" && item.types[0].fields) {
+        return true;
+      } else if (
+        item.types[0].bsonType === "Array" &&
+        item.types[0].types[0] &&
+        item.types[0].types[0].bsonType === "Document"
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
-    <div
-      className={`${
-        open
-          ? "p-3 block bg-gray-100 rounded-lg"
-          : "p-3 block bg-white rounded-lg"
-      }`}
-    >
-      <div className="flex text-sm justify-between">
-        <span className="flex flex-row items-center justify-between w-full">
-          <div className="m-1">
-            <EyeIcon
-              label={eyeId}
-              name={eyeId}
-              id={eyeId}
-              setVisibility={setVisibility}
-            />
+    <div className={`p-3 ${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
+      <div className="flex items-center justify-between text-sm">
+        <div className="m-1">
+          <EyeIcon
+            label={item.name}
+            name={eyeId} // eyeId should be a unique identifier
+            id={eyeId}
+            visibility={visibility}
+            setVisibility={setVisibility}
+          />
+        </div>
+        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
+          {item.name}
+        </div>
+        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
+          {Array.isArray(item.type) ? item.type[0] : item.type}
+        </div>
+        <div className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
+          {Math.round(item.probability * 100)}%
+        </div>
+        {hasNestedFields(item) && (
+          <div className="m-1 cursor-pointer" onClick={toggleOpen}>
+            {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
           </div>
-          <div
-            className={`${
-              visibility
-                ? "m-1 font-bold text-gray-400"
-                : "m-1 font-bold text-black"
-            }`}
-          >
-            {item.name}
-          </div>
-          <div
-            className={`${visibility ? "m-1 text-gray-400" : "m-1 text-black"}`}
-          >
-            {item.type}
-          </div>
-          <div
-            className={`${
-              visibility ? "m-1 text-gray-400" : "m-1 text-green-500"
-            }`}
-          >
-            {Math.round(item.probability * 100)}%
-          </div>
-          {hasNestedFields && (
-            <div className="m-1 cursor-pointer" onClick={() => setOpen(!open)}>
-              {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
-            </div>
-          )}
-        </span>
+        )}
       </div>
-      {hasNestedFields && open && (
+      {hasNestedFields(item) && open && (
         <div className="pt-1 h-auto overflow-auto">
-          {item.types[0].fields.map((nestedItem, index) => (
-            <SidebarItem key={index} item={nestedItem} />
-          ))}
+          {item.types[0].bsonType === "Array" &&
+          item.types[0].types[0].bsonType === "Document"
+            ? item.types[0].types[0].fields.map((nestedField, index) => (
+                <SidebarItem key={`array-doc-${index}`} item={nestedField} />
+              ))
+            : item.types[0].fields.map((nestedField, index) => (
+                <SidebarItem key={`doc-${index}`} item={nestedField} />
+              ))}
         </div>
       )}
     </div>
