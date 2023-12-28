@@ -31,7 +31,7 @@ const AppProvider = ({ children }) => {
     console.log("Fetching databases...");
     console.log("database", database);
     fetchCollectionsForDatabase(database);
-  }, []); // Empty dependency array means this runs once on component mount
+  }, [isLoggedIn]); // Empty dependency array means this runs once on component mount
 
   const fetchCollectionsForDatabase = async (database) => {
     try {

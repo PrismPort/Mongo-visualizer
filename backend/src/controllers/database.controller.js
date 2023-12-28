@@ -37,6 +37,8 @@ export const connectMongoDB = async (req, res) => {
       clientInstance = new MongoClient(mongoURL, { useUnifiedTopology: true });
       await clientInstance.connect();
     }
+    console.log(" clientInstance in backend:", clientInstance);
+
     console.log("Successfully connected to MongoDB");
     res.json({ mongoURL, message: "Successfully connected to MongoDB" });
   } catch (error) {
