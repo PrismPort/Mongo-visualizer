@@ -11,28 +11,33 @@ import CollectionDashboard from "../_components/SchemaSidebarComponents/Collecti
 
 import { AppContext } from "../_context/AppContext";
 
-export default function mongovisualizer() {
-  const { isLoggedIn } = useContext(AppContext);
+export default function MongoVisualizer() {
+  const { isLoggedIn, databases } = useContext(AppContext);
   const router = useRouter();
+  console.log("databases", databases);
   console.log("isLoggedin", isLoggedIn);
 
-  if (isLoggedIn) {
-    return (
-      <>
-        <SideNavigation />
-
-        <main className="flex h-screen w-screen justify-center bg-white items-center">
-          <div className="text-black">
-            mongovisualizer
-            <DatabaseList />
-            <ToggleSwitch />
-          </div>
-        </main>
-
-        <CollectionDashboard />
-      </>
-    );
+  if (typeof window === "undefined") {
+    return null;
   } else {
-    router.push("/");
+    if (isLoggedIn) {
+      return (
+        <>
+          <SideNavigation />
+
+          <main className="flex h-screen w-screen justify-center bg-white items-center">
+            <div className="text-black">
+              mongovisualizer
+              <DatabaseList />
+              <ToggleSwitch />
+            </div>
+          </main>
+
+          <CollectionDashboard />
+        </>
+      );
+    } else {
+      router.push("/");
+    }
   }
 }
