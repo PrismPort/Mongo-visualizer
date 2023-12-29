@@ -3,9 +3,13 @@ import { MongoClient } from "mongodb";
 // services
 import { analyzeCollection } from "../services/analyzeSchema.service.js";
 
+import { v4 as uuidv4 } from "uuid"; // For ES modules
+
 let clientInstance = null; // mongo client instance, which will be reused throughout a session
 
 export const connectMongoDB = async (req, res) => {
+  console.log("data arriving in the backend", req.body);
+
   let mongoURL = null;
   const user = req.body.username;
   const password = req.body.password;
@@ -28,22 +32,42 @@ export const connectMongoDB = async (req, res) => {
 
   console.log(mongoURL);
 
+  /*
+//  the code below is not needed because mongo URL is nevver false.
   if (!mongoURL) {
     return res.status(400).json({ error: "MongoDB URL is required" });
   }
+  */
 
+  const uuid = uuidv4();
   try {
     if (!clientInstance) {
       clientInstance = new MongoClient(mongoURL, { useUnifiedTopology: true });
       await clientInstance.connect();
+      console.log("clientInstance is connected");
     }
-    console.log(" clientInstance in backend:", clientInstance);
+    /*
+    This would be the place to set a cookie for the session token, 
+    though it is not needed for the current implementation. because were using JWT on the clientside.
+    To keep session tokens on the server generally consumes more resources than using JWTs and makes an application harder to scale.
 
-    console.log("Successfully connected to MongoDB");
-    res.json({ mongoURL, message: "Successfully connected to MongoDB" });
+
+    // Once connected, you can set your cookie and send a response
+    res.cookie("sessionToken", uuid, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // should be true in production if using HTTPS
+      maxAge: 3600000, // Cookie expiry time in milliseconds
+    });
+
+    console.log("Cookie is set");
+
+    */
+    res.json({ message: "Successfully connected to MongoDB" });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
-    res.status(500).json({ error: "Failed to connect to MongoDB" });
+    res
+      .status(500)
+      .json({ error: "Failed to connect to MongoDB", details: error.message });
   }
 };
 
