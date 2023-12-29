@@ -1,34 +1,45 @@
 "use client";
 
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-import { AppContext } from "../../_context/AppContext";
+import { signIn, useSession } from "next-auth/react"; // Import signIn method
 
 import InputField from "./InputField";
 
-import { handleLogin } from "../../_utils/handleLogin";
-import ContainerSelector from "./ContainerSelector";
-
 export default function LoginForm() {
-  const router = useRouter();
-
-  const { isLoggedIn, setIsLoggedIn } = useContext(AppContext);
+  const router = useRouter(); // Use Next.js's router
+  const { data: session, status } = useSession(); // Get session data and status
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [port, setPort] = useState("");
 
+  // Redirect to the application page if already in session
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/mongoVisualizer");
+    }
+  }, [status, router, session]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const loginData = { username, password, address, port };
-    const success = await handleLogin(loginData);
-    if (success) {
-      setIsLoggedIn(true);
+    // Use NextAuth's signIn method
+
+    const result = await signIn("credentials", {
+      redirect: false, // Prevents automatic redirection
+      username,
+      password,
+      address,
+      port,
+    });
+
+    if (!result.error) {
+      // If authentication is successful
       router.push("/mongoVisualizer");
     } else {
-      console.log("Error: Login not successful!");
+      // Handle failed authentication
+      console.log("Error: Login not successful!", result.error);
     }
   };
 

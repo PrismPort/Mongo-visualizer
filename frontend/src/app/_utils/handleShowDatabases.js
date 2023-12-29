@@ -7,7 +7,9 @@ export const handleShowDatabases = async () => {
       },
     });
     const data = await response.json();
-    // setDatabases(data);
+
+    console.log("data from handleShowDatabases: ", data);
+
     return data;
   } catch (error) {
     console.error(error);

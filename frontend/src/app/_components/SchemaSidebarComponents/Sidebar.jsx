@@ -3,7 +3,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import SidebarItem from "./SidebarItem.jsx";
 //import items from "../../_dummyData/sidebar.json"
-import { AppContext } from "../../_context/AppContext";
+import { AppContext } from "../../_context/AppContext.js";
 
 export default function Sidebar() {
   const {

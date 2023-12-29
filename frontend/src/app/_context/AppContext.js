@@ -4,6 +4,8 @@ import React, { createContext, useState, useEffect } from "react";
 
 // EXPERIMENTAL: importing utility functions into global state
 
+import { useSession } from "next-auth/react";
+
 import { handleLoadCollections } from "../_utils/handleLoadCollections";
 import { handleShowDatabases } from "../_utils/handleShowDatabases";
 
@@ -17,21 +19,29 @@ const AppProvider = ({ children }) => {
   const [collections, setCollections] = useState({});
   const [data, setData] = useState();
   const [collectionDbMap, setCollectionDbMap] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loadingDatabases, setLoadingDatabases] = useState(false);
+
+  const { data: session, status } = useSession();
+  const loadSession = status === "loading";
+  const isLoggedIn = status === "authenticated";
 
   useEffect(() => {
     const fetchDatabases = async () => {
       const dbList = await handleShowDatabases();
       if (dbList) {
         setDatabases(dbList);
+        setLoadingDatabases(true);
       }
     };
-
-    fetchDatabases();
-    console.log("Fetching databases...");
-    console.log("database", database);
-    fetchCollectionsForDatabase(database);
-  }, [isLoggedIn]); // Empty dependency array means this runs once on component mount
+    if (isLoggedIn) {
+      fetchDatabases();
+      console.log("Fetching databases...");
+      console.log("database", database);
+      if (loadingDatabases) {
+        fetchCollectionsForDatabase(database);
+      }
+    }
+  }, [isLoggedIn, loadingDatabases]); // Empty dependency array means this runs once on component mount
 
   const fetchCollectionsForDatabase = async (database) => {
     try {
@@ -113,8 +123,8 @@ const AppProvider = ({ children }) => {
 
   // Pass the fetchDataAndUpdateContext function to the children
   const contextValue = {
-    isLoggedIn,
-    setIsLoggedIn,
+    session,
+    loadSession,
     data,
     stats,
     database,
@@ -127,7 +137,10 @@ const AppProvider = ({ children }) => {
     handleAnalyzeCollections,
     updateStats,
     collectionDbMap,
+    isLoggedIn,
   };
+
+  //console.log(contextValue);
 
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
