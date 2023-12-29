@@ -9,18 +9,21 @@ import SELECTOR from './charts/chart_selector'
 export default function Home() {
   const Thing = SELECTOR.getChartFor("something")
   return (
-    <div className=" w-screen h-screen bg-black/90">
-      <ClientSessionProvider>
-        <LoginForm></LoginForm>
-      </ClientSessionProvider>
-      {/* <NumberBarChart /> */}
-      <DateBarChart />
-    <div className=" w-screen h-screen">
-      {/* <NumberBarChart
+    <>
+      <div className=" w-screen h-screen bg-black/90">
+        <ClientSessionProvider>
+          <LoginForm></LoginForm>
+        </ClientSessionProvider>
+        {/* <NumberBarChart /> */}
+        <DateBarChart />
+      </div>
+      <div className=" w-screen h-screen">
+        {/* <NumberBarChart
         labels={["ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy"]}
-        numbers={[10, 20, 30, 40, 50, 60, 70]} /> */}
-      {/* <DateBarChart /> */}
-      <Thing />
-    </div>
+      numbers={[10, 20, 30, 40, 50, 60, 70]} /> */}
+        {/* <DateBarChart /> */}
+        <Thing />
+      </div>
+    </>
   );
 }
