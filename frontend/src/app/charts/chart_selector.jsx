@@ -1,9 +1,11 @@
-import StringListChart from './components/string_list_chart';
-import NumberBarChart from './components/number_bar_chart';
-import DateBarChart from './components/date_bar_chart';
-import BooleanDoughnutChart from './components/boolean_doughnut_chart';
-import ArrayListChart from './components/array_list_chart';
-import ObjectListChart from './components/object_list_chart';
+import { NumberBarChart } from './components/number_bar_chart';
+import { StringListChart } from './components/string_list_chart';
+import { DateBarChart } from './components/date_bar_chart';
+import { BooleanDoughnutChart } from './components/boolean_doughnut_chart';
+import { ArrayListChart } from './components/array_list_chart';
+import { ObjectListChart } from './components/object_list_chart';
+import { NullChart} from './components/null_chart';
+
 
 class ChartSelector {
     constructor() {
@@ -18,7 +20,7 @@ class ChartSelector {
                 return chart[1];
             }
         }
-        return ReferenceError(`There is no chart defined for this "${data}"`);
+        return NullChart;
     }
 }
 
@@ -29,12 +31,17 @@ class ChartSelector {
 // Bool (als Chart) 
 // Array, Objects (als Listen)
 
-const selector = new ChartSelector();
-selector.register((data) => (data.type === "String"), StringListChart);
-selector.register((data) => (data.type === "Number"), NumberBarChart);
-selector.register((data) => (data.type === "Date"), DateBarChart);
-selector.register((data) => (data.type === "Boolean"), BooleanDoughnutChart);
-selector.register((data) => (data.type === "Array"), ArrayListChart);
-selector.register((data) => (data.type === "Object"), ObjectListChart);
 
-export default selector;
+function createSelector() {
+    const selector = new ChartSelector();
+    // selector.register((data) => (data.type === "String"), StringListChart);
+    selector.register((data) => (data === "somethsing"), NumberBarChart);
+    // selector.register((data) => (data.type === "Date"), DateBarChart);
+    // selector.register((data) => (data.type === "Boolean"), BooleanDoughnutChart);
+    // selector.register((data) => (data.type === "Array"), ArrayListChart);
+    // selector.register((data) => (data.type === "Object"), ObjectListChart);
+    return selector
+};
+
+const SELECTOR = createSelector();
+export default SELECTOR

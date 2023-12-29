@@ -43,6 +43,10 @@ export function NumberBarChart(label, value) {
   };
   const options = {
     plugins: {
+      title: {
+        display: true,
+        text: 'Custom Chart Title'
+      },
       datalabels: {
         anchor: 'end', // Position of the label
         align: 'end',
