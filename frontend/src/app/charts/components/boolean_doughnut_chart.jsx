@@ -31,16 +31,26 @@ const NumberGenerator = {
     return numbers;
   }
 }
+
+const FAKE_DATA = {
+  labels: ['true', 'false'],
+  get values() {
+    const values = [];
+    let i = 0;
+    while (i < 100) {
+      values.push(i < 58 ? true : false);
+      i++;
+    }
+    return values;
+  },
+  name: 'popular'
+}
 // export function DateBarChart(data, options, ...props) {
-export function BooleanDoughnutChart(label, value) {
-  const lab = ['true', 'false']//val.map(v => `i=${v}`)
-  const title = 'popular';
-  const values = [];
-  let i = 0;
-  while (i < 100) {
-    values.push(i < 58 ? true : false);
-    i++;
-  }
+export function BooleanDoughnutChart() {
+  const lab = FAKE_DATA.labels;
+  const values = FAKE_DATA.values;
+  const title= FAKE_DATA.name;
+
   const truthy = values.filter(value => value === true);
   const falsy = values.filter(value => value === false);
   const options = {
@@ -83,23 +93,21 @@ export function BooleanDoughnutChart(label, value) {
       data: [truthy.length, falsy.length],
     }],
   };
-  // TODO: fix hack solution
   return (
-    <div className='rounded-lg border-2 border-black p-12'>
+    <Portrait>
       <ChartHeading inner_text={title} />
       <Doughnut
         data={data}
         options={options}
       />
-    </div>
+    </Portrait>
   )
 }
 
-function ChartBorder({ ...inner_html }) {
+function Portrait({ children }) {
   return (
     <div className='rounded-lg border-2 border-black p-12'>
-      {inner_html}
+      {children}
     </div>
-
   )
 }
