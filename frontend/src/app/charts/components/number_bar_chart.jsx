@@ -66,7 +66,8 @@ export function NumberBarChart(label, value) {
       }
     },
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
+    aspectRatio:2.333333333333, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
     scales: {
       yAxes: [{
         ticks: {
@@ -89,11 +90,9 @@ export function NumberBarChart(label, value) {
   };
   // TODO: fix hack solution
   return (
-    <div className="relative w-full" Style="padding-top: 50%;">
-      <Bar className='absolute inset-0 rounded-lg border-2 border-black p-12'
+      <Bar className='rounded-lg border-2 border-black p-12'
         data={data}
         options={options}
       />
-    </div>
   )
 }

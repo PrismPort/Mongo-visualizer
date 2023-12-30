@@ -37,7 +37,7 @@ function createSelector() {
     // selector.register((data) => (data.type === "String"), StringListChart);
     selector.register((data) => (data === "something"), NumberBarChart);
     // selector.register((data) => (data.type === "Date"), DateBarChart);
-    // selector.register((data) => (data.type === "Boolean"), BooleanDoughnutChart);
+    selector.register((data) => (data === "something-different"), BooleanDoughnutChart);
     // selector.register((data) => (data.type === "Array"), ArrayListChart);
     // selector.register((data) => (data.type === "Object"), ObjectListChart);
     return selector

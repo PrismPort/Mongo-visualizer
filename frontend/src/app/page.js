@@ -18,18 +18,14 @@ export default function Home() {
         </ClientSessionProvider>
         <DateBarChart />
       </div> */}
-      <div className=" w-screen h-screen">
         {/* <NumberBarChart /> */}
         {/* <NumberBarChart
           labels={["ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy"]}
           numbers={[10, 20, 30, 40, 50, 60, 70]} />
     <DateBarChart />*/}
-        <div>
-          <Thing />
-        </div>
-        <AnotherThing />
+          {/* <Thing /> */}
+        {/* <AnotherThing /> */}
         <JetAnotherThing />
-      </div>
     </>
   );
 }
