@@ -32,7 +32,6 @@ const NumberGenerator = {
 }
 // export function DateBarChart(data, options, ...props) {
 export function BooleanDoughnutChart(label, value) {
-  const val = [58, 42];//NumberGenerator.getAThousandExtremeNumbers();
   const lab = ['true', 'false']//val.map(v => `i=${v}`)
   const title = 'popular';
   const values = [];
@@ -45,16 +44,6 @@ export function BooleanDoughnutChart(label, value) {
   const falsy = values.filter(value => value === false);
   const options = {
     plugins: {
-      title: {
-        display: true,
-        text: title,
-        align: 'start',
-        font: {
-          color: 'black',
-          weight: 'bold',
-          size: 22,
-        },
-      },
       datalabels: {
         anchor: 'end', // Position of the label
         align: 'end',
@@ -95,9 +84,17 @@ export function BooleanDoughnutChart(label, value) {
   };
   // TODO: fix hack solution
   return (
-    <Doughnut className='rounded-lg border-2 border-black p-12'
-      data={data}
-      options={options}
-    />
+    <div className='rounded-lg border-2 border-black p-12'>
+      <ChartHeading text={title} />
+      <Doughnut
+        data={data}
+        options={options}
+      />
+    </div>
   )
+}
+function ChartHeading({text}) {
+  return (
+    <h1 className='float-left font-bold'>{text}</h1>
+  );
 }
