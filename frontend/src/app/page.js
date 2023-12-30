@@ -18,14 +18,18 @@ export default function Home() {
         </ClientSessionProvider>
         <DateBarChart />
       </div> */}
-        {/* <NumberBarChart /> */}
-        {/* <NumberBarChart
+      {/* <NumberBarChart /> */}
+      {/* <NumberBarChart
           labels={["ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy"]}
           numbers={[10, 20, 30, 40, 50, 60, 70]} />
     <DateBarChart />*/}
-          {/* <Thing /> */}
-        {/* <AnotherThing /> */}
-        <JetAnotherThing />
+      <div className='w-1/4'>
+        <AnotherThing />
+        {/* <JetAnotherThing /> */}
+      </div>
+      <div className='w-1/2'>
+        <Thing />
+      </div>
     </>
   );
 }

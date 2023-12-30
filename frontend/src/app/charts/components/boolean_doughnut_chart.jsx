@@ -12,7 +12,7 @@ import Chart from 'chart.js/auto';
 //   LinearScale,
 //   BarElement,
 // );
-import { Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 
 /*
 date datatype: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/#mongodb-bsontype-Date
@@ -32,20 +32,22 @@ const NumberGenerator = {
 }
 // export function DateBarChart(data, options, ...props) {
 export function BooleanDoughnutChart(label, value) {
-  const val = [0, 0, 0, 12, 14, 54, 65, 59, 39, 23, 2, 0]//NumberGenerator.getAThousandExtremeNumbers();
-  const lab = [1, 2, 3, 4, 5, 6, 7, 8, 9.10, 11, 12, 13, 14, 15]//val.map(v => `i=${v}`)
-  const schema_description = {
-    count: 10,
-    type: ['Number', 'Undefined'],
-    name: 'number',
-    probability: 0.5,
-    types: { 'Number': [12, 3, 4, 3, 23], Undefined: undefined }
-  };
+  const val = [58, 42];//NumberGenerator.getAThousandExtremeNumbers();
+  const lab = ['true', 'false']//val.map(v => `i=${v}`)
+  const title = 'popular';
+  const values = [];
+  let i = 0;
+  while (i < 100) {
+    values.push(i < 58 ? true : false);
+    i++;
+  }
+  const truthy = values.filter(value => value === true);
+  const falsy = values.filter(value => value === false);
   const options = {
     plugins: {
       title: {
         display: true,
-        text: 'score',
+        text: title,
         align: 'start',
         font: {
           color: 'black',
@@ -67,7 +69,7 @@ export function BooleanDoughnutChart(label, value) {
     },
     responsive: true,
     maintainAspectRatio: true,
-    aspectRatio:2.333333333333, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
+    aspectRatio: 0.666666666, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
     scales: {
       yAxes: [{
         ticks: {
@@ -79,20 +81,23 @@ export function BooleanDoughnutChart(label, value) {
   const data = {
     labels: lab,
     datasets: [{
-      label:'',
+      label: '',
       // barPercentage: 0.5,
       // barThickness: 6,
       // maxBarThickness: 8,
       // minBarLength: 2,
-      backgroundColor: '#2A5639',
-      data: val,
-    }]
+      backgroundColor: [
+        '#B2DF8A',
+        '#2A5639',
+      ],
+      data: [truthy.length, falsy.length],
+    }],
   };
   // TODO: fix hack solution
   return (
-      <Bar className='rounded-lg border-2 border-black p-12'
-        data={data}
-        options={options}
-      />
+    <Doughnut className='rounded-lg border-2 border-black p-12'
+      data={data}
+      options={options}
+    />
   )
 }
