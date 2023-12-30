@@ -13,11 +13,12 @@ import Chart from 'chart.js/auto';
 //   BarElement,
 // );
 import { Bar } from 'react-chartjs-2';
+import ChartHeading from './chart_heading';
 
 /*
 date datatype: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/#mongodb-bsontype-Date
 */
-export function isDate(scheme_description) {
+function isDate(scheme_description) {
   return scheme_description.type.includes("Date")
 }
 
@@ -31,7 +32,7 @@ const NumberGenerator = {
   }
 }
 // export function DateBarChart(data, options, ...props) {
-export function NumberBarChart(label, value) {
+function NumberBarChart() {
   const val = [0, 0, 0, 12, 14, 54, 65, 59, 39, 23, 2, 0]//NumberGenerator.getAThousandExtremeNumbers();
   const lab = [1, 2, 3, 4, 5, 6, 7, 8, 9.10, 11, 12, 13, 14, 15]//val.map(v => `i=${v}`)
   const schema_description = {
@@ -43,16 +44,6 @@ export function NumberBarChart(label, value) {
   };
   const options = {
     plugins: {
-      title: {
-        display: true,
-        text: 'score',
-        align: 'start',
-        font: {
-          color: 'black',
-          weight: 'bold',
-          size: 22,
-        },
-      },
       datalabels: {
         anchor: 'end', // Position of the label
         align: 'end',
@@ -66,8 +57,8 @@ export function NumberBarChart(label, value) {
       }
     },
     responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio:2.333333333333, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
+    // maintainAspectRatio: true,
+    //aspectRatio: 2.333333333333, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
     scales: {
       yAxes: [{
         ticks: {
@@ -79,7 +70,7 @@ export function NumberBarChart(label, value) {
   const data = {
     labels: lab,
     datasets: [{
-      label:'',
+      label: '',
       // barPercentage: 0.5,
       // barThickness: 6,
       // maxBarThickness: 8,
@@ -88,11 +79,21 @@ export function NumberBarChart(label, value) {
       data: val,
     }]
   };
-  // TODO: fix hack solution
   return (
-      <Bar className='rounded-lg border-2 border-black p-12'
+    <Landscape>
+      <ChartHeading inner_text={'score'} />
+      <Bar
         data={data}
         options={options}
       />
+    </Landscape>
   )
 }
+function Landscape({ children }) {
+  return (
+    <div className='aspect-[7/4] rounded-lg border-2 border-black p-12'>
+      {children}
+    </div>
+  )
+}
+export {isDate, NumberBarChart}

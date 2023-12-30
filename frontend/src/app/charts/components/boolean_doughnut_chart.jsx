@@ -68,8 +68,8 @@ export function BooleanDoughnutChart() {
       }
     },
     responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio: 0.666666666, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
+    // maintainAspectRatio: true,
+    //aspectRatio: 0.666666666, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
     scales: {
       yAxes: [{
         ticks: {
@@ -106,7 +106,7 @@ export function BooleanDoughnutChart() {
 
 function Portrait({ children }) {
   return (
-    <div className='rounded-lg border-2 border-black p-12'>
+    <div className='aspect-[3/4] rounded-lg border-2 border-black p-12'>
       {children}
     </div>
   )
