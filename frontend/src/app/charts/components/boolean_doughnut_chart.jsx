@@ -13,6 +13,7 @@ import Chart from 'chart.js/auto';
 //   BarElement,
 // );
 import { Doughnut } from 'react-chartjs-2';
+import ChartHeading from './chart_heading';
 
 /*
 date datatype: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/#mongodb-bsontype-Date
@@ -85,7 +86,7 @@ export function BooleanDoughnutChart(label, value) {
   // TODO: fix hack solution
   return (
     <div className='rounded-lg border-2 border-black p-12'>
-      <ChartHeading text={title} />
+      <ChartHeading inner_text={title} />
       <Doughnut
         data={data}
         options={options}
@@ -93,8 +94,12 @@ export function BooleanDoughnutChart(label, value) {
     </div>
   )
 }
-function ChartHeading({text}) {
+
+function ChartBorder({ ...inner_html }) {
   return (
-    <h1 className='float-left font-bold'>{text}</h1>
-  );
+    <div className='rounded-lg border-2 border-black p-12'>
+      {inner_html}
+    </div>
+
+  )
 }
