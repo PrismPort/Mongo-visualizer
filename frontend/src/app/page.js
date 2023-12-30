@@ -7,8 +7,8 @@ import { NumberBarChart } from './charts/components/number_bar_chart'
 import SELECTOR from './charts/chart_selector'
 
 export default function Home() {
-  const Thing = SELECTOR.getChartFor('something')
-  const AnotherThing = SELECTOR.getChartFor('something-different');
+  const BarChart = SELECTOR.getChartFor('something')
+  const DoughnutChart = SELECTOR.getChartFor('something-different');
   const JetAnotherThing = SELECTOR.getChartFor('something-different');
   return (
     <>
@@ -24,11 +24,11 @@ export default function Home() {
           numbers={[10, 20, 30, 40, 50, 60, 70]} />
     <DateBarChart />*/}
       <div className='w-1/4'>
-        <AnotherThing />
+        <DoughnutChart />
         {/* <JetAnotherThing /> */}
       </div>
       <div className='w-1/2'>
-        <Thing />
+        <BarChart />
       </div>
     </>
   );
