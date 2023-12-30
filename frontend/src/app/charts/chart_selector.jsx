@@ -4,7 +4,7 @@ import { DateBarChart } from './components/date_bar_chart';
 import { BooleanDoughnutChart } from './components/boolean_doughnut_chart';
 import { ArrayListChart } from './components/array_list_chart';
 import { ObjectListChart } from './components/object_list_chart';
-import { NullChart} from './components/null_chart';
+import { NullChart } from './components/null_chart';
 
 
 class ChartSelector {
@@ -35,7 +35,7 @@ class ChartSelector {
 function createSelector() {
     const selector = new ChartSelector();
     // selector.register((data) => (data.type === "String"), StringListChart);
-    selector.register((data) => (data === "somethsing"), NumberBarChart);
+    selector.register((data) => (data === "something"), NumberBarChart);
     // selector.register((data) => (data.type === "Date"), DateBarChart);
     // selector.register((data) => (data.type === "Boolean"), BooleanDoughnutChart);
     // selector.register((data) => (data.type === "Array"), ArrayListChart);

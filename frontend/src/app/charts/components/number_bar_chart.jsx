@@ -32,8 +32,8 @@ const NumberGenerator = {
 }
 // export function DateBarChart(data, options, ...props) {
 export function NumberBarChart(label, value) {
-  const val = NumberGenerator.getAThousandExtremeNumbers();
-  const lab = val.map(v => `i=${v}`)
+  const val = [0, 0, 0, 12, 14, 54, 65, 59, 39, 23, 2, 0]//NumberGenerator.getAThousandExtremeNumbers();
+  const lab = [1, 2, 3, 4, 5, 6, 7, 8, 9.10, 11, 12, 13, 14, 15]//val.map(v => `i=${v}`)
   const schema_description = {
     count: 10,
     type: ['Number', 'Undefined'],
@@ -45,14 +45,20 @@ export function NumberBarChart(label, value) {
     plugins: {
       title: {
         display: true,
-        text: 'Custom Chart Title'
+        text: 'score',
+        align: 'start',
+        font: {
+          color: 'black',
+          weight: 'bold',
+          size: 22,
+        },
       },
       datalabels: {
         anchor: 'end', // Position of the label
         align: 'end',
         color: 'black', // Label color
         font: {
-          weight: 'bold'
+          weight: 'bold',
         },
         formatter: function (value, context) {
           return value; // Display the value of the bar as the label
@@ -72,17 +78,22 @@ export function NumberBarChart(label, value) {
   const data = {
     labels: lab,
     datasets: [{
+      label:'',
       // barPercentage: 0.5,
       // barThickness: 6,
       // maxBarThickness: 8,
       // minBarLength: 2,
+      backgroundColor: '#2A5639',
       data: val,
     }]
   };
+  // TODO: fix hack solution
   return (
-    <Bar
-      data={data}
-      options={options}
-    />
+    <div className="relative w-full" Style="padding-top: 50%;">
+      <Bar className='absolute inset-0 rounded-lg border-2 border-black p-12'
+        data={data}
+        options={options}
+      />
+    </div>
   )
 }
