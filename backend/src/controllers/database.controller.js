@@ -153,8 +153,6 @@ export const analyzeDatabase = async (req, res) => {
     const db = client.db(database);
     const collections = await db.collection(collection).find().toArray();
 
-    console.log("Collections Data:", JSON.stringify(collections, null, 2)); // Debugging: Inspect the raw collection data
-
     const schema = await analyzeCollection(collections, true);
 
     res.json(schema);
