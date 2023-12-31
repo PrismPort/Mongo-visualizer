@@ -8,6 +8,8 @@ import CustomButton from "./CustomButton";
 import Divider from "../AtomarComponents/Divider";
 import { HiOutlineChevronDown, HiOutlineChevronRight } from "react-icons/hi";
 
+import { handleLogout } from "../../_utils/handleLogout";
+
 export default function SideNavigation() {
   const {
     database,
@@ -77,9 +79,10 @@ export default function SideNavigation() {
     setAllCollectionsIsExpanded(!allCollectionsIsExpanded); // Toggle the state
   };
 
-  const handleLogout = () => {
+  const handleButtonLogout = () => {
     // Calling the signOut function redirects the user to the sign-out page
     // and then back to the homepage after successfully signing out.
+    handleLogout();
     signOut({ callbackUrl: "/" });
   };
 
@@ -121,7 +124,7 @@ export default function SideNavigation() {
                 <CustomButton
                   variant={"inactive"}
                   text={"Logout"}
-                  onClick={handleLogout}
+                  onClick={handleButtonLogout}
                 ></CustomButton>
               ) : null}
             </div>
