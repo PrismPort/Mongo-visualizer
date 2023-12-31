@@ -19,7 +19,6 @@ export const connectMongoDB = async (req, res) => {
 
   // Docker config for MongoDB on localhost
   if (
-    DOCKER === "true" &&
     (address === "localhost" || address === "127.0.0.1")
   ) {
     address = "host.docker.internal";
