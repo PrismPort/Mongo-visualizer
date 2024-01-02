@@ -14,19 +14,19 @@ export default function Home() {
   const JetAnotherThing = SELECTOR.getChartFor('something-different');
   return (
     <div className="w-1/2 h-1/2">
-      {/* <div className=" w-screen h-screen bg-black/90">
+      <div className=" w-screen h-screen bg-black/90">
         <ClientSessionProvider>
           <LoginForm></LoginForm>
         </ClientSessionProvider>
-        <DateBarChart />
-      </div> */}
+      </div>
+        {/* <DateBarChart /> */}
       {/* <NumberBarChart /> */}
       {/* <NumberBarChart
           labels={["ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy"]}
           numbers={[10, 20, 30, 40, 50, 60, 70]} />
     <DateBarChart />*/}
-      <BarChart data='something' />
-      <DoughnutChart data='something' />
+      {/* <BarChart data='something' />
+      <DoughnutChart data='something' /> */}
       {/* <JetAnotherThing /> */}
     </div>
   );

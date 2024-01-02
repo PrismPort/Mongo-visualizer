@@ -11,7 +11,8 @@ services:
     environment:
       - NODE_ENV=development
     command: npm run dev
-
+    networks:
+      - outside
   frontend:
     build: ./frontend
     ports:
@@ -22,7 +23,10 @@ services:
     environment:
       - NODE_ENV=development
     command: npm run dev
-
+    networks:
+      - outside
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   nginx:
     image: nginx:latest
     ports:
@@ -32,3 +36,12 @@ services:
     depends_on:
       - backend
       - frontend
+    networks:
+      - outside
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  outside:
+    driver: bridge
+    name: outside

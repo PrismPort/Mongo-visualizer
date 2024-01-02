@@ -25,6 +25,7 @@ export default function LoginForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Use NextAuth's signIn method
+    console.log(username, password, address, port)
 
     const result = await signIn("credentials", {
       redirect: false, // Prevents automatic redirection
@@ -33,7 +34,7 @@ export default function LoginForm() {
       address,
       port,
     });
-
+    console.log(result)
     if (!result.error) {
       // If authentication is successful
       router.push("/mongoVisualizer");
