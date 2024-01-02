@@ -11,13 +11,13 @@ class ChartSelector {
     constructor() {
         this.charts = new Array();
     }
-    register(condition, chart) {
-        this.charts.push([condition, chart]);
+    register(challenge, chart) {
+        this.charts.push([challenge, chart]);
     }
     getChartFor(data) {
-        for (const chart of this.charts) {
-            if (chart[0](data)) {
-                return chart[1];
+        for (const [challenge, chart] of this.charts) {
+            if (challenge(data)) {
+                return chart;
             }
         }
         return NullChart;
@@ -37,7 +37,7 @@ function createSelector() {
     // selector.register((data) => (data.type === "String"), StringListChart);
     selector.register((data) => (data === "something"), NumberBarChart);
     // selector.register((data) => (data.type === "Date"), DateBarChart);
-    selector.register((data) => (data === "something-different"), BooleanDoughnutChart);
+    selector.register((data) => (data === "somethings-different"), BooleanDoughnutChart);
     // selector.register((data) => (data.type === "Array"), ArrayListChart);
     // selector.register((data) => (data.type === "Object"), ObjectListChart);
     return selector
