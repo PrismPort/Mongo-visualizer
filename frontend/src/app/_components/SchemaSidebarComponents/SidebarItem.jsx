@@ -1,16 +1,23 @@
 "use client";
-
-import React, { useState } from "react";
-import { EyeIcon } from "./EyeIcon.jsx"; // Make sure this import is correct
+import React, { useState, useContext } from "react";
+import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
+import { useGraphContext } from "../../_context/GraphContext.js";
+import { AppContext } from "../../_context/AppContext.js";
 
 export default function SidebarItem({ item }) {
   const [open, setOpen] = useState(false);
-  const [visibility, setVisibility] = useState(true);
+  const [visibility, setVisibility] = useState(false);
+  const { handleSelectItem } = useGraphContext(); // Use handleSelectItem instead of selectItems
+  const { database, collection } = useContext(AppContext);
 
   const toggleOpen = () => setOpen(!open);
 
-  // Generate random ID for the EyeIcon
+  const handleVisibilityChange = () => {
+    setVisibility(!visibility);
+    handleSelectItem(database, collection, item); // Pass necessary parameters
+  };
+
   function generateRandomString(length) {
     let result = "";
     const characters =
@@ -24,7 +31,6 @@ export default function SidebarItem({ item }) {
 
   const eyeId = generateRandomString(10);
 
-  // Function to determine if the item has nested fields or nested documents in arrays
   const hasNestedFields = (item) => {
     if (item.types && item.types[0]) {
       if (item.types[0].bsonType === "Document" && item.types[0].fields) {
@@ -46,10 +52,10 @@ export default function SidebarItem({ item }) {
         <div className="m-1">
           <EyeIcon
             label={item.name}
-            name={eyeId} // eyeId should be a unique identifier
+            name={eyeId}
             id={eyeId}
             visibility={visibility}
-            setVisibility={setVisibility}
+            setVisibility={handleVisibilityChange}
           />
         </div>
         <div className={`${visibility ? "text-black" : "text-gray-400"}`}>

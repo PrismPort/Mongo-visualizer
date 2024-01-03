@@ -19,6 +19,7 @@ export default function SideNavigation() {
     collection,
     collections,
     fetchCollectionsForDatabase,
+    loadingDatabases,
   } = useContext(AppContext);
 
   const [loginIsExpanded, setLoginIsExpanded] = useState(false);
@@ -93,7 +94,7 @@ export default function SideNavigation() {
     fetchCollectionsForDatabase(database);
     // Mark data as loaded when this useEffect runs
     setDataLoaded(true);
-  }, [databases]);
+  }, [loadingDatabases]);
 
   // Render a loading message or a spinner while data is being fetched
   if (!dataLoaded) {

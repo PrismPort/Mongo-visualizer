@@ -138,9 +138,10 @@ const AppProvider = ({ children }) => {
     updateStats,
     collectionDbMap,
     isLoggedIn,
+    loadingDatabases,
   };
 
-  //console.log(contextValue);
+  console.log(contextValue);
 
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

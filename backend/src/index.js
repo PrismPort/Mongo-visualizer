@@ -12,6 +12,9 @@ import {
   connectMongoDB,
   getDocumentsFromCollection,
   logout,
+  getDocumentCountForKey,
+  getUniqueValuesForKey,
+  getValueDistributionForKey,
 } from "./controllers/database.controller.js";
 
 import {
@@ -56,6 +59,15 @@ app.get("/query/:database/:collection/:limit", getDocumentsFromCollection);
 app.get("/analyze/:database/:collection", analyzeDatabase);
 
 app.post("/query/:database/:collection", queryDatabase);
+
+app.post("/documentcount/:database/:collection/:key", getDocumentCountForKey);
+
+app.get("/uniquevalues/:database/:collection/:key", getUniqueValuesForKey);
+
+app.get(
+  "/valuedistribution/:database/:collection/:key",
+  getValueDistributionForKey
+);
 
 app.post("/connect-to-mongodb", (req, res) => connectMongoDB(req, res, DOCKER));
 

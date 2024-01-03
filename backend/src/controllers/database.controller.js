@@ -153,6 +153,8 @@ export const analyzeDatabase = async (req, res) => {
     const db = client.db(database);
     const collections = await db.collection(collection).find().toArray();
 
+    console.log("collections in backend analyzeDatabase", collections);
+
     const schema = await analyzeCollection(collections, true);
 
     res.json(schema);
@@ -183,5 +185,75 @@ export const queryDatabase = async (req, res) => {
   } catch (error) {
     console.error("Error querying data from MongoDB:", error);
     res.status(500).json({ error: "Failed to query data from MongoDB" });
+  }
+};
+
+export const getDocumentCountForKey = async (req, res) => {
+  const { database, collection, key } = req.params;
+  const client = getClientInstance();
+
+  try {
+    const db = client.db(database);
+    const count = await db
+      .collection(collection)
+      .countDocuments({ [key]: { $exists: true } });
+    res.json({ key, count });
+  } catch (error) {
+    console.error("Error counting documents for key:", error);
+    res.status(500).json({ error: "Failed to count documents for key" });
+  }
+};
+
+export const getUniqueValuesForKey = async (req, res) => {
+  const { database, collection, key } = req.params;
+  const client = getClientInstance();
+
+  try {
+    const db = client.db(database);
+    const aggregation = await db
+      .collection(collection)
+      .aggregate([
+        { $match: { [key]: { $exists: true } } },
+        { $group: { _id: `$${key}`, count: { $sum: 1 } } },
+        { $sort: { count: -1 } }, // Optional: sort by count
+      ])
+      .toArray();
+
+    res.json(aggregation);
+  } catch (error) {
+    console.error("Error getting unique values for key:", error);
+    res.status(500).json({ error: "Failed to get unique values for key" });
+  }
+};
+
+export const getValueDistributionForKey = async (req, res) => {
+  const { database, collection, key } = req.params;
+  const client = getClientInstance();
+
+  try {
+    const db = client.db(database);
+    const totalDocuments = await db.collection(collection).countDocuments();
+
+    const aggregation = await db
+      .collection(collection)
+      .aggregate([
+        { $match: { [key]: { $exists: true } } },
+        { $group: { _id: `$${key}`, count: { $sum: 1 } } },
+        {
+          $project: {
+            _id: 0,
+            value: "$_id",
+            percentage: {
+              $multiply: [{ $divide: ["$count", totalDocuments] }, 100],
+            },
+          },
+        },
+      ])
+      .toArray();
+
+    res.json(aggregation);
+  } catch (error) {
+    console.error("Error getting value distribution for key:", error);
+    res.status(500).json({ error: "Failed to get value distribution for key" });
   }
 };
