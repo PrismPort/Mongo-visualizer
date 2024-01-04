@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import ToggleSwitch from "../AtomarComponents/ToggleSwitch";
 import SearchBar from "../AtomarComponents/SearchBar";
 
-const StringList = ({ data, keyName }) => {
+const StringList = ({ labels, counts, keyName }) => {
   const [toggles, setToggles] = useState(
-    data.map((item) => ({ ...item, checked: false }))
+    labels.map((label, index) => ({
+      value: label,
+      occurance: counts[index],
+      checked: false,
+    }))
   );
 
   // State for the "select all" checkbox

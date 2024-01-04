@@ -1,5 +1,5 @@
 // GraphContext.js
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, use, useContext, useState } from "react";
 
 const GraphContext = createContext();
 
@@ -10,18 +10,28 @@ export const GraphProvider = ({ children }) => {
   const [chartsData, setChartsData] = useState({});
   const [query, setQuery] = useState([]);
 
-  const queryBuilder = (selectedItems) => {
-    selectedItems.forEach((item) => {
-      console.log(item.name);
-    });
-  };
-
   const handleSelectItem = async (databaseName, collectionName, item) => {
-    const updatedSelectedItems = selectedItems.includes(item)
-      ? selectedItems.filter((selected) => selected !== item)
-      : [...selectedItems, item];
+    // Determine if the item is currently selected
+    const isItemSelected = selectedItems.some(
+      (selected) => selected.name === item.name
+    );
+
+    let updatedSelectedItems, updatedQuery;
+
+    if (isItemSelected) {
+      // Deselect the item
+      updatedSelectedItems = selectedItems.filter(
+        (selected) => selected.name !== item.name
+      );
+      updatedQuery = query.filter((q) => !q.hasOwnProperty(item.name));
+    } else {
+      // Select the item
+      updatedSelectedItems = [...selectedItems, item];
+      updatedQuery = [...query, { [item.name]: { $exists: true } }];
+    }
 
     setSelectedItems(updatedSelectedItems);
+    setQuery(updatedQuery);
 
     // Fetch data for the new item
     try {
@@ -32,7 +42,7 @@ export const GraphProvider = ({ children }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: null,
+          body: JSON.stringify({ $and: updatedQuery }),
         }
       );
       if (!response.ok) {
@@ -41,25 +51,33 @@ export const GraphProvider = ({ children }) => {
       const data = await response.json();
       console.log("response data", data);
 
-      // console.log(
-      //   data.schema.filter((i) => item.name === i.name)[0].types[0].values
-      // );
+      console.log(
+        data.schema.filter((i) => item.name === i.name)[0].types[0].values
+      );
+      // Extract the values array for the specific item
+      const valuesArray = data.schema.filter((i) => i.name === item.name)[0]
+        .types[0].values;
 
-      // setChartsData({
-      //   ...chartsData,
-      //   [item.name]: {
-      //     labels: data.map((d) => d._id),
-      //     counts: data.map((d) => d.count),
-      //   },
-      // });
+      // Count occurrences of each value
+      const countsMap = valuesArray.reduce((acc, value) => {
+        acc[value] = acc[value] ? acc[value] + 1 : 1;
+        return acc;
+      }, {});
+
+      // Convert countsMap to labels and counts arrays
+      const labels = Object.keys(countsMap);
+      const counts = Object.values(countsMap);
+
+      setChartsData({
+        ...chartsData,
+        [item.name]: { labels, counts },
+      });
     } catch (error) {
       console.error("Failed to fetch unique values:", error);
     }
   };
 
   console.dir(selectedItems);
-
-  queryBuilder(selectedItems);
 
   console.log("query", query);
 
@@ -107,6 +125,7 @@ export const GraphProvider = ({ children }) => {
     selectedItems,
     chartsData,
     handleSelectItem,
+    query,
   };
 
   console.log("GraphContextValue", GraphContextValue);
