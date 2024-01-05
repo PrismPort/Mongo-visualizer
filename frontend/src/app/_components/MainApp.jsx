@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, StrictMode } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -28,11 +28,11 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main className="flex h-screen w-screen justify-center bg-white items-center">
-          <div className="text-black">
-            <Charts />
+        <main className="flex h-screen w-screen justify-center bg-white items-center overflow-auto">
+            <StrictMode>
+              <Charts />
+            </StrictMode>
             <ToggleSwitch />
-          </div>
         </main>
 
         <CollectionDashboard />
