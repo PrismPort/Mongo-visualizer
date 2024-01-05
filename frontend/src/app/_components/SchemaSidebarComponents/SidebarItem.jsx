@@ -3,19 +3,17 @@ import React, { useState, useContext } from "react";
 import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 import { useGraphContext } from "../../_context/GraphContext.js";
-import { AppContext } from "../../_context/AppContext.js";
 
-export default function SidebarItem({ item }) {
+export default function SidebarItem({ item: key }) {
   const [open, setOpen] = useState(false);
   const [visibility, setVisibility] = useState(false);
-  const { handleSelectItem } = useGraphContext(); // Use handleSelectItem instead of selectItems
-  const { database, collection } = useContext(AppContext);
+  const { handleSelectkey } = useGraphContext(); // Use handleSelectItem instead of selectItems
 
   const toggleOpen = () => setOpen(!open);
 
   const handleVisibilityChange = () => {
     setVisibility(!visibility);
-    handleSelectItem(database, collection, item); // Pass necessary parameters
+    handleSelectkey(key); // Pass necessary parameters
   };
 
   function generateRandomString(length) {
@@ -51,7 +49,7 @@ export default function SidebarItem({ item }) {
       <div className="flex items-center justify-between text-sm">
         <div className="m-1">
           <EyeIcon
-            label={item.name}
+            label={key.name}
             name={eyeId}
             id={eyeId}
             visibility={visibility}
@@ -59,28 +57,28 @@ export default function SidebarItem({ item }) {
           />
         </div>
         <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {item.name}
+          {key.name}
         </div>
         <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {Array.isArray(item.type) ? item.type[0] : item.type}
+          {Array.isArray(key.type) ? key.type[0] : key.type}
         </div>
         <div className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
-          {Math.round(item.probability * 100)}%
+          {Math.round(key.probability * 100)}%
         </div>
-        {hasNestedFields(item) && (
+        {hasNestedFields(key) && (
           <div className="m-1 cursor-pointer" onClick={toggleOpen}>
             {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
           </div>
         )}
       </div>
-      {hasNestedFields(item) && open && (
+      {hasNestedFields(key) && open && (
         <div className="pt-1 h-auto overflow-auto">
-          {item.types[0].bsonType === "Array" &&
-          item.types[0].types[0].bsonType === "Document"
-            ? item.types[0].types[0].fields.map((nestedField, index) => (
+          {key.types[0].bsonType === "Array" &&
+          key.types[0].types[0].bsonType === "Document"
+            ? key.types[0].types[0].fields.map((nestedField, index) => (
                 <SidebarItem key={`array-doc-${index}`} item={nestedField} />
               ))
-            : item.types[0].fields.map((nestedField, index) => (
+            : key.types[0].fields.map((nestedField, index) => (
                 <SidebarItem key={`doc-${index}`} item={nestedField} />
               ))}
         </div>

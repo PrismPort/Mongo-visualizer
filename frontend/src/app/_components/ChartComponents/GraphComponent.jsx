@@ -17,18 +17,21 @@ import StringList from "./StringList.jsx";
 // ];
 
 const GraphComponent = () => {
-  const { selectedItems, chartsData } = useGraphContext();
+  const { selectedKeys, chartsData } = useGraphContext();
 
-  if (selectedItems.length === 0) {
+  if (selectedKeys.length === 0) {
     return <div>Select items to view their graphs</div>;
   }
 
   return (
     <div>
-      {selectedItems.map((item) => {
+      {selectedKeys.map((item) => {
         const chartData = chartsData[item.name];
 
-        console.log("chartData", chartData);
+        // console.log("This is the chart data in the graph component", chartData);
+
+        // console.log("chartData", chartData);
+
         if (chartData) {
           // Ensure the data format is suitable for MyBooleanChart
           if (chartData.counts.length <= 6) {

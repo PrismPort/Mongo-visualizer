@@ -20,6 +20,7 @@ const AppProvider = ({ children }) => {
   const [data, setData] = useState();
   const [collectionDbMap, setCollectionDbMap] = useState({});
   const [loadingDatabases, setLoadingDatabases] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { data: session, status } = useSession();
   const loadSession = status === "loading";
@@ -95,8 +96,6 @@ const AppProvider = ({ children }) => {
     console.log(`collection updated to: ${newCollection}`);
   };
 
-  const [loading, setLoading] = useState(false);
-
   const handleAnalyzeCollections = async (database, collection) => {
     setLoading(true);
     try {
@@ -141,7 +140,7 @@ const AppProvider = ({ children }) => {
     loadingDatabases,
   };
 
-  console.log(contextValue);
+  //console.log(contextValue);
 
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

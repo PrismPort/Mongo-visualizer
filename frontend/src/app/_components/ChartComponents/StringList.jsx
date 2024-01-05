@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useGraphContext } from "../../_context/GraphContext.js";
 import ToggleSwitch from "../AtomarComponents/ToggleSwitch";
 import SearchBar from "../AtomarComponents/SearchBar";
 
 const StringList = ({ labels, counts, keyName }) => {
+  const { updateToggleState } = useGraphContext();
   const [toggles, setToggles] = useState(
     labels.map((label, index) => ({
       value: label,
       occurance: counts[index],
-      checked: false,
+      checked: true,
     }))
   );
+
+  useEffect(() => {
+    updateToggleState(keyName, toggles);
+  }, []);
 
   // State for the "select all" checkbox
   const [selectAll, setSelectAll] = useState(false);
@@ -23,6 +29,8 @@ const StringList = ({ labels, counts, keyName }) => {
     });
     setToggles(updatedToggles);
 
+    // Update the toggle state in the GraphContext
+    updateToggleState(keyName, updatedToggles);
     // Check if all toggles are true after update
     const allChecked = updatedToggles.every((item) => item.checked);
     setSelectAll(allChecked);
@@ -30,7 +38,13 @@ const StringList = ({ labels, counts, keyName }) => {
 
   const handleSelectAllChange = () => {
     setSelectAll(!selectAll);
-    setToggles(toggles.map((item) => ({ ...item, checked: !selectAll })));
+    const updatedAllToggles = toggles.map((item) => ({
+      ...item,
+      checked: !selectAll,
+    }));
+    setToggles(updatedAllToggles);
+
+    updateToggleState(keyName, updatedAllToggles);
   };
 
   return (
@@ -62,7 +76,7 @@ const StringList = ({ labels, counts, keyName }) => {
             <tr key={index}>
               <td className="px-2">
                 <ToggleSwitch
-                  id={index} // Pass the index as the unique ID
+                  id={`${keyName}-${index}`} // Pass the index as the unique ID
                   checked={item.checked} // Use the `checked` property from the `toggles` state
                   onChange={() => handleToggleChange(index)}
                 />
