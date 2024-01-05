@@ -36,8 +36,10 @@ class ChartSelector {
 function StringChart({ specific_data, path }) {
     const { data } = useContext(AppContext);
     console.log('path', path);
-    console.log(data);
-    const string_data_from_context = data.find((item) => item.path === path);
+    console.log(specific_data);
+    const string_data_from_context = data.find((item) => item.name ==  path);
+    console.log(string_data_from_context)
+    console.log(string_data_from_context == specific_data)
     return (
         <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
             <p>A string chart:</p>
