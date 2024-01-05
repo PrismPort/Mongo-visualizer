@@ -22,7 +22,7 @@ export const connectMongoDB = async (req, res) => {
     DOCKER === "true" &&
     (address === "localhost" || address === "127.0.0.1")
   ) {
-    address = "host.docker.internal";
+    address = "172.17.0.1";
   }
 
   mongoURL =
@@ -87,7 +87,7 @@ export const getDatabases = async (req, res) => {
   try {
     const client = getClientInstance();
 
-    //console.log("getDatabases: " + client);
+    console.log("getDatabases: " + client);
 
     // Access the specified collection and query data
     const adminDb = client.db("admin"); // Access the 'admin' database
