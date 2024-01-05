@@ -112,6 +112,7 @@ const AppProvider = ({ children }) => {
       // const datalocal = await response.json();
       const responseData = await response.json();
       console.log("Parsed response data:", responseData);
+      console.log("paste this somewhere: ", JSON.stringify(responseData))
       setData(responseData);
       setStats(responseData);
     } catch (error) {

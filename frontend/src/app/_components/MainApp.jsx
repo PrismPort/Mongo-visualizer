@@ -5,6 +5,7 @@ import React, { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 
 import ToggleSwitch from "./AtomarComponents/ToggleSwitch";
+import Charts from "./ChartComponents/Charts";
 import DatabaseList from "./DatabaseList";
 import SideNavigation from "./NavBarComponents/SideNavigation";
 import CollectionDashboard from "./SchemaSidebarComponents/CollectionDashboard";
@@ -29,7 +30,7 @@ export default function MainApp() {
         <SideNavigation />
         <main className="flex h-screen w-screen justify-center bg-white items-center">
           <div className="text-black">
-            mongovisualizer
+            <Charts />
             <ToggleSwitch />
           </div>
         </main>
