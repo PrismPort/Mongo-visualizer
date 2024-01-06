@@ -72,6 +72,12 @@ const MyBooleanChart = ({ title, dataValues, labels }) => {
       return item;
     });
     setChartToggles(updatedChartToggles);
+
+    // Update the toggle state in the GraphContext
+    console.log(
+      "updatedChartToggles send from boolean chart to context",
+      updatedChartToggles
+    );
     updateToggleState(title, updatedChartToggles);
   };
 

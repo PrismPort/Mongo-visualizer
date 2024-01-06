@@ -1,4 +1,3 @@
-// GraphContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { buildQuery } from "../_utils/queryBuilder";
 import { sendQuery } from "../_utils/sendQuery";
@@ -9,7 +8,7 @@ const GraphContext = createContext();
 export const useGraphContext = () => useContext(GraphContext);
 
 export const GraphProvider = ({ children }) => {
-  const { database, collection } = useContext(AppContext);
+  const { data: initialData, database, collection } = useContext(AppContext);
 
   const [initialFetchState, setInitialFetchState] = useState(null);
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -17,64 +16,87 @@ export const GraphProvider = ({ children }) => {
   const [query, setQuery] = useState({});
   const [toggleStates, setToggleStates] = useState({});
   const [shouldFetch, setShouldFetch] = useState(false);
+  const [toggleUpdateFromContext, setToggleUpdateFromContext] = useState(false);
 
   useEffect(() => {
-    // In GraphContext.js, within GraphProvider
+    if (initialData) {
+      const newToggleStates = {};
 
+      initialData.forEach((field) => {
+        const fieldName = field.name;
+        const fieldValues = field.types[0]?.values || [];
+
+        const occurrences = fieldValues.reduce((acc, value) => {
+          acc[value] = (acc[value] || 0) + 1;
+          return acc;
+        }, {});
+
+        newToggleStates[fieldName] = Object.keys(occurrences).map((value) => ({
+          value: value,
+          occurance: occurrences[value],
+          checked: true,
+        }));
+      });
+
+      setToggleStates(newToggleStates);
+    }
+  }, [initialData]);
+
+  useEffect(() => {
     const fetchData = async () => {
       const data = await sendQuery(query, database, collection);
       if (data) {
+        let updatedToggleStates = { ...toggleStates };
         const isFirstFetch = !initialFetchState;
+
         if (isFirstFetch) {
           setInitialFetchState(data);
         }
 
-        // Prepare to update toggle states for missing values
-        let updatedToggleStates = { ...toggleStates };
-
         selectedKeys.forEach((key) => {
-          const valuesArray = data.schema.find(
-            (schemaItem) => schemaItem.name === key.name
-          )?.types[0]?.values;
+          const schemaItem = data.schema.find((item) => item.name === key.name);
+          const valuesArray = schemaItem?.types?.[0]?.values || [];
 
           let initialCountsMap = {};
+
           if (!isFirstFetch) {
             // Initialize initialCountsMap with all counts set to 0
-            const initialValues =
-              initialFetchState.schema.find(
-                (schemaItem) => schemaItem.name === key.name
-              )?.types[0]?.values || [];
+            const initialSchemaItem = initialFetchState.schema.find(
+              (item) => item.name === key.name
+            );
+            const initialValues = initialSchemaItem?.types?.[0]?.values || [];
+
             initialValues.forEach((value) => {
               initialCountsMap[value] = 0;
             });
 
-            // Identify missing values
             const missingValues = initialValues.filter(
               (initialValue) => !valuesArray.includes(initialValue)
             );
 
             // Update toggle states for missing values
-            if (missingValues.length > 0 && updatedToggleStates[key.name]) {
+            if (updatedToggleStates[key.name]) {
               updatedToggleStates[key.name] = updatedToggleStates[key.name].map(
                 (toggle) => {
-                  if (missingValues.includes(toggle.value)) {
-                    return { ...toggle, occurance: 0, checked: false };
-                  }
-                  return toggle;
+                  return {
+                    ...toggle,
+                    occurance: valuesArray.includes(toggle.value)
+                      ? (initialCountsMap[toggle.value] || 0) + 1
+                      : 0,
+                    checked: valuesArray.includes(toggle.value)
+                      ? toggle.checked
+                      : false,
+                  };
                 }
               );
             }
           }
 
-          // Prepare counts map
-          const countsMap = valuesArray
-            ? valuesArray.reduce((acc, value) => {
-                acc[value] = (acc[value] || 0) + 1;
-                return acc;
-              }, initialCountsMap)
-            : initialCountsMap;
+          const countsMap = valuesArray.reduce((acc, value) => {
+            acc[value] = (acc[value] || 0) + 1;
+            return acc;
+          }, initialCountsMap);
 
-          // Update chart data
           setChartsData((prevData) => ({
             ...prevData,
             [key.name]: {
@@ -84,18 +106,17 @@ export const GraphProvider = ({ children }) => {
           }));
         });
 
-        // Apply updated toggle states
         setToggleStates(updatedToggleStates);
       }
     };
 
     if (shouldFetch) {
-      fetchData();
-      setShouldFetch(false); // Reset the flag after fetching
+      fetchData().catch(console.error);
+      setShouldFetch(false);
     }
   }, [selectedKeys, toggleStates, database, collection]);
 
-  const handleSelectkey = async (key) => {
+  const handleSelectkey = (key) => {
     const isKeySelected = selectedKeys.some(
       (selected) => selected.name === key.name
     );
@@ -110,26 +131,38 @@ export const GraphProvider = ({ children }) => {
     }
 
     setSelectedKeys(updatedSelectedItems);
-
     const newQuery = buildQuery(updatedSelectedItems, toggleStates);
     setQuery(newQuery);
-
-    setShouldFetch(true); // Set the flag to fetch data
+    setShouldFetch(true);
   };
 
   const updateToggleState = (key, toggles) => {
-    setToggleStates((prevStates) => ({ ...prevStates, [key]: toggles }));
+    setToggleStates((prevStates) => {
+      const newStates = { ...prevStates, [key]: toggles };
 
-    // Use the new toggles directly to build the query
-    const newQuery = buildQuery(selectedKeys, {
-      ...toggleStates,
-      [key]: toggles,
+      // Check if any value is reselected or deselected
+      const isChanged = toggles.some(
+        (toggle) =>
+          prevStates[key] &&
+          prevStates[key].find(
+            (prevToggle) =>
+              prevToggle.value === toggle.value &&
+              prevToggle.checked !== toggle.checked
+          )
+      );
+
+      if (isChanged) {
+        const newQuery = buildQuery(selectedKeys, newStates);
+        setQuery(newQuery);
+        setShouldFetch(true);
+      }
+
+      return newStates;
     });
-    setQuery(newQuery);
-    setShouldFetch(true); // Set the flag to fetch data
   };
 
   const GraphContextValue = {
+    initialFetchState,
     selectedKeys,
     chartsData,
     handleSelectkey,
@@ -146,3 +179,5 @@ export const GraphProvider = ({ children }) => {
     </GraphContext.Provider>
   );
 };
+
+export default GraphProvider;
