@@ -25,7 +25,7 @@ export default function Charts() {
       <p>`charts ${data.length}`</p>
       <div>
         {data ? (data.map((line, index) =>
-          <SelectedCharts key={index} line={line} />
+          <SelectedCharts key={`selected-charts-${index}`} line={line} />
         )) : <NoData />}
       </div>
     </>

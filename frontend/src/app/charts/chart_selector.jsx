@@ -6,7 +6,7 @@ import { ArrayListChart } from './components/array_list_chart';
 import { ObjectListChart } from './components/object_list_chart';
 import { NullChart } from './components/null_chart';
 import { AppContext } from './adapter';
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 
 
 class ChartSelector {
@@ -36,15 +36,14 @@ class ChartSelector {
 function StringChart({ name }) {
     const { data } = useContext(AppContext);
     const own_data = data.find((item) => (item.name === name));
-    const values = own_data.types[0].values.map((value) => (<p>{value}</p>))
-    console.log(values)
+    const values = own_data.types[0].values.map(
+        (value, index) => (<p key={`string-chart-${name}-${index}`}>{value}</p>)
+    );
     return (
         <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
             <p>A string chart:</p>
             <p>{`${JSON.stringify(own_data)}`}</p>
-            <div>
-                {own_data.types[0].values.map((value) => (<p>{value}</p>))}
-            </div>
+            {values}
         </div>
     );
 }
@@ -65,7 +64,7 @@ class Filter {
         this.path = path;
     }
     filter(data) {
-        return data.path
+        return data.path;
     }
 }
 
@@ -75,11 +74,18 @@ function createSelector() {
     selector.register((data) => (data === "something"), NumberBarChart);
     // selector.register((data) => (data.type === "Date"), DateBarChart);
     selector.register((data) => (data === "somethings-different"), BooleanDoughnutChart);
-    selector.register(stringChallenge, StringChart)
+    selector.register(stringChallenge, StringChart);
     // selector.register((data) => (data.type === "Array"), ArrayListChart);
     // selector.register((data) => (data.type === "Object"), ObjectListChart);
-    return selector
+    return selector;
 };
 
-const SELECTOR = createSelector();
-export default SELECTOR
+const SELECTOR = new ChartSelector();
+// selector.register((data) => (data.type === "String"), StringListChart);
+SELECTOR.register((data) => (data === "something"), NumberBarChart);
+// selector.register((data) => (data.type === "Date"), DateBarChart);
+SELECTOR.register((data) => (data === "somethings-different"), BooleanDoughnutChart);
+SELECTOR.register(stringChallenge, StringChart);
+// selector.register((data) => (data.type === "Array"), ArrayListChart);
+// selector.register((data) => (data.type === "Object"), ObjectListChart);
+export default SELECTOR;
