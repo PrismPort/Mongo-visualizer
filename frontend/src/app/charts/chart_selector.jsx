@@ -33,27 +33,20 @@ class ChartSelector {
 // Bool (als Chart) 
 // Array, Objects (als Listen)
 
-function StringChart({ specific_data, path }) {
+function StringChart({ name }) {
     const { data } = useContext(AppContext);
-    console.log('path', path);
-    console.log(specific_data);
-    const string_data_from_context = data.find((item) => item.name ==  path);
-    console.log(string_data_from_context)
-    console.log(string_data_from_context == specific_data)
+    const own_data = data.find((item) => (item.name === name));
+    const values = own_data.types[0].values.map((value) => (<p>{value}</p>))
+    console.log(values)
     return (
         <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
             <p>A string chart:</p>
-            <p>{`${JSON.stringify(string_data_from_context)}`}</p>
-            <h1>specific data</h1>
-            <p>{`${JSON.stringify(specific_data)}`}</p>
-            <h1>data</h1>
-            <p>{`${JSON.stringify(data, null, 2)}`}</p>
+            <p>{`${JSON.stringify(own_data)}`}</p>
+            <div>
+                {own_data.types[0].values.map((value) => (<p>{value}</p>))}
+            </div>
         </div>
     );
-}
-
-function getStringData(data) {
-    return data;
 }
 
 function stringChallenge(data) {

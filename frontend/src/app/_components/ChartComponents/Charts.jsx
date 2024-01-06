@@ -18,7 +18,7 @@ export default function Charts() {
   function SelectedCharts({ line }) {
     const properties = Array.from(Object.entries(line));
     const Chart = SELECTOR.getChartFor(line);
-    return <Chart specific_data={line} path={line['name']}/>
+    return <Chart name={line['name']} />
   }
   return (
     <>

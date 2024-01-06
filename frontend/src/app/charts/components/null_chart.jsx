@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Chart from 'chart.js/auto';
 
-export function NullChart({ specific_data }) {
+import { AppContext } from '../adapter';
+
+export function NullChart({ name }) {
+    const {data} = useContext(AppContext);
+    const own_data = data.find((item) => item.name ===  name);
     return (
         <div className="rounded-lg border-black border-solid border-2 bg-red-500 p-4">
-            <p>There is no chart defined for this specific_data:</p>
-            <p>{`${specific_data ? JSON.stringify(specific_data.types, null, 2) : 'undefined'}`}</p>
+            <p>There is no chart defined for this own_data:</p>
+            <p>{`${own_data ? JSON.stringify(own_data.types, null, 2) : 'undefined'}`}</p>
         </div>
     );
 }
