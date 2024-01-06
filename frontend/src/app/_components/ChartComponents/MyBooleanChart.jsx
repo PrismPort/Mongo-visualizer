@@ -1,15 +1,12 @@
-// components/MyBooleanChart.js
 import React, { useEffect, useState } from "react";
 import { useGraphContext } from "../../_context/GraphContext.js";
 import { Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import ToggleSwitch from "../AtomarComponents/ToggleSwitch";
 
-// Set the override for Doughnut charts
-//Chart.overrides.doughnut.plugins.legend.display = false;
-
 const MyBooleanChart = ({ title, dataValues, labels }) => {
-  const { updateToggleState } = useGraphContext();
+  const { updateToggleState, toggleStates } = useGraphContext();
+
   const colors = [
     "grey",
     "green",
@@ -31,11 +28,10 @@ const MyBooleanChart = ({ title, dataValues, labels }) => {
 
   const data = {
     labels: labels,
-
     datasets: [
       {
-        label: title, // Use the title prop here
-        data: dataValues, // Use the dataValues prop here
+        label: title,
+        data: dataValues,
         backgroundColor: labelColors,
       },
     ],
@@ -44,29 +40,29 @@ const MyBooleanChart = ({ title, dataValues, labels }) => {
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "top",
-        display: false,
-      },
-      title: {
-        display: false,
-        text: title, // Use the title prop here
-      },
+      legend: { position: "top", display: false },
+      title: { display: false, text: title },
     },
   };
 
-  // Initialize toggle state
+  // Initialize toggle state based on context
   const [chartToggles, setChartToggles] = useState(
-    labels.map((label, index) => ({
-      value: label,
-      occurance: dataValues[index],
-      checked: true,
-    }))
+    toggleStates[title] ||
+      labels.map((label, index) => ({
+        value: label,
+        occurance: dataValues[index],
+        checked: true,
+      }))
   );
 
   useEffect(() => {
-    updateToggleState(title, chartToggles);
-  }, []);
+    if (toggleStates[title]) {
+      const updatedToggles = toggleStates[title].map((toggle, index) => {
+        return { ...toggle, occurance: dataValues[index] || 0 };
+      });
+      setChartToggles(updatedToggles);
+    }
+  }, [toggleStates, title, dataValues]);
 
   const handleToggleChange = (index) => {
     const updatedChartToggles = chartToggles.map((item, i) => {
@@ -76,8 +72,6 @@ const MyBooleanChart = ({ title, dataValues, labels }) => {
       return item;
     });
     setChartToggles(updatedChartToggles);
-
-    // Update the toggle state in the GraphContext
     updateToggleState(title, updatedChartToggles);
   };
 
@@ -91,38 +85,34 @@ const MyBooleanChart = ({ title, dataValues, labels }) => {
         <table>
           <thead>
             <tr>
-              <th className=" px-4">%</th>
-              <th className=" px-4">colour</th>
-              <th className=" px-4">{title}</th>
-              <th className=" px-4">
-                selected <br></br> documents
-              </th>
+              <th className="px-4">%</th>
+              <th className="px-4">Colour</th>
+              <th className="px-4">{title}</th>
+              <th className="px-4">Selected Documents</th>
             </tr>
           </thead>
           <tbody>
-            {labels.map((label, index) => {
-              return (
-                <tr key={index} className=" h-5">
-                  <td>
-                    {parseFloat((dataValues[index] / sum) * 100).toFixed(2)}
-                  </td>
-                  <td className="h-8 flex  justify-center items-center">
-                    <div
-                      className={`h-4 w-4 rounded-full`}
-                      style={{ backgroundColor: labelColors[index] }}
-                    ></div>
-                  </td>
-                  <td className=" text-center">{label}</td>
-                  <td>
-                    <ToggleSwitch
-                      id={`${title}-${index}`}
-                      checked={chartToggles[index].checked}
-                      onChange={() => handleToggleChange(index)}
-                    ></ToggleSwitch>
-                  </td>
-                </tr>
-              );
-            })}
+            {labels.map((label, index) => (
+              <tr key={index} className="h-5">
+                <td>
+                  {parseFloat((dataValues[index] / sum) * 100).toFixed(2)}
+                </td>
+                <td className="h-8 flex justify-center items-center">
+                  <div
+                    className="h-4 w-4 rounded-full"
+                    style={{ backgroundColor: labelColors[index] }}
+                  ></div>
+                </td>
+                <td className="text-center">{label}</td>
+                <td>
+                  <ToggleSwitch
+                    id={`${title}-${index}`}
+                    checked={chartToggles[index].checked}
+                    onChange={() => handleToggleChange(index)}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
