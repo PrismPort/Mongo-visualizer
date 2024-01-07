@@ -71,7 +71,7 @@ function makeQuery(key, value) {
 function StringChart({ name, path }) {
     const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
     const own_data = data.find((item) => {
-        console.log('str', item)
+        // console.log('str', item)
         for (let i = 0; i < item.types[0].path.length; i++) {
             if (i >= path.length - 1) {
                 return false;
@@ -82,16 +82,16 @@ function StringChart({ name, path }) {
         }
         return true;
     });
-    console.log('str2', own_data)
-    const values = own_data.types[0].values ? own_data.types[0].values : own_data.types[0].fields;
-    console.log('str3', values)
+    // console.log('str2', own_data)
+    // const values = own_data.types[0].values ? own_data.types[0].values : own_data.types[0].fields;
+    // // console.log('str3', values)
     return (
         <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
             <p>A string chart:</p>
             {/* {values.map(
                 (value, index) => (<p key={`string-chart-${name}-value${index}`}>{value}</p>)
             )} */}
-            <ul>
+            {/* <ul>
                 {values.map(
                     (value, index) => (
                         <Button
@@ -101,7 +101,7 @@ function StringChart({ name, path }) {
                                 async function get() {
                                     let result;
                                     result = await sendQuery(makeQuery(name, value), 'db', 'collection')
-                                    console.log(result)
+                                    // console.log(result)
                                     // updateData(result);  <-- This breaks everything
                                     updateStats(result);
                                 }
@@ -109,14 +109,14 @@ function StringChart({ name, path }) {
                         />
                     )
                 )}
-            </ul>
+            </ul> */}
         </div>
     );
 }
 
 function stringChallenge(data) {
-    console.log('strc', data)
-    console.log('strc2', data.path)
+    // console.log('strc', data);
+    // console.log('strc2', data.path);
     if (data.type instanceof Array
         && data.type.includes('String')) {
         return true;
@@ -139,7 +139,7 @@ function numberChallenge(data) {
 }
 
 function booleanChallenge(data) {
-    console.log('data', data)
+    // console.log('data', data)
     if (data.type instanceof Array
         && data.type.includes('Boolean')) {
         return true;
@@ -164,9 +164,9 @@ function documentChallenge(data) {
 function DocumentListChart2({ name }) {
     const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
     const own_data = data.find((item) => (item.name === name));
-    console.log('own_data', own_data);
+    // console.log('own_data', own_data);
     const values = own_data.types[0].fields;
-    console.log(values)
+    // console.log(values)
     try {
         return (
             <>
