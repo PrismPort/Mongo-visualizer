@@ -113,32 +113,33 @@ function stringChallenge(data) {
     }
 }
 
-class Filter {
-    constructor(path) {
-        this.path = path;
-    }
-    filter(data) {
-        return data.path;
+function numberChallenge(data) {
+    if (data.type instanceof Array
+        && data.type.includes('Number')) {
+        return true;
+    } else if (data.type === 'Number') {
+        return true;
+    } else {
+        return false;
     }
 }
 
-function createSelector() {
-    const selector = new ChartSelector();
-    // selector.register((data) => (data.type === "String"), StringListChart);
-    selector.register((data) => (data === "something"), NumberBarChart);
-    // selector.register((data) => (data.type === "Date"), DateBarChart);
-    selector.register((data) => (data === "somethings-different"), BooleanDoughnutChart);
-    selector.register(stringChallenge, StringChart);
-    // selector.register((data) => (data.type === "Array"), ArrayListChart);
-    // selector.register((data) => (data.type === "Object"), ObjectListChart);
-    return selector;
-};
+function booleanChallenge(data) {
+    if (data.type instanceof Array
+        && data.type.includes('Boolean')) {
+        return true;
+    } else if (data.type === 'Boolean') {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
-SELECTOR.register((data) => (data === "something"), NumberBarChart);
+SELECTOR.register(numberChallenge, NumberBarChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
-SELECTOR.register((data) => (data === "somethings-different"), BooleanDoughnutChart);
+SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
 SELECTOR.register(stringChallenge, StringChart);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
 // selector.register((data) => (data.type === "Object"), ObjectListChart);
