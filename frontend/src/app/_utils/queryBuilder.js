@@ -1,6 +1,9 @@
 export const buildQuery = (selectedKeys, toggleStates) => {
   let queryParts = [];
 
+  console.log("selectedKeys in buildQuery", selectedKeys);
+  console.log("toggleStates in buildQuery", toggleStates);
+
   // Handle toggle states
   selectedKeys.forEach((key) => {
     let toggles = toggleStates[key.name];
@@ -23,6 +26,8 @@ export const buildQuery = (selectedKeys, toggleStates) => {
       // queryParts.push({ [key.name]: { $exists: true } });
     }
   });
+
+  console.log("query parts after constuction", queryParts);
 
   // Combine the parts with $and if there are multiple parts
   return queryParts.length > 1 ? { $and: queryParts } : queryParts[0];
