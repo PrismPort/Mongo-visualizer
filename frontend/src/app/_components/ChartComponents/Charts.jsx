@@ -27,10 +27,5 @@ export default function Charts() {
 function SelectedChart({ line }) {
   const properties = Array.from(Object.entries(line));
   const Chart = SELECTOR.getChartFor(line);
-  return <Chart name={line['name']} />
-}
-function GetSingleChart({ key, values }) {
-  const Chart = SELECTOR.getChartFor(values);
-  return <Chart data={values} />
-
+  return <Chart name={line['name']} path={line['types'][0]['path']} />
 }

@@ -68,14 +68,26 @@ function makeQuery(key, value) {
     return { [key]: { $ne: value } };
 }
 
-function StringChart({ name }) {
+function StringChart({ name, path }) {
     const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
-    const own_data = data.find((item) => (item.name === name));
-    const values = own_data.types[0].values;
+    const own_data = data.find((item) => {
+        console.log('str', item)
+        for (let i = 0; i < item.types[0].path.length; i++) {
+            if (i >= path.length - 1) {
+                return false;
+            }
+            if (path[i] !== item.types[0].path[i]) {
+                return false;
+            }
+        }
+        return true;
+    });
+    console.log('str2', own_data)
+    const values = own_data.types[0].values ? own_data.types[0].values : own_data.types[0].fields;
+    console.log('str3', values)
     return (
         <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
             <p>A string chart:</p>
-            <p>{`${JSON.stringify(own_data)}`}</p>
             {/* {values.map(
                 (value, index) => (<p key={`string-chart-${name}-value${index}`}>{value}</p>)
             )} */}
@@ -103,6 +115,8 @@ function StringChart({ name }) {
 }
 
 function stringChallenge(data) {
+    console.log('strc', data)
+    console.log('strc2', data.path)
     if (data.type instanceof Array
         && data.type.includes('String')) {
         return true;
@@ -125,6 +139,7 @@ function numberChallenge(data) {
 }
 
 function booleanChallenge(data) {
+    console.log('data', data)
     if (data.type instanceof Array
         && data.type.includes('Boolean')) {
         return true;
@@ -135,6 +150,51 @@ function booleanChallenge(data) {
     }
 }
 
+function documentChallenge(data) {
+    if (data.type instanceof Array
+        && data.type.includes('Document')) {
+        return true;
+    } else if (data.type === 'Document') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function DocumentListChart2({ name }) {
+    const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
+    const own_data = data.find((item) => (item.name === name));
+    console.log('own_data', own_data);
+    const values = own_data.types[0].fields;
+    console.log(values)
+    try {
+        return (
+            <>
+                <p>{name}</p>
+                {values.map((line, index) =>
+                    <SelectedChart key={`selected-chart-${name}-${index}`} line={line} />
+                )}
+            </>
+        )
+    } catch (error) {
+        console.error(error.toString())
+    }
+}
+function DocumentListChart({ name }) {
+
+    return (
+        <>
+            {data.map((line, index) =>
+                <SelectedChart key={`selected-chart-${index}`} line={line} />
+            )}
+        </>
+    )
+}
+function SelectedChart({ line }) {
+    const properties = Array.from(Object.entries(line));
+    const Chart = SELECTOR.getChartFor(line);
+    return <Chart name={line['name']} path={line['types'][0]['path']} />
+}
 const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
 SELECTOR.register(numberChallenge, NumberBarChart);
@@ -142,5 +202,5 @@ SELECTOR.register(numberChallenge, NumberBarChart);
 SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
 SELECTOR.register(stringChallenge, StringChart);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
-// selector.register((data) => (data.type === "Object"), ObjectListChart);
+SELECTOR.register(documentChallenge, DocumentListChart2);
 export default SELECTOR;
