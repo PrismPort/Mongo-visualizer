@@ -7,10 +7,22 @@ export const buildQuery = (selectedKeys, toggleStates) => {
   // Handle toggle states
   selectedKeys.forEach((key) => {
     let toggles = toggleStates[key.name];
+    console.log("toggles for", key, "in Query Builder: ", toggles);
     if (toggles && toggles.length > 0) {
       let selectedValues = toggles
         .filter((toggle) => toggle.checked)
-        .map((toggle) => toggle.value);
+        .map((toggle) => {
+          if (toggle.type === "Number") {
+            toggle.value = parseInt(toggle.value);
+          } else if (toggle.type === "Date") {
+            toggle.value = new Date(toggle.value);
+          } else if (toggle.type === "Boolean") {
+            toggle.value = toggle.value === "true";
+          } else if (toggle.type === "String") {
+            toggle.value = toggle.value.toString();
+          }
+          return toggle.value;
+        });
 
       if (selectedValues.length > 0) {
         // If there are selected values, use $in to filter for these values

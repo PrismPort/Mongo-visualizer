@@ -13,6 +13,7 @@ export function calculateInitialToggleStates(initialData) {
 
     newToggleStates[fieldName] = Object.keys(occurrences).map((value) => ({
       value: value,
+      type: field.types[0]?.bsonType || "string",
       occurance: occurrences[value],
       checked: true,
     }));

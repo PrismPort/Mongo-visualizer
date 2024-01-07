@@ -54,63 +54,41 @@ export const GraphProvider = ({ children }) => {
           const schemaItem = data.schema.find((item) => item.name === key.name);
           const valuesArray = schemaItem?.types?.[0]?.values || [];
 
-          let initialCountsMap = {};
+          const type = schemaItem?.types?.[0]?.bsonType || "string";
+          // Initialize countsMap with all possible values for the key, with counts set to 0
+          let countsMap = {};
+          toggleStates[key.name].forEach((toggle) => {
+            countsMap[toggle.value] = 0;
+          });
 
-          if (!isFirstFetch) {
-            // Initialize initialCountsMap with all counts set to 0
-            const initialSchemaItem = initialFetchState.schema.find(
-              (item) => item.name === key.name
+          // Update countsMap with actual counts
+          valuesArray.forEach((value) => {
+            countsMap[value] = (countsMap[value] || 0) + 1;
+          });
+
+          // Update toggle states for missing values
+          if (!isFirstFetch && updatedToggleStates[key.name]) {
+            updatedToggleStates[key.name] = updatedToggleStates[key.name].map(
+              (toggle) => {
+                return {
+                  ...toggle,
+                  type: type,
+                  occurance: countsMap[toggle.value] || 0,
+                  checked: !!countsMap[toggle.value],
+                };
+              }
             );
-            const initialValues = initialSchemaItem?.types?.[0]?.values || [];
-
-            initialValues.forEach((value) => {
-              initialCountsMap[value] = 0;
-            });
-
-            const missingValues = initialValues.filter(
-              (initialValue) => !valuesArray.includes(initialValue)
-            );
-
-            console.log("missingValues", missingValues);
-
-            console.log("valuesArray for", key, "=", valuesArray);
-            // Update toggle states for missing values
-            if (updatedToggleStates[key.name]) {
-              updatedToggleStates[key.name] = updatedToggleStates[key.name].map(
-                (toggle) => {
-                  console.log("toggle update for missing values", toggle);
-
-                  return {
-                    ...toggle,
-                    occurance: valuesArray.includes(toggle.value)
-                      ? (initialCountsMap[toggle.value] || 0) + 1
-                      : 0,
-                    checked: valuesArray.includes(toggle.value)
-                      ? toggle.checked
-                      : false,
-                  };
-                }
-              );
-            }
           }
-
-          const countsMap = valuesArray.reduce((acc, value) => {
-            acc[value] = (acc[value] || 0) + 1;
-            return acc;
-          }, initialCountsMap);
-
-          console.log("countsMap", countsMap);
 
           setChartsData((prevData) => ({
             ...prevData,
             [key.name]: {
               labels: Object.keys(countsMap),
               counts: Object.values(countsMap),
+              type: type,
             },
           }));
         });
-
-        console.log("updatedToggleStates", updatedToggleStates);
 
         setToggleStates(updatedToggleStates);
       }
