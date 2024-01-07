@@ -5,29 +5,32 @@ function NoData() {
 }
 
 import { AppContext } from "../../_context/AppContext";
+
 export default function Charts() {
   const { data } = useContext(AppContext);
   if (data === undefined) {
     return <NoData />
   }
-  function GetSingleChart({ key, values }) {
-    const Chart = SELECTOR.getChartFor(values);
-    return <Chart data={values} />
+  try {
 
-  }
-  function SelectedCharts({ line }) {
-    const properties = Array.from(Object.entries(line));
-    const Chart = SELECTOR.getChartFor(line);
-    return <Chart name={line['name']} />
-  }
-  return (
-    <>
-      <p>`charts ${data.length}`</p>
-      <div>
+    return (
+      <>
         {data ? (data.map((line, index) =>
-          <SelectedCharts key={`selected-charts-${index}`} line={line} />
+          <SelectedChart key={`selected-chart-${index}`} line={line} />
         )) : <NoData />}
-      </div>
-    </>
-  )
+      </>
+    )
+  } catch (error) {
+    console.error(error)
+  }
+}
+function SelectedChart({ line }) {
+  const properties = Array.from(Object.entries(line));
+  const Chart = SELECTOR.getChartFor(line);
+  return <Chart name={line['name']} />
+}
+function GetSingleChart({ key, values }) {
+  const Chart = SELECTOR.getChartFor(values);
+  return <Chart data={values} />
+
 }

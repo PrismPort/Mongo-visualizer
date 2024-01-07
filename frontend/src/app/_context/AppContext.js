@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 
 import { handleLoadCollections } from "../_utils/handleLoadCollections";
 import { handleShowDatabases } from "../_utils/handleShowDatabases";
+import { sendQuery} from "../_utils/sendQuery";
 
 export const AppContext = createContext();
 
@@ -84,6 +85,9 @@ const AppProvider = ({ children }) => {
   const updateStats = (newStats) => {
     setStats(newStats);
   };
+  const updateData = (newData)=> {
+    setData(newData);
+  }
 
   const updateDatabase = (newDatabase) => {
     setDatabase(newDatabase);
@@ -136,8 +140,10 @@ const AppProvider = ({ children }) => {
     fetchCollectionsForDatabase,
     handleAnalyzeCollections,
     updateStats,
+    updateData,
     collectionDbMap,
     isLoggedIn,
+    sendQuery,
   };
 
   //console.log(contextValue);

@@ -28,13 +28,12 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main className="flex h-screen w-screen justify-center bg-white items-center overflow-auto">
-            <StrictMode>
-              <Charts />
-            </StrictMode>
-            <ToggleSwitch />
+        <main style={{ overflowY: 'scroll', height: 'calc(100vh - 100px)', padding: '20px' }}>
+          <StrictMode>
+            <Charts />
+          </StrictMode>
+          <ToggleSwitch />
         </main>
-
         <CollectionDashboard />
       </>
     );
