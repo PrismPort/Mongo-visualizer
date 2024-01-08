@@ -174,5 +174,5 @@ function display(something) {
   console.log(
     something['types'][0]['values']
     || something['types'][0]['types'][0]['values']
-  )
+  );
 }
