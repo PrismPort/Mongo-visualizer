@@ -20,7 +20,7 @@ export const connectMongoDB = async (req, res) => {
     DOCKER === "true" &&
     (address === "localhost" || address === "127.0.0.1")
   ) {
-    address = "host.docker.internal";
+    address = "172.17.0.1";
   }
 
   mongoURL =
