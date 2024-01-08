@@ -16,7 +16,7 @@ const handler = NextAuth({
           });
 
           const mongoConnectionResponse = await fetch(
-            "http://host.docker.internal:4000/connect-to-mongodb", // Consider updating this URL for production
+            "http://172.17.0.1:4000/connect-to-mongodb", // Consider updating this URL for production
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
