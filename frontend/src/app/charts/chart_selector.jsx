@@ -30,7 +30,7 @@ class ChartSelector {
                 return new Chart(data);
             }
         }
-        return new NullChart(data);
+        return new NullChart(data.path||[data.name]);
     }
 }
 // Generelle Tasks um an ein Minimalprodukt ran zu kommen im nächsten Schritt: 
