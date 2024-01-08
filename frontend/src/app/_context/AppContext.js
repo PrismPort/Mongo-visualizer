@@ -116,7 +116,6 @@ const AppProvider = ({ children }) => {
       // const datalocal = await response.json();
       const responseData = await response.json();
       console.log("Parsed response data:", responseData);
-      runLogic(responseData, '>');
       setData(responseData);
       setStats(responseData);
     } catch (error) {
@@ -155,24 +154,3 @@ const AppProvider = ({ children }) => {
 };
 
 export default AppProvider;
-function runLogic(data, pre) {
-  for (const thing of data) {
-    console.log(pre, 'name:', thing.name);
-    console.log(pre, 'type:', thing.type);
-
-    if (thing.type === 'Document') {
-      for (const field of thing['types'][0]['fields']) {
-        runLogic([field], '    ' + pre)
-      }
-    } else {
-      display(thing)
-    }
-    console.log();
-  }
-}
-function display(something) {
-  console.log(
-    something['types'][0]['values']
-    || something['types'][0]['types'][0]['values']
-  );
-}

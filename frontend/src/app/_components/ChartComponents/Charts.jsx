@@ -15,7 +15,7 @@ export default function Charts() {
 
     return (
       <>
-        {data ? (data.map((line, index) =>
+        {data ? () => (data || [])().map((line, index) => (
           <SelectedChart key={`selected-chart-${index}`} line={line} />
         )) : <NoData />}
       </>
@@ -27,5 +27,7 @@ export default function Charts() {
 function SelectedChart({ line }) {
   const properties = Array.from(Object.entries(line));
   const Chart = SELECTOR.getChartFor(line);
-  return <Chart name={line['name']} path={line['types'][0]['path']} />
+  return <>
+    {Chart.getComponent()}
+  </>
 }

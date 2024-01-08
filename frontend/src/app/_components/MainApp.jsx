@@ -11,7 +11,7 @@ import SideNavigation from "./NavBarComponents/SideNavigation";
 import CollectionDashboard from "./SchemaSidebarComponents/CollectionDashboard";
 
 import { AppContext } from "../_context/AppContext";
-
+import { NullChart } from "../charts/components/null_chart";
 export default function MainApp() {
   const { session, loadSession } = useContext(AppContext);
   const router = useRouter();
@@ -25,16 +25,22 @@ export default function MainApp() {
 
   // Render content if in a session or loading the session
   if (session) {
+    const ullch = new NullChart("hi")
+    console.log(ullch.getComponent())
+    const Charr = ullch.getComponent();
     return (
       <>
-        <SideNavigation />
+      <div>
+        <Charr/>
+      </div>
+        {/* <SideNavigation />
         <main style={{ overflowY: 'scroll', height: 'calc(100vh - 100px)', padding: '20px' }}>
           <StrictMode>
             <Charts />
           </StrictMode>
           <ToggleSwitch />
         </main>
-        <CollectionDashboard />
+        <CollectionDashboard /> */}
       </>
     );
   }

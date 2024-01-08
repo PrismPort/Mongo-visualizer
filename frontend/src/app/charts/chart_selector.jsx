@@ -25,15 +25,14 @@ class ChartSelector {
         this.charts.push([challenge, chart]);
     }
     getChartFor(data) {
-        for (const [challenge, chart] of this.charts) {
-            if (challenge(data)) {
-                return chart;
+        for (const [challenge, Chart] of this.charts) {
+            if (false &&challenge(data)) {
+                return new Chart(data);
             }
         }
-        return NullChart;
+        return new NullChart(data);
     }
 }
-
 // Generelle Tasks um an ein Minimalprodukt ran zu kommen im nächsten Schritt: 
 // Wir brauchen erstmal 4 verschiedene Components für die Datentyp Views in unserem Main Chart Window. 
 // Strings (als Liste)
@@ -67,7 +66,19 @@ class ToggleSwitchManager {
 function makeQuery(key, value) {
     return { [key]: { $ne: value } };
 }
-
+class StringChartClass {
+    constructor(data) {
+        this.data = data;
+    }
+    getComponent() {
+        return (
+            <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
+                <p>A string chart:</p>
+                <p>{this.data}</p>
+            </div>
+        )
+    }
+}
 function StringChart({ name, path }) {
     const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
     const own_data = data.find((item) => {
@@ -161,8 +172,8 @@ function documentChallenge(data) {
     }
 }
 
-function DocumentListChart2({ name }) {
-    const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
+function DocumentChart({ name }) {
+    const { data } = useContext(AppContext);
     const own_data = data.find((item) => (item.name === name));
     // console.log('own_data', own_data);
     const values = own_data.types[0].fields;
@@ -170,37 +181,35 @@ function DocumentListChart2({ name }) {
     try {
         return (
             <>
-                <p>{name}</p>
-                {values.map((line, index) =>
-                    <SelectedChart key={`selected-chart-${name}-${index}`} line={line} />
-                )}
+                <div className='aspect-[3/4] rounded-lg border-2 border-black p-12'>
+                    <h1><b>{name}</b></h1>
+                    {values.map((thing, index) =>
+                        <RegularChart key={`document-chart-${name}-${index}`} line={thing} />
+                    )}
+                </div>
             </>
         )
     } catch (error) {
         console.error(error.toString())
     }
 }
-function DocumentListChart({ name }) {
 
-    return (
-        <>
-            {data.map((line, index) =>
-                <SelectedChart key={`selected-chart-${index}`} line={line} />
-            )}
-        </>
-    )
+function RegularChart({ line }) {
+    const properties = Array.from(Object.entries(line));
+    const chart = SELECTOR.getChartFor(line);
+    return chart.getComponent(); //chart name={line['name']} path={line['types'][0]['path']} />
 }
-function SelectedChart({ line }) {
+function DocumentInnerChart({ line }) {
     const properties = Array.from(Object.entries(line));
     const Chart = SELECTOR.getChartFor(line);
-    return <Chart name={line['name']} path={line['types'][0]['path']} />
+    return <Chart name={line['name']} path={['types'][0]['types'][0]['values']} />
 }
 const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
-SELECTOR.register(numberChallenge, NumberBarChart);
+//SELECTOR.register(numberChallenge, NumberBarChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
-SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
-SELECTOR.register(stringChallenge, StringChart);
+//SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
+SELECTOR.register(stringChallenge, StringChartClass);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
-SELECTOR.register(documentChallenge, DocumentListChart2);
+//SELECTOR.register(documentChallenge, DocumentChart);
 export default SELECTOR;
