@@ -146,7 +146,7 @@ export default function SideNavigation() {
               ></CustomButton>
               {allDatabasesIsExpanded ? (
                 <div className="flex flex-col max-h-full overflow-y-auto">
-                  {databases.map((eachDatabase, index) => (
+                  {()=>(databases || [])().map((eachDatabase, index) => (
                     <CustomButton
                       key={index}
                       text={eachDatabase}
@@ -158,7 +158,7 @@ export default function SideNavigation() {
                   ))}
                 </div>
               ) : (
-                databases.map((eachDB, index) => {
+                ()=>(databases || [])().map((eachDB, index) => {
                   if (eachDB === database) {
                     return (
                       <CustomButton
