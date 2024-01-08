@@ -15,9 +15,8 @@ export class NullChart {
             return (
                 <div className="rounded-lg border-black border-solid border-2 bg-red-500 p-4">
                     <p>There is no chart defined for this:</p>
-                    <p>{JSON.stringify(data)}</p>
-                    <p>{JSON.stringify(own_data)}</p>
-                    <p>{`${own_data ? JSON.stringify(own_data.types, null, 2) : 'undefined'}`}</p>
+                    <p>data:{JSON.stringify(data)}</p>
+                    <p>own_data:2{JSON.stringify(own_data)}</p>
                 </div>
             );
         }
