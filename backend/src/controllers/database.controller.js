@@ -37,9 +37,9 @@ export const connectMongoDB = async (req, res) => {
   if (!mongoURL) {
     return res.status(400).json({ error: "MongoDB URL is required" });
   }
+  const uuid = uuidv4();
   */
 
-  const uuid = uuidv4();
   try {
     if (!clientInstance) {
       clientInstance = new MongoClient(mongoURL, { useUnifiedTopology: true });
@@ -223,37 +223,5 @@ export const getUniqueValuesForKey = async (req, res) => {
   } catch (error) {
     console.error("Error getting unique values for key:", error);
     res.status(500).json({ error: "Failed to get unique values for key" });
-  }
-};
-
-export const getValueDistributionForKey = async (req, res) => {
-  const { database, collection, key } = req.params;
-  const client = getClientInstance();
-
-  try {
-    const db = client.db(database);
-    const totalDocuments = await db.collection(collection).countDocuments();
-
-    const aggregation = await db
-      .collection(collection)
-      .aggregate([
-        { $match: { [key]: { $exists: true } } },
-        { $group: { _id: `$${key}`, count: { $sum: 1 } } },
-        {
-          $project: {
-            _id: 0,
-            value: "$_id",
-            percentage: {
-              $multiply: [{ $divide: ["$count", totalDocuments] }, 100],
-            },
-          },
-        },
-      ])
-      .toArray();
-
-    res.json(aggregation);
-  } catch (error) {
-    console.error("Error getting value distribution for key:", error);
-    res.status(500).json({ error: "Failed to get value distribution for key" });
   }
 };

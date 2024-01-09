@@ -4,6 +4,9 @@ import { sendQuery } from "../_utils/sendQuery";
 import { AppContext } from "./AppContext";
 
 import { getDocumentsFromCollection } from "../_utils/getDocumentsFromCollection";
+import { getUniqueValuesForKey } from "../_utils/getUniqueValuesForKey";
+import { getValueDistributionForKey } from "../_utils/getValueDistributionForKey";
+import { getDocumentCountForKey } from "../_utils/getDocumentCountForKey";
 import { calculateInitialToggleStates } from "../_utils/calculateInitialToggleStates";
 import { get } from "http";
 
@@ -65,6 +68,16 @@ export const GraphProvider = ({ children }) => {
         }
 
         selectedKeys.forEach((key) => {
+          console.log(
+            `documents count`,
+            getDocumentCountForKey(database, collection, key.name)
+          );
+
+          console.log(
+            `unique values`,
+            getUniqueValuesForKey(database, collection, key.name)
+          );
+
           if (key.type.includes("Array")) {
             console.log(
               "Here i am",
