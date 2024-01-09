@@ -310,7 +310,7 @@ EXPRESS_PORT=4000
 
 # clientside config
 
-CLIENT_ORIGIN="http://localhost:3000" // add the url fo the frontend
+CLIENT_ORIGIN="http://localhost:3000" # add the url fo the frontend
 
 # Docker config
 
