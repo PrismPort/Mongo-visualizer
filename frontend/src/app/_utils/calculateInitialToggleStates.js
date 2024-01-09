@@ -19,5 +19,7 @@ export function calculateInitialToggleStates(initialData) {
     }));
   });
 
+  console.log("returning initial newToggleStates", newToggleStates);
+
   return newToggleStates;
 }

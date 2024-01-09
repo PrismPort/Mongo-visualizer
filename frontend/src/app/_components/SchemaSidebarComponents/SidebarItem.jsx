@@ -4,16 +4,20 @@ import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 import { useGraphContext } from "../../_context/GraphContext.js";
 
-export default function SidebarItem({ item: key }) {
+export default function SidebarItem({ item: key, visibility }) {
   const [open, setOpen] = useState(false);
-  const [visibility, setVisibility] = useState(false);
-  const { handleSelectkey } = useGraphContext(); // Use handleSelectItem instead of selectItems
+  const { handleSelectkey, setSidebarItemsVisibility } = useGraphContext(); // Use handleSelectItem instead of selectItems
 
   const toggleOpen = () => setOpen(!open);
 
   const handleVisibilityChange = () => {
-    setVisibility(!visibility);
     handleSelectkey(key); // Pass necessary parameters
+
+    // Update the visibility state in the parent component
+    setSidebarItemsVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [key.name]: !visibility,
+    }));
   };
 
   function generateRandomString(length) {

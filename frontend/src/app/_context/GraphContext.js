@@ -16,11 +16,25 @@ export const GraphProvider = ({ children }) => {
 
   const [initialFetchState, setInitialFetchState] = useState(null);
   const [selectedKeys, setSelectedKeys] = useState([]);
+  const [sidebarItemsVisibility, setSidebarItemsVisibility] = useState({});
+
   const [chartsData, setChartsData] = useState({});
   const [query, setQuery] = useState({});
   const [toggleStates, setToggleStates] = useState({});
   const [shouldFetch, setShouldFetch] = useState(false);
   const [toggleDependencies, setToggleDependencies] = useState({});
+
+  useEffect(() => {
+    console.log("collection or DB changed", collection, database);
+
+    setSelectedKeys([]), setSidebarItemsVisibility({});
+    setChartsData({}),
+      setQuery({}),
+      setToggleStates({}),
+      setShouldFetch(false),
+      setToggleDependencies({});
+  }, [collection, database]);
+
   useEffect(() => {
     if (initialData) {
       setToggleStates(calculateInitialToggleStates(initialData));
@@ -51,6 +65,18 @@ export const GraphProvider = ({ children }) => {
         }
 
         selectedKeys.forEach((key) => {
+          if (key.type.includes("Array")) {
+            console.log(
+              "Here i am",
+              data.schema.find((item) => item.name === key.name)
+            );
+            const schemaItem = data.schema.find(
+              (item) => item.name === key.name
+            ).types[0].types[0];
+
+            console.log("schemaItem nested", schemaItem);
+          }
+
           const schemaItem = data.schema.find((item) => item.name === key.name);
           const valuesArray = schemaItem?.types?.[0]?.values || [];
 
@@ -173,6 +199,8 @@ export const GraphProvider = ({ children }) => {
     toggleStates,
     updateToggleState,
     toggleDependencies,
+    sidebarItemsVisibility,
+    setSidebarItemsVisibility,
   };
 
   console.log("GraphContextValue", GraphContextValue);

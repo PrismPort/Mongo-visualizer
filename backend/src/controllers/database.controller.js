@@ -30,7 +30,7 @@ export const connectMongoDB = async (req, res) => {
       ? `mongodb://${user}:${password}@${address}:${port}`
       : `mongodb://${address}:${port}`;
 
-  console.log(mongoURL);
+  //console.log(mongoURL);
 
   /*
 //  the code below is not needed because mongo URL is nevver false.

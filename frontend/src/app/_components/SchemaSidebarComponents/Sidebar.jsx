@@ -5,6 +5,8 @@ import SidebarItem from "./SidebarItem.jsx";
 //import items from "../../_dummyData/sidebar.json"
 import { AppContext } from "../../_context/AppContext.js";
 
+import { useGraphContext } from "../../_context/GraphContext.js";
+
 export default function Sidebar() {
   const {
     database,
@@ -14,6 +16,8 @@ export default function Sidebar() {
     handleAnalyzeCollections,
     collectionDbMap,
   } = useContext(AppContext);
+
+  const { sidebarItemsVisibility } = useGraphContext();
 
   const [items, setItems] = useState([]);
 
@@ -33,7 +37,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     setItems(data || []);
-  }, [data]);
+  }, [data, collection]);
 
   if (collection === "all") {
     return null;
@@ -47,7 +51,11 @@ export default function Sidebar() {
           </u>
         </div>
         {items.map((item, index) => (
-          <SidebarItem key={index} item={item} />
+          <SidebarItem
+            key={index}
+            item={item}
+            visibility={sidebarItemsVisibility[item.name] || false}
+          />
         ))}
       </div>
     </>

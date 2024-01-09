@@ -4,19 +4,6 @@ import MyBooleanChart from "./MyBooleanChart.jsx";
 import StringList from "./StringList.jsx";
 import RangeBarChart from "./RangeBarChart.jsx";
 
-// const sampleData = [
-//   { value: "Jason", occurance: 8 },
-//   { value: "Cindy", occurance: 4 },
-//   { value: "Richard", occurance: 6 },
-//   { value: "Nicole", occurance: 4 },
-//   { value: "Alexandra", occurance: 3 },
-//   { value: "Michael", occurance: 7 },
-//   { value: "David", occurance: 3 },
-//   { value: "Russell", occurance: 3 },
-//   { value: "Cindy", occurance: 8 },
-//   { value: "John", occurance: 7 },
-// ];
-
 const GraphComponent = () => {
   const { selectedKeys, chartsData } = useGraphContext();
 
@@ -25,46 +12,48 @@ const GraphComponent = () => {
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4  overflow-y-auto">
       {selectedKeys.map((item) => {
         const chartData = chartsData[item.name];
 
         if (chartData) {
-          // Ensure the data format is suitable for MyBooleanChart
-          if (chartData.counts.length <= 6 && chartData.type != "number") {
-            return (
-              <div key={item.name}>
-                <MyBooleanChart
-                  title={item.name}
-                  dataValues={chartData.counts}
-                  labels={chartData.labels}
-                />
-              </div>
+          let chartComponent = null;
+
+          if (chartData.counts.length <= 6 && chartData.type !== "Number") {
+            chartComponent = (
+              <MyBooleanChart
+                title={item.name}
+                dataValues={chartData.counts}
+                labels={chartData.labels}
+              />
             );
-          } else if (chartData.type == "number") {
-            return (
-              <div key={item.name}>
-                <RangeBarChart
-                  keyName={item.name}
-                  labels={chartData.labels}
-                  counts={chartData.counts}
-                />
-              </div>
+          } else if (chartData.type === "Number") {
+            chartComponent = (
+              <RangeBarChart
+                keyName={item.name}
+                labels={chartData.labels}
+                dataValues={chartData.counts}
+              />
             );
           } else if (chartData.counts.length > 6) {
+            chartComponent = (
+              <StringList
+                keyName={item.name}
+                labels={chartData.labels}
+                counts={chartData.counts}
+              />
+            );
+          }
+
+          if (chartComponent) {
             return (
-              <div key={item.name}>
-                <StringList
-                  keyName={item.name}
-                  labels={chartData.labels}
-                  counts={chartData.counts}
-                />
+              <div key={item.name} className="p-4">
+                {chartComponent}
               </div>
             );
-          } else {
-            return null; // If no chartData is found for the item
           }
         }
+        return null; // If no chartData is found for the item
       })}
     </div>
   );

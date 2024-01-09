@@ -31,9 +31,9 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main className="flex h-screen w-screen justify-center bg-white items-center">
+        <main className="flex h-full overflow-y-scroll w-screen justify-center bg-white items-center">
           <div className="text-black">
-            <h2 className=" m-12">mongovisualizer</h2>
+            <h2 className=" text-center text-2xl bold m-12">mongovisualizer</h2>
 
             <GraphComponent></GraphComponent>
           </div>
