@@ -19,163 +19,233 @@ The Backend is used to communicate to a mongoDB server through the official mong
   },
 ```
 
-## Endpoints
+Endpoints
+Connect to MongoDB Server
+URL: /connect-to-mongodb
 
-### Connect to mongoDB server
+Method: POST
 
-- **URL:** `/connect-to-mongodb`
-- **Method:** POST
-- **Description:** Receives credentials and mongoDB adress and returns a concatenated mongoURL
-- **Request Parameters:**
-  - in post request body:
+Description: Connect to a MongoDB server using provided credentials and configuration.
 
-  ```json
-  {
-  "user":"",
-  "password":"",
-  "adress": "127.0.0.1",
-  "port":"27017"
-  }
-  ```
+Request Parameters:
 
-- **Response:**
+In the post request body:
+json
+Copy code
+{
+  "username": "",
+  "password": "",
+  "address": "127.0.0.1",
+  "port": "27017"
+}
+Response:
 
-  ```json
-  {
-  "mongoURL": "mongodb://localhost:27017/",
+json
+Copy code
+{
   "message": "Successfully connected to MongoDB"
-  }
-  ```
+}
+Logout from MongoDB Server
+URL: /disconnect-mongodb
 
-### Get a list of available databases
+Method: GET
 
-- **URL:** `/query-databases`
-- **Method:** GET
-- **Description:** Lists all available databases on the server
-- **Request Parameters:**
-  - None
+Description: Disconnect from the MongoDB server if connected.
 
-- **Response:**
+Request Parameters:
 
-  ```json
-  [
+None
+Response:
+
+json
+Copy code
+{
+  "message": "Successfully disconnected from MongoDB"
+}
+Get a List of Available Databases
+URL: /query-databases
+
+Method: GET
+
+Description: Lists all available databases on the MongoDB server.
+
+Request Parameters:
+
+None
+Response:
+
+json
+Copy code
+[
   "admin",
   "config",
   "local",
   "yourdatabase"
-  ]
-  ```
+]
+Get a List of Available Collections in a Database
+URL: /query/:database
 
-### Get a list of available collections in a database
+Method: GET
 
-- **URL:** `/query/:database`
-- **Method:** GET
-- **Description:** Lists all available collections of the specified database
-- **Request Parameters:**
-  - database [name of the database you want to see collections from]
+Description: Lists all available collections in the specified database.
 
-- **Response:**
+Request Parameters:
 
-  ```json
-  [
+database (name of the database)
+Response:
+
+json
+Copy code
+[
   "playlists",
   "users"
-  ]
-  ```
+]
+Get Documents from a Collection
+URL: /query/:database/:collection/:limit
 
-### Analyze a given collection
+Method: GET
 
-- **URL:** `/analyze/:database/:collection`
-- **Method:** GET
-- **Description:** Returns a schema description object _without_ concrete values for every occuring type
-- **Request Parameters:**
-  - database [name of the database where the collection is from]
-  - collection [collection to be analyzed]
+Description: Retrieves documents from a collection with a specified limit.
 
-- **Response:**
+Request Parameters:
 
-  ```json
-  [
-      {
-        count: 108000, // how many documents have this particullar key?
-        type: 'ObjectId', // datatype(s)
-        name: '_id', // key name
-        probability: 1 // how many documents have this particullar key, but now in percent [0.0, 1.0]
-      },
-      {
-        count: 34529,
-        type: [ 'String', 'Undefined' ],
-        name: 'address',
-        probability: 0.319712962962963
-      },
-      {
-        count: 34360,
-        type: [ 'String', 'Undefined' ],
-        name: 'company',
-        probability: 0.3181481481481481
-      },
-      {
-        count: 34099,
-        type: [ 'Date', 'Undefined' ],
-        name: 'date',
-        probability: 0.3157314814814815
-      },
-  ...
-  ]
-  ```
+database (name of the database)
+collection (name of the collection)
+limit (maximum number of documents to retrieve)
+Response:
 
-### Query a given collection
+json
+Copy code
+[
+  // Retrieved documents
+]
+Analyze a Collection
+URL: /analyze/:database/:collection
 
-- **URL:** `/query/:database/:collection`
-- **Method:** POST
-- **Description:** Returns a schema description object _with_ concrete values for every occuring type
-- **Request Parameters:**
-  - database [name of the database where the collection is from]
-  - collection [collection to be analyzed]
-  - mongo query in post request body:
+Method: GET
 
-  ```json
-  { 
-    "$and": [ 
+Description: Provides a schema description for a given collection without concrete values for each type.
+
+Request Parameters:
+
+database (name of the database)
+collection (name of the collection)
+Response:
+
+json
+Copy code
+[
+  // Schema description
+]
+Query a Collection
+URL: /query/:database/:collection
+
+Method: POST
+
+Description: Provides a schema description for a given collection with concrete values for each type based on a specified query.
+
+Request Parameters:
+
+database (name of the database)
+collection (name of the collection)
+MongoDB query in the post request body:
+json
+Copy code
+{ 
+  "$and": [ 
     { "email": { "$exists": true } }, 
     { "name": { "$exists": true } }, 
     { "company": { "$exists": true } } 
-    ] 
+  ] 
+}
+Response:
+
+json
+Copy code
+[
+  // Schema description with concrete values
+]
+Get Document Count for a Key
+URL: /count/:database/:collection/:key
+
+Method: GET
+
+Description: Retrieves the count of documents that have a specific key in a collection.
+
+Request Parameters:
+
+database (name of the database)
+collection (name of the collection)
+key (name of the key to count)
+Response:
+
+json
+Copy code
+{
+  "key": "",
+  "count": 0
+}
+Get Unique Values for a Key
+URL: /unique-values/:database/:collection/:key
+
+Method: GET
+
+Description: Retrieves unique values and their counts for a specific key in a collection.
+
+Request Parameters:
+
+database (name of the database)
+collection (name of the collection)
+key (name of the key to get unique values for)
+Response:
+
+json
+Copy code
+[
+  {
+    "_id": "",
+    "count": 0
   }
-  ```
+]
+Get Value Distribution for a Key
+URL: /value-distribution/:database/:collection/:key
 
-- **Response:**
+Method: GET
 
-  ```json
-  [
-      {
-        count: 108000, // how many documents have this particullar key?
-        type: 'ObjectId', // datatype(s)
-        name: '_id', // key name
-        probability: 1, // how many documents have this particullar key, but now in percent [0.0, 1.0]
-        types: { ObjectId: [Array] } // every datatype of the given key and an array with all occuring concrete values for this particular key
-      },
-      {
-        count: 34529,
-        type: [ 'String', 'Undefined' ],
-        name: 'address',
-        probability: 0.319712962962963,
-        types: { String: [Array], Undefined: undefined }
-      },
-      {
-        count: 34360,
-        type: [ 'String', 'Undefined' ],
-        name: 'company',
-        probability: 0.3181481481481481,
-        types: { String: [Array], Undefined: undefined }
-      },
-      {
-        count: 34099,
-        type: [ 'Date', 'Undefined' ],
-        name: 'date',
-        probability: 0.3157314814814815,
-        types: { Date: [Array], Undefined: undefined }
-      },
-  ...
-  ]
-  ```
+Description: Retrieves the distribution of values for a specific key in a collection, including percentages.
+
+Request Parameters:
+
+database (name of the database)
+collection (name of the collection)
+key (name of the key to get value distribution for)
+Response:
+
+json
+Copy code
+[
+  {
+    "value": "",
+    "percentage": 0
+  }
+]
+Environment Configuration
+Additionally, there's an .env.local file that contains configuration variables for the MongoDB URL, Express port, client origin, and Docker usage.
+
+ini
+Copy code
+# MongoDB url string
+MONGO_URL=localhost
+MONGO_PORT=5001
+DB_NAME=admin
+MONGO_USER=null
+MONGO_PASS=null
+
+# Express config
+EXPRESS_PORT=4000
+
+# Client-side config
+CLIENT_ORIGIN="http://localhost:3000"
+
+# Docker config
+DOCKER="true" # Set to false if
