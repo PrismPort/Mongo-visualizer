@@ -1,27 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { buildQuery } from "../_utils/queryBuilder";
-import { sendQuery } from "../_utils/sendQuery";
 import { AppContext } from "./AppContext";
-
 import { getDocumentsFromCollection } from "../_utils/getDocumentsFromCollection";
 import { getUniqueValuesForKey } from "../_utils/getUniqueValuesForKey";
-import { getValueDistributionForKey } from "../_utils/getValueDistributionForKey";
-import { getDocumentCountForKey } from "../_utils/getDocumentCountForKey";
 import { calculateInitialToggleStates } from "../_utils/calculateInitialToggleStates";
-import { get } from "http";
 
 const GraphContext = createContext();
 
 export const useGraphContext = () => useContext(GraphContext);
 
 export const GraphProvider = ({ children }) => {
-  const { data: initialData, database, collection } = useContext(AppContext);
+  const {
+    data: initialKeysData,
+    database,
+    collection,
+  } = useContext(AppContext);
 
   const [initialFetchState, setInitialFetchState] = useState(null);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [sidebarItemsVisibility, setSidebarItemsVisibility] = useState({});
 
-  const [chartsData, setChartsData] = useState({});
+  // const [chartsData, setChartsData] = useState({});
   const [query, setQuery] = useState({});
   const [toggleStates, setToggleStates] = useState({});
   const [shouldFetch, setShouldFetch] = useState(false);
@@ -39,97 +38,93 @@ export const GraphProvider = ({ children }) => {
   }, [collection, database]);
 
   useEffect(() => {
-    if (initialData) {
-      setToggleStates(calculateInitialToggleStates(initialData));
+    if (initialKeysData) {
+      //setToggleStates(calculateInitialToggleStates(initialData));
 
-      console.log("initialData in GraphContext", initialData);
+      console.log("initialData in GraphContext", initialKeysData);
 
-      getDocumentsFromCollection(database, collection, 1000).then((data) => {
-        if (data) {
+      getDocumentsFromCollection(database, collection).then((documentsData) => {
+        if (documentsData) {
           console.log(
             "data arriving in GraphContext from getDocumentsFromCollection",
-            data
+            documentsData
           );
-          setToggleDependencies(data);
+          setToggleStates(
+            calculateInitialToggleStates(initialKeysData, database, collection)
+          );
+          setToggleDependencies(documentsData);
         }
       });
     }
-  }, [initialData]);
+  }, [initialKeysData]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await sendQuery(query, database, collection);
+      const data = await getDocumentsFromCollection(
+        database,
+        collection,
+        query
+      );
+
+      console.log("data in FETCH GraphContext", data);
+
       if (data) {
         let updatedToggleStates = { ...toggleStates };
+        let updatedChartsData = { ...chartsData };
         const isFirstFetch = !initialFetchState;
 
         if (isFirstFetch) {
           setInitialFetchState(data);
         }
 
-        selectedKeys.forEach((key) => {
-          console.log(
-            `documents count`,
-            getDocumentCountForKey(database, collection, key.name)
+        for (const key of selectedKeys) {
+          const uniqueValues = await getUniqueValuesForKey(
+            database,
+            collection,
+            key.name,
+            query
           );
 
-          console.log(
-            `unique values`,
-            getUniqueValuesForKey(database, collection, key.name)
-          );
+          // Initialize countsMap
+          let countsMap = uniqueValues.reduce((map, value) => {
+            map[value.value] = 0;
+            return map;
+          }, {});
 
-          if (key.type.includes("Array")) {
-            console.log(
-              "Here i am",
-              data.schema.find((item) => item.name === key.name)
-            );
-            const schemaItem = data.schema.find(
-              (item) => item.name === key.name
-            ).types[0].types[0];
-
-            console.log("schemaItem nested", schemaItem);
-          }
-
-          const schemaItem = data.schema.find((item) => item.name === key.name);
-          const valuesArray = schemaItem?.types?.[0]?.values || [];
-
-          const type = schemaItem?.types?.[0]?.bsonType || "string";
-          // Initialize countsMap with all possible values for the key, with counts set to 0
-          let countsMap = {};
-          toggleStates[key.name].forEach((toggle) => {
-            countsMap[toggle.value] = 0;
-          });
+          console.log("countsMap", countsMap);
 
           // Update countsMap with actual counts
-          valuesArray.forEach((value) => {
-            countsMap[value] = (countsMap[value] || 0) + 1;
+          data.forEach((doc) => {
+            const value = doc[key.name];
+            if (value !== undefined && countsMap.hasOwnProperty(value)) {
+              countsMap[value]++;
+            }
           });
 
-          // Update toggle states for missing values
-          if (!isFirstFetch && updatedToggleStates[key.name]) {
-            updatedToggleStates[key.name] = updatedToggleStates[key.name].map(
-              (toggle) => {
-                return {
-                  ...toggle,
-                  type: type,
-                  occurance: countsMap[toggle.value] || 0,
-                  checked: !!countsMap[toggle.value],
-                };
-              }
-            );
-          }
+          console.log("unique values in fetch after update", uniqueValues);
 
-          setChartsData((prevData) => ({
-            ...prevData,
-            [key.name]: {
-              labels: Object.keys(countsMap),
-              counts: Object.values(countsMap),
-              type: type,
-            },
-          }));
-        });
+          // Update toggle states
+          updatedToggleStates = updatedToggleStates[key.name].map((toggle) => {
+            if (toggle.value in countsMap) {
+              toggle.occurance = countsMap[toggle.value];
+              toggle.checked = true;
+            } else {
+              toggle.occurance = 0;
+              toggle.checked = false;
+            }
+          });
 
+          // // Update charts data
+          // updatedChartsData[key.name] = {
+          //   labels: Object.keys(countsMap),
+          //   counts: Object.values(countsMap),
+          //   type: uniqueValues[0]?.type || "string", // Default type if not available
+          // }
+        }
+
+        // Set the updated states
         setToggleStates(updatedToggleStates);
+        // setChartsData(updatedChartsData);
       }
     };
 
@@ -163,8 +158,14 @@ export const GraphProvider = ({ children }) => {
     setToggleStates((prevStates) => {
       const newStates = { ...prevStates, [key]: toggles };
 
+      console.log("toggles in update toggle state", toggles);
+
+      console.log("newStates", newStates);
+
       // Find toggles that were turned on
       const togglesTurnedOn = toggles.filter((toggle) => toggle.checked);
+
+      console.log("togglesTurnedOn", togglesTurnedOn);
 
       if (togglesTurnedOn.length > 0) {
         // Iterate over the toggles that were turned on
@@ -173,6 +174,8 @@ export const GraphProvider = ({ children }) => {
           const matchingDependencies = toggleDependencies.filter(
             (dependency) => dependency[key] === toggle.value
           );
+
+          console.log("matchingDependencies", matchingDependencies);
 
           // Update all fields in matching dependencies
           matchingDependencies.forEach((dependency) => {
@@ -206,7 +209,7 @@ export const GraphProvider = ({ children }) => {
   const GraphContextValue = {
     initialFetchState,
     selectedKeys,
-    chartsData,
+    // chartsData,
     handleSelectkey,
     query,
     toggleStates,

@@ -1,25 +1,30 @@
 // Define a function to calculate the initial toggle states
-export function calculateInitialToggleStates(initialData) {
+import { getUniqueValuesForKey } from "./getUniqueValuesForKey";
+
+export function calculateInitialToggleStates(
+  initialKeysData,
+  database,
+  collection
+) {
   const newToggleStates = {};
 
-  initialData.forEach((field) => {
-    const fieldName = field.name;
-    const fieldValues = field.types[0]?.values || [];
-
-    const occurrences = fieldValues.reduce((acc, value) => {
-      acc[value] = (acc[value] || 0) + 1;
-      return acc;
-    }, {});
-
-    newToggleStates[fieldName] = Object.keys(occurrences).map((value) => ({
-      value: value,
-      type: field.types[0]?.bsonType || "string",
-      occurance: occurrences[value],
-      checked: true,
-    }));
+  initialKeysData.forEach((key) => {
+    newToggleStates[key.name] = [];
+    getUniqueValuesForKey(database, collection, key.name).then(
+      (uniqueValues) => {
+        uniqueValues.forEach((value) => {
+          newToggleStates[key.name].push({
+            value: value.value,
+            type: key.type,
+            occurance: value.count,
+            checked: true,
+          });
+        });
+      }
+    );
   });
 
-  console.log("returning initial newToggleStates", newToggleStates);
+  console.log("new toggle states", newToggleStates);
 
   return newToggleStates;
 }

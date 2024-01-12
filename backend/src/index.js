@@ -60,7 +60,7 @@ app.get("/query-databases", getDatabases);
 
 app.get("/query/:database", getCollections);
 
-app.get("/query/:database/:collection/:limit", getDocumentsFromCollection);
+app.get("/query-documents/:database/:collection", getDocumentsFromCollection);
 
 app.get("/analyze/:database/:collection", analyzeDatabase);
 
@@ -68,7 +68,7 @@ app.post("/query/:database/:collection", queryDatabase);
 
 app.get("/documentcount/:database/:collection/:key", getDocumentCountForKey);
 
-app.get("/uniquevalues/:database/:collection/:key", getUniqueValuesForKey);
+app.get("/uniquevalues/:database/:collection/:key/", getUniqueValuesForKey);
 
 // experiments with docker api
 // TODO: routes should be deactivated if 'DOCKER = false' in .env

@@ -122,7 +122,8 @@ export const getCollections = async (req, res) => {
 };
 
 export const getDocumentsFromCollection = async (req, res) => {
-  const { database, collection, limit } = req.params;
+  const { database, collection } = req.params;
+  const { query = {}, limit = 1000 } = req.query;
 
   try {
     const client = getClientInstance();
@@ -131,7 +132,7 @@ export const getDocumentsFromCollection = async (req, res) => {
     const db = client.db(database);
     const collections = await db
       .collection(collection)
-      .find()
+      .find(JSON.parse(query))
       .limit(parseInt(limit))
       .toArray();
 
@@ -153,7 +154,7 @@ export const analyzeDatabase = async (req, res) => {
     const db = client.db(database);
     const collections = await db.collection(collection).find().toArray();
 
-    console.log("collections in backend analyzeDatabase", collections);
+    //console.log("collections in backend analyzeDatabase", collections);
 
     const schema = await analyzeCollection(collections, true);
 
@@ -206,22 +207,42 @@ export const getDocumentCountForKey = async (req, res) => {
 
 export const getUniqueValuesForKey = async (req, res) => {
   const { database, collection, key } = req.params;
+  const { query = {} } = req.query;
   const client = getClientInstance();
 
   try {
     const db = client.db(database);
+    const parsedQuery = JSON.parse(query);
+
+    console.log("parsedQuery", parsedQuery);
+
     const aggregation = await db
       .collection(collection)
       .aggregate([
+        { $match: parsedQuery },
         { $match: { [key]: { $exists: true } } },
-        { $group: { _id: `$${key}`, count: { $sum: 1 } } },
-        { $sort: { count: -1 } }, // Optional: sort by count
+        {
+          $group: {
+            _id: { value: `$${key}`, type: { $type: `$${key}` } },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1 } },
       ])
       .toArray();
 
-    res.json(aggregation);
+    // Transform the results to include value and type separately
+    const results = aggregation.map((item) => ({
+      value: item._id.value,
+      type: item._id.type,
+      count: item.count,
+    }));
+
+    res.json(results);
   } catch (error) {
-    console.error("Error getting unique values for key:", error);
-    res.status(500).json({ error: "Failed to get unique values for key" });
+    console.error("Error getting unique values and types for key:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to get unique values and types for key" });
   }
 };
