@@ -20,7 +20,7 @@ export const GraphProvider = ({ children }) => {
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [sidebarItemsVisibility, setSidebarItemsVisibility] = useState({});
 
-  // const [chartsData, setChartsData] = useState({});
+  const [chartsData, setChartsData] = useState({});
   const [query, setQuery] = useState({});
   const [toggleStates, setToggleStates] = useState({});
   const [shouldFetch, setShouldFetch] = useState(false);
@@ -39,16 +39,14 @@ export const GraphProvider = ({ children }) => {
 
   useEffect(() => {
     if (initialKeysData) {
-      //setToggleStates(calculateInitialToggleStates(initialData));
-
-      console.log("initialData in GraphContext", initialKeysData);
+      // console.log("initialData in GraphContext", initialKeysData);
 
       getDocumentsFromCollection(database, collection).then((documentsData) => {
         if (documentsData) {
-          console.log(
-            "data arriving in GraphContext from getDocumentsFromCollection",
-            documentsData
-          );
+          // console.log(
+          //   "data arriving in GraphContext from getDocumentsFromCollection",
+          //   documentsData
+          // );
           setToggleStates(
             calculateInitialToggleStates(initialKeysData, database, collection)
           );
@@ -78,53 +76,68 @@ export const GraphProvider = ({ children }) => {
         }
 
         for (const key of selectedKeys) {
-          const uniqueValues = await getUniqueValuesForKey(
+          const uniqueValuesResult = await getUniqueValuesForKey(
             database,
             collection,
             key.name,
             query
           );
 
-          // Initialize countsMap
-          let countsMap = uniqueValues.reduce((map, value) => {
-            map[value.value] = 0;
-            return map;
-          }, {});
+          // Create a map from unique values for easy lookup
+          const uniqueValueMap = new Map(
+            uniqueValuesResult.map((uv) => [uv.value, uv])
+          );
 
-          console.log("countsMap", countsMap);
+          // Merge uniqueValues with existing toggleStates
+          updatedToggleStates[key.name] = updatedToggleStates[key.name].map(
+            (toggle) => {
+              if (uniqueValueMap.has(toggle.value)) {
+                // Update existing toggle with new count and maintain its checked status
+                return {
+                  ...toggle,
+                  occurance: uniqueValueMap.get(toggle.value).count,
+                  checked: toggle.checked,
+                };
+              } else {
+                // Keep toggle but set occurrence to 0 and checked to false
+                return {
+                  ...toggle,
+                  occurance: 0,
+                  checked: false,
+                };
+              }
+            }
+          );
 
-          // Update countsMap with actual counts
-          data.forEach((doc) => {
-            const value = doc[key.name];
-            if (value !== undefined && countsMap.hasOwnProperty(value)) {
-              countsMap[value]++;
+          // Ensure all unique values are represented in the toggle states
+          uniqueValuesResult.forEach((uniqueValue) => {
+            if (
+              !updatedToggleStates[key.name].some(
+                (toggle) => toggle.value === uniqueValue.value
+              )
+            ) {
+              updatedToggleStates[key.name].push({
+                value: uniqueValue.value,
+                type: uniqueValue.type,
+                occurance: uniqueValue.count,
+                checked: false,
+              });
             }
           });
 
-          console.log("unique values in fetch after update", uniqueValues);
-
-          // Update toggle states
-          updatedToggleStates = updatedToggleStates[key.name].map((toggle) => {
-            if (toggle.value in countsMap) {
-              toggle.occurance = countsMap[toggle.value];
-              toggle.checked = true;
-            } else {
-              toggle.occurance = 0;
-              toggle.checked = false;
-            }
-          });
-
-          // // Update charts data
-          // updatedChartsData[key.name] = {
-          //   labels: Object.keys(countsMap),
-          //   counts: Object.values(countsMap),
-          //   type: uniqueValues[0]?.type || "string", // Default type if not available
-          // }
+          // Update charts data
+          updatedChartsData[key.name] = {
+            labels: updatedToggleStates[key.name].map((toggle) => toggle.value),
+            counts: updatedToggleStates[key.name].map(
+              (toggle) => toggle.occurance
+            ),
+            type: uniqueValuesResult[0]?.type || "string",
+          };
         }
 
         // Set the updated states
         setToggleStates(updatedToggleStates);
-        // setChartsData(updatedChartsData);
+        setChartsData(updatedChartsData);
       }
     };
 
@@ -175,7 +188,7 @@ export const GraphProvider = ({ children }) => {
             (dependency) => dependency[key] === toggle.value
           );
 
-          console.log("matchingDependencies", matchingDependencies);
+          //console.log("matchingDependencies", matchingDependencies);
 
           // Update all fields in matching dependencies
           matchingDependencies.forEach((dependency) => {
@@ -209,7 +222,7 @@ export const GraphProvider = ({ children }) => {
   const GraphContextValue = {
     initialFetchState,
     selectedKeys,
-    // chartsData,
+    chartsData,
     handleSelectkey,
     query,
     toggleStates,
