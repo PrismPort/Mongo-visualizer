@@ -7,10 +7,8 @@ import { ChartLandscapeDiv } from './util/chart_divs';
 class NumberBarChart {
   constructor(data) {
     this.own_data = data;
-    this.card = ChartLandscapeDiv;
   }
   getComponent() {
-    const Card = this.card;
     const val = this.own_data.types[0].values;
     const lab = val.map(v => `i=${v}`)
     const options = {
@@ -31,13 +29,13 @@ class NumberBarChart {
       }]
     };
     return (
-      <Card>
+      <ChartLandscapeDiv>
         <ChartHeading inner_text={this.own_data.name} />
         <Bar
           data={data}
           options={options}
         />
-      </Card>
+      </ChartLandscapeDiv>
     )
   }
 }
