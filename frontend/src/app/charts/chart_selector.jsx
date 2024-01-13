@@ -209,7 +209,7 @@ function DocumentInnerChart({ line }) {
 const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
 SELECTOR.register(numberChallenge, NumberBarChart);
-// SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
+SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
 //  SELECTOR.register(stringChallenge, StringChartClass);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
