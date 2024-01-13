@@ -1,4 +1,4 @@
-import { NumberBarChart } from './components/number_bar_chart';
+import { numberChallenge, NumberBarChart } from './components/number_bar_chart';
 import { StringListChart } from './components/string_list_chart';
 import { DateBarChart } from './components/date_bar_chart';
 import { BooleanDoughnutChart } from './components/boolean_doughnut_chart';
@@ -138,16 +138,7 @@ function stringChallenge(data) {
   }
 }
 
-function numberChallenge(data) {
-  if (data.type instanceof Array
-    && data.type.includes('Number')) {
-    return true;
-  } else if (data.type === 'Number') {
-    return true;
-  } else {
-    return false;
-  }
-}
+
 
 function booleanChallenge(data) {
   // console.log('data', data)
@@ -178,7 +169,6 @@ class DocumentChart {
   }
   getComponent() {
     const components = [];
-    console.log(this.own_data.types[0].fields)
     this.own_data?.types[0].fields?.forEach((document, index) => {
       const chart = SELECTOR.getChartFor(document);
       // chart.setComponentKey(`chart-${index}`)

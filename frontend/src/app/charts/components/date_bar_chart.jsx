@@ -12,6 +12,9 @@ ChartJS.register(
 );
 import { Bar } from 'react-chartjs-2';
 
+/*
+date datatype: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/#mongodb-bsontype-Date
+*/
 export function isDate(scheme_description) {
   return scheme_description.type.includes("Date")
 }

@@ -1,19 +1,7 @@
-import React from 'react';
-import Chart from 'chart.js/auto';
-// TODO: implement treeshaking when done.
-// import {
-//   Chart as ChartJS,
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-// } from "chart.js";
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-// );
+import Chart from 'chart.js/auto';  // TODO: implement treeshaking when done.
+
 import { Doughnut } from 'react-chartjs-2';
-import ChartHeading from './chart_heading';
+import { ChartHeading } from './util/chart_heading';
 
 /*
 date datatype: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/#mongodb-bsontype-Date
