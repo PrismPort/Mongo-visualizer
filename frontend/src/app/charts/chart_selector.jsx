@@ -67,7 +67,7 @@ class ToggleSwitchManager {
 function makeQuery(key, value) {
   return { [key]: { $ne: value } };
 }
-class StringChartClass {
+class StringChart {
   constructor(data) {
     this.data = data;
   }
@@ -75,12 +75,11 @@ class StringChartClass {
     return (
       <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
         <p>A string chart:</p>
-        <p>{this.data}</p>
       </div>
     )
   }
 }
-function StringChart({ name, path }) {
+function OStringChart({ name, path }) {
   const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
   const own_data = data.find((item) => {
     // console.log('str', item)
@@ -173,25 +172,27 @@ function documentChallenge(data) {
   }
 }
 
-function DocumentChart({ name }) {
-  const { data } = useContext(AppContext);
-  const own_data = data.find((item) => (item.name === name));
-  // console.log('own_data', own_data);
-  const values = own_data.types[0].fields;
-  // console.log(values)
-  try {
+class DocumentChart {
+  constructor(data) {
+    this.own_data = data;
+  }
+  getComponent() {
+    const components = [];
+    console.log(this.own_data.types[0].fields)
+    this.own_data?.types[0].fields?.forEach((document, index) => {
+      const chart = SELECTOR.getChartFor(document);
+      // chart.setComponentKey(`chart-${index}`)
+      const Component = chart.getComponent();
+      components.push(Component);
+    });
     return (
       <>
         <div className='aspect-[3/4] rounded-lg border-2 border-black p-12'>
-          <h1><b>{name}</b></h1>
-          {values.map((thing, index) =>
-            <RegularChart key={`document-chart-${name}-${index}`} line={thing} />
-          )}
+          <h1>{this.own_data.name}</h1>
+          {components}
         </div>
       </>
     )
-  } catch (error) {
-    console.error(error.toString())
   }
 }
 
@@ -210,8 +211,8 @@ const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
 SELECTOR.register(numberChallenge, NumberBarChart);
 SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
+SELECTOR.register(stringChallenge, StringChart);
+SELECTOR.register(documentChallenge, DocumentChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
-//  SELECTOR.register(stringChallenge, StringChartClass);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
-// SELECTOR.register(documentChallenge, DocumentChart);
 export default SELECTOR;
