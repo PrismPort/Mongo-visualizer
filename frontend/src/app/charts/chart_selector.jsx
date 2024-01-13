@@ -138,8 +138,6 @@ function stringChallenge(data) {
   }
 }
 
-
-
 function booleanChallenge(data) {
   // console.log('data', data)
   if (data.type instanceof Array

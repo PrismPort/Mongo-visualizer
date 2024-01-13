@@ -2,23 +2,7 @@ import Chart from 'chart.js/auto';  // TODO: implement treeshaking when done.
 
 import { Doughnut } from 'react-chartjs-2';
 import { ChartHeading } from './util/chart_heading';
-
-/*
-date datatype: https://www.mongodb.com/docs/manual/reference/mongodb-extended-json/#mongodb-bsontype-Date
-*/
-export function isDate(scheme_description) {
-  return scheme_description.type.includes("Date")
-}
-
-const NumberGenerator = {
-  getAThousandExtremeNumbers() {
-    const numbers = [];
-    for (let i = 0; i < 1000; i++) {
-      numbers.push(Math.pow(10, Math.round(Math.random() * 10)))
-    }
-    return numbers;
-  }
-}
+import { ChartPortraitDiv } from './util/chart_divs';
 
 const FAKE_DATA = {
   labels: ['true', 'false'],
@@ -37,9 +21,10 @@ const FAKE_DATA = {
 export class BooleanDoughnutChart {
   constructor(data) {
     this.own_data = data;
+    this.card = ChartPortraitDiv;
   }
   getComponent() {
-
+    const Card = this.card;
     const lab = FAKE_DATA.labels;
     const values = FAKE_DATA.values;
     const title = FAKE_DATA.name;
@@ -87,20 +72,14 @@ export class BooleanDoughnutChart {
       }],
     };
     return (
-      <Portrait>
+      <Card>
         <ChartHeading inner_text={title} />
         <Doughnut
           data={data}
           options={options}
         />
-      </Portrait >
+      </Card>
     )
   }
 }
-function Portrait({ children }) {
-  return (
-    <div className='aspect-[3/4] rounded-lg border-2 border-black p-12'>
-      {children}
-    </div>
-  )
-}
+
