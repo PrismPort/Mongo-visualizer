@@ -26,7 +26,7 @@ class ChartSelector {
   }
   getChartFor(data) {
     for (const [challenge, Chart] of this.charts) {
-      if (false && challenge(data)) {
+      if (challenge(data)) {
         return new Chart(data);
       }
     }
@@ -208,10 +208,10 @@ function DocumentInnerChart({ line }) {
 }
 const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
-//SELECTOR.register(numberChallenge, NumberBarChart);
+SELECTOR.register(numberChallenge, NumberBarChart);
+// SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
-//SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
 //  SELECTOR.register(stringChallenge, StringChartClass);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
-//SELECTOR.register(documentChallenge, DocumentChart);
+// SELECTOR.register(documentChallenge, DocumentChart);
 export default SELECTOR;
