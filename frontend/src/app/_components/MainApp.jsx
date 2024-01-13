@@ -5,7 +5,7 @@ import React, { useEffect, useContext, StrictMode } from "react";
 import { useRouter } from "next/navigation";
 
 import ToggleSwitch from "./AtomarComponents/ToggleSwitch";
-import Charts from "./ChartComponents/Charts";
+import {AllCharts} from "./ChartComponents/AllCharts";
 import DatabaseList from "./DatabaseList";
 import SideNavigation from "./NavBarComponents/SideNavigation";
 import CollectionDashboard from "./SchemaSidebarComponents/CollectionDashboard";
@@ -25,22 +25,16 @@ export default function MainApp() {
 
   // Render content if in a session or loading the session
   if (session) {
-    const ullch = new NullChart("hi")
-    console.log(ullch.getComponent())
-    const Charr = ullch.getComponent();
     return (
       <>
-      <div>
-        <Charr/>
-      </div>
-        {/* <SideNavigation />
+        <SideNavigation />
         <main style={{ overflowY: 'scroll', height: 'calc(100vh - 100px)', padding: '20px' }}>
           <StrictMode>
-            <Charts />
+            <AllCharts />
           </StrictMode>
           <ToggleSwitch />
         </main>
-        <CollectionDashboard /> */}
+        <CollectionDashboard />
       </>
     );
   }

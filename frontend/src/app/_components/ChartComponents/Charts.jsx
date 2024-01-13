@@ -12,22 +12,23 @@ export default function Charts() {
     return <NoData />
   }
   try {
-
     return (
       <>
-        {data ? () => (data || [])().map((line, index) => (
-          <SelectedChart key={`selected-chart-${index}`} line={line} />
-        )) : <NoData />}
+        {() => (data || [])().map(
+          (line, index) => (
+            <ElectedChart key={`selected-chart-${index}`} line={line} />
+          )
+        )}
       </>
     )
   } catch (error) {
     console.error(error)
   }
 }
-function SelectedChart({ line }) {
-  const properties = Array.from(Object.entries(line));
-  const Chart = SELECTOR.getChartFor(line);
-  return <>
-    {Chart.getComponent()}
-  </>
+function ElectedChart(line) {
+  const cha = SELECTOR.getChartFor(line);
+  const Chart = cha.getComponent();
+  console.log("KJDSKFDHS")
+  return Chart;
+
 }
