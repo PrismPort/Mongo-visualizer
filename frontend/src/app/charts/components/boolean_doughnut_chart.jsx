@@ -26,8 +26,6 @@ export class BooleanDoughnutChart {
 
     const options = {
       responsive: true,
-      // maintainAspectRatio: true,
-      //aspectRatio: 0.666666666, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
     };
     const data = {
       labels: lab,

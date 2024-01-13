@@ -13,17 +13,12 @@ class NumberBarChart {
     const lab = val.map(v => `i=${v}`)
     const options = {
       responsive: true,
-      // maintainAspectRatio: true,
-      //aspectRatio: 2.333333333333, // TODO: This gets overridden if height is set - dont use height and write a test? Or remove attribute?
     };
     const data = {
       labels: lab,
       datasets: [{
         label: '',
-        // barPercentage: 0.5,
-        // barThickness: 6,
         maxBarThickness: 8,
-        // minBarLength: 2,
         backgroundColor: '#2A5639',
         data: val,
       }]
