@@ -1,36 +1,21 @@
 import React, { useContext } from 'react';
-import Chart from 'chart.js/auto';
+import Chart from 'chart.js/auto';  // TODO: implement treeshaking when done.
+import { Subset } from './subset';
+import { ChartHeading } from './util/chart_heading';
+import { ChartPortraitDivRed } from './util/chart_divs';
 
-import { AppContext } from '../adapter';
-
-export class NullChart {
-  constructor(data) {
-    this.data = data;
+class NullChart {
+  constructor(subset) {
+    this.subset = subset;
   }
   getComponent() {
     return (
-      <NullChart own_data={this.data} />
+      <ChartPortraitDivRed>
+        <ChartHeading inner_text={'There is no Chart registered for this subset.'} />
+        <code><pre>{Subset.toPrettyString(this.subset)}</pre></code>
+      </ChartPortraitDivRed>
     );
-
-    function NullChart({ own_data }) {
-      const { data } = useContext(AppContext);
-      return (
-        <div className="rounded-lg border-black border-solid border-2 bg-red-500 p-4">
-          <p>There is no chart defined for this:</p>
-          <p>{JSON.stringify(own_data)}</p>
-        </div>
-      );
-    }
   }
 }
-function NullChartComponent({ data }) {
-  // const own_data = this.data.find((item) => item.name);
-  console.log('hey!')
-  return (
-    <div className="rounded-lg border-black border-solid border-2 bg-red-500 p-4">
-      <p>There is no chart defined for this:</p>
-      <p>{data}</p>
-      {/* <p>{`${own_data ? JSON.stringify(own_data.types, null, 2) : 'undefined'}`}</p> */}
-    </div>
-  );
-}
+
+export { NullChart };

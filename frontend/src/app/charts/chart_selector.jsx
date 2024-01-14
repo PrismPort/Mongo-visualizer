@@ -4,8 +4,7 @@ import { DateBarChart } from './components/date_bar_chart';
 import { booleanChallenge, BooleanDoughnutChart } from './components/boolean_doughnut_chart';
 import { stringChallenge, StringChart } from './components/string_chart';
 import { documentChallenge, DocumentChart } from './components/document_chart';
-import { ArrayListChart } from './components/array_list_chart';
-import { ObjectListChart } from './components/object_list_chart';
+import { arrayChallenge, ArrayChart } from './components/array_list_chart';
 import { NullChart } from './components/null_chart';
 import { AppContext } from './adapter';
 import React, { useContext } from 'react';
@@ -92,12 +91,11 @@ function DocumentInnerChart({ line }) {
 
 const SELECTOR = new ChartSelector();
 
-// selector.register((data) => (data.type === "String"), StringListChart);
 SELECTOR.register(numberChallenge, NumberBarChart);
 SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
 SELECTOR.register(stringChallenge, StringChart);
 SELECTOR.register(documentChallenge, DocumentChart);
+SELECTOR.register(arrayChallenge, ArrayChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
-// selector.register((data) => (data.type === "Array"), ArrayListChart);
 
 export default SELECTOR;

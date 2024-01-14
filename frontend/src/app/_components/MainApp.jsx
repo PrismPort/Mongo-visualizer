@@ -5,7 +5,7 @@ import React, { useEffect, useContext, StrictMode } from "react";
 import { useRouter } from "next/navigation";
 
 import ToggleSwitch from "./AtomarComponents/ToggleSwitch";
-import {AllCharts} from "./ChartComponents/AllCharts";
+import { AllCharts } from "./ChartComponents/AllCharts";
 import DatabaseList from "./DatabaseList";
 import SideNavigation from "./NavBarComponents/SideNavigation";
 import CollectionDashboard from "./SchemaSidebarComponents/CollectionDashboard";
@@ -29,9 +29,7 @@ export default function MainApp() {
       <>
         <SideNavigation />
         <main style={{ overflowY: 'scroll', height: 'calc(100vh - 100px)', padding: '20px' }}>
-          <StrictMode>
-            <AllCharts />
-          </StrictMode>
+          <AllCharts />
           <ToggleSwitch />
         </main>
         <CollectionDashboard />
