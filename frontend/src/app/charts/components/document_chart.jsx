@@ -1,31 +1,51 @@
+import { ChartHeading } from "./util/chart_heading";
+import { ChartLandscapeDiv, ChartPortraitDiv } from "./util/chart_divs";
+import SELECTOR from "../chart_selector";
+
+
+function subsetFields(subset) {
+  return subset.types[0].fields;
+}
+function subsetName(subset) {
+  return subset.name;
+}
+
+function subsetIsArray(subset) {
+  return subset.type instanceof Array;
+}
+function subsetArrayIncludesType(subset, type_) {
+  return subset.type.includes(type_);
+}
+
+function subsetIsType(subset, type_) {
+  return subset.type === type_;
+}
 class DocumentChart {
   constructor(subset) {
     this.subset = subset;
   }
   getComponent() {
-    const components = [];
-    this.subset?.types[0].fields?.forEach((document, index) => {
-      const chart = SELECTOR.getChartFor(document);
+    const children = [];
+    const name = subsetName(this.subset);
+    subsetFields(this.subset).forEach((document, index) => {
       // chart.setComponentKey(`chart-${index}`)
-      const Component = chart.getComponent();
-      components.push(Component);
+      const Chart = SELECTOR.getChartFor(document).getComponent();
+      children.push(Chart);
     });
     return (
-      <>
-        <div className='aspect-[3/4] rounded-lg border-2 border-black p-12'>
-          <h1>{this.subset.name}</h1>
-          {components}
-        </div>
-      </>
+      <ChartLandscapeDiv>
+        <ChartHeading inner_text={name} />
+        {children}
+      </ChartLandscapeDiv>
     )
   }
 }
 
 function documentChallenge(subset) {
-  if (subset.type instanceof Array
-    && subset.type.includes('Document')) {
+  if (subsetIsArray(subset)
+    && subsetArrayIncludesType(subset, 'Document')) {
     return true;
-  } else if (subset.type === 'Document') {
+  } else if (subsetIsType(subset, 'Document')) {
     return true;
   } else {
     return false;

@@ -10,15 +10,6 @@ import { NullChart } from './components/null_chart';
 import { AppContext } from './adapter';
 import React, { useContext } from 'react';
 
-
-function Button({ label, onClick }) {
-  return (
-    <li>
-      <button onClick={onClick}>{label}</button>
-    </li>
-  );
-};
-
 class ChartSelector {
   constructor() {
     this.charts = new Array();
@@ -32,7 +23,6 @@ class ChartSelector {
         return new Chart(subset);
       }
     }
-    const initial_data = subset;
     return new NullChart(subset);
   }
 }
@@ -42,30 +32,6 @@ class ChartSelector {
 // Number, Dates (als Chart zwischen min. & max.)
 // Bool (als Chart) 
 // Array, Objects (als Listen)
-
-class Connector {
-  #context
-  constructor() {
-    this.#context = AppContext;
-  }
-
-}
-
-class ToggleSwitchManager {
-  constructor() {
-    this.context = AppContext;
-    this.switches = [];
-  }
-  register(toggle_switch) {
-    toggle_switch.
-      this.switches.push(toggle_switch);
-  }
-  getConnectedToggleSwitch(something) {
-    // TODO use the existing toggle and listen to its state (?)
-
-  }
-}
-
 
 function OStringChart({ name, path }) {
   const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
@@ -87,10 +53,10 @@ function OStringChart({ name, path }) {
   return (
     <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
       <p>A string chart:</p>
-      {/* {values.map(
+      {values.map(
                 (value, index) => (<p key={`string-chart-${name}-value${index}`}>{value}</p>)
-            )} */}
-      {/* <ul>
+            )}
+      <ul>
                 {values.map(
                     (value, index) => (
                         <Button
@@ -108,7 +74,7 @@ function OStringChart({ name, path }) {
                         />
                     )
                 )}
-            </ul> */}
+            </ul>
     </div>
   );
 }
