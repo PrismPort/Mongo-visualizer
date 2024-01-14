@@ -52,6 +52,6 @@ export class BooleanDoughnutChart {
 
 
 export function booleanChallenge(subset) {
-  return (Subset.typeIncludes(subset, 'Number')
-    || Subset.typeIs(subset, 'Number'));
+  return (Subset.typeIncludes(subset, 'Boolean')
+    || Subset.typeIs(subset, 'Boolean'));
 }
