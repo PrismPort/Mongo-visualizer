@@ -49,14 +49,14 @@ function numberChallenge(subset) {
 }
 
 function isTypeNumber(subset) {
-  return (isOfTypeNumberString(subset) || isOfTypeNumberArray(subset))
+  return (isTypeNumberString(subset) || isTypeNumberArray(subset))
 }
 
-function isOfTypeNumberString(subset) {
+function isTypeNumberString(subset) {
   return subset.type === 'Number';
 }
 
-function isOfTypeNumberArray(subset) {
+function isTypeNumberArray(subset) {
   return (subset.type instanceof Array
     && subset.type.includes('Number')
     && subset.type.length === 1);

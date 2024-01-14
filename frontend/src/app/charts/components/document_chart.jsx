@@ -1,4 +1,5 @@
 import { ChartHeading } from "./util/chart_heading";
+import { Subset } from './subset'
 import { ChartLandscapeDiv, ChartPortraitDiv } from "./util/chart_divs";
 import SELECTOR from "../chart_selector";
 
@@ -23,18 +24,20 @@ function subsetIsType(subset, type_) {
 class DocumentChart {
   constructor(subset) {
     this.subset = subset;
+    console.log(this.subset.getFields())
+    console.log(subset.getFields())
   }
   getComponent() {
     const children = [];
-    const name = subsetName(this.subset);
-    subsetFields(this.subset).forEach((document, index) => {
+    const fields = this.subset.getFields();
+    fields.forEach((document, index) => {
       // chart.setComponentKey(`chart-${index}`)
       const Chart = SELECTOR.getChartFor(document).getComponent();
       children.push(Chart);
     });
     return (
       <ChartLandscapeDiv>
-        <ChartHeading inner_text={name} />
+        <ChartHeading inner_text={this.subset.getName()} />
         {children}
       </ChartLandscapeDiv>
     )

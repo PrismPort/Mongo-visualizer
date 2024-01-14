@@ -1,31 +1,26 @@
 class Subset {
-  constuctor(subset) {
-    this.subset = subset;
+  constuctor(obj) {
+    if (!obj) {
+      throw new TypeError(`Cannot make subset out of ${obj}.`)
+    }
+    this.obj = obj;
   }
-
+  typeIncludes(type_) {
+    return (this.obj.type instanceof Array
+      && this.obj.type.includes(type_));
+  }
+  typeIs(type_) {
+    return this.obj.type === type_;
+  }
+  get values() {
+    return this.obj.types[0].values;
+  }
+  getName() {
+    return this.obj?.name || 'no name';
+  }
+  getFields() {
+    return this.obj.types[0].fields;
+  }
 }
 
-function subsetValues(subset) {
-  return subset.types[0].values;
-}
-
-function subsetName(subset) {
-  return subset.name;
-}
-function subsetFields(subset) {
-  return subset.types[0].fields;
-}
-function subsetName(subset) {
-  return subset.name;
-}
-
-function subsetIsArray(subset) {
-  return subset.type instanceof Array;
-}
-function subsetArrayIncludesType(subset, type_) {
-  return subset.type.includes(type_);
-}
-
-function subsetIsType(subset, type_) {
-  return subset.type === type_;
-}
+export { Subset };

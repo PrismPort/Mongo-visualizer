@@ -8,6 +8,7 @@ import { ArrayListChart } from './components/array_list_chart';
 import { ObjectListChart } from './components/object_list_chart';
 import { NullChart } from './components/null_chart';
 import { AppContext } from './adapter';
+import { Subset } from './components/subset';
 import React, { useContext } from 'react';
 
 class ChartSelector {
@@ -54,27 +55,27 @@ function OStringChart({ name, path }) {
     <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
       <p>A string chart:</p>
       {values.map(
-                (value, index) => (<p key={`string-chart-${name}-value${index}`}>{value}</p>)
-            )}
+        (value, index) => (<p key={`string-chart-${name}-value${index}`}>{value}</p>)
+      )}
       <ul>
-                {values.map(
-                    (value, index) => (
-                        <Button
-                            key={`string-chart-${name}-button-${index}`}
-                            label={value}
-                            onClick={
-                                async function get() {
-                                    let result;
-                                    result = await sendQuery(makeQuery(name, value), 'db', 'collection')
-                                    // console.log(result)
-                                    // updateData(result);  <-- This breaks everything
-                                    updateStats(result);
-                                }
-                            }
-                        />
-                    )
-                )}
-            </ul>
+        {values.map(
+          (value, index) => (
+            <Button
+              key={`string-chart-${name}-button-${index}`}
+              label={value}
+              onClick={
+                async function get() {
+                  let result;
+                  result = await sendQuery(makeQuery(name, value), 'db', 'collection')
+                  // console.log(result)
+                  // updateData(result);  <-- This breaks everything
+                  updateStats(result);
+                }
+              }
+            />
+          )
+        )}
+      </ul>
     </div>
   );
 }
@@ -108,9 +109,9 @@ function DocumentInnerChart({ line }) {
 }
 const SELECTOR = new ChartSelector();
 // selector.register((data) => (data.type === "String"), StringListChart);
-SELECTOR.register(numberChallenge, NumberBarChart);
-SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
-SELECTOR.register(stringChallenge, StringChart);
+// SELECTOR.register(numberChallenge, NumberBarChart);
+// SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
+// SELECTOR.register(stringChallenge, StringChart);
 SELECTOR.register(documentChallenge, DocumentChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
