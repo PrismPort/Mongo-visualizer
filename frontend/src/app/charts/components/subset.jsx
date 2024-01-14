@@ -10,7 +10,25 @@ const Subset = {
     return subset_.types[0].values;
   },
   getArrayValues(subset_) {
-    return [];
+    let ret = [];
+    const lengths = subset_.types[0].lengths;
+    const values = subset_.types[0].types[0].values;
+    // TODO: refactor this pos
+    let i = 0;
+    let j = 0;
+    while (i < values.length && i < 1000) {
+      let k = i;
+      let arr = [];
+      while (k < lengths[j] + i && k < 1000) { 
+        arr.push(values[k])
+        k++;
+      }
+      ret.push(arr)
+      i = k;
+      j++;
+    }
+
+    return ret;
   },
   getName(subset_) {
     return subset_.name;
@@ -19,7 +37,7 @@ const Subset = {
     return subset_.types[0].fields;
   },
   toPrettyString(subset_) {
-    return JSON.stringify(subset_,null,4);
+    return JSON.stringify(subset_, null, 4);
   }
 }
 export { Subset };

@@ -77,3 +77,4 @@ out/
 *.log
 node_modules/
 frontend/src/app/charts/data_example.js
+frontend/src/app/charts/data_example_array.json
