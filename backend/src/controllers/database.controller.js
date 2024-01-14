@@ -214,8 +214,6 @@ export const getUniqueValuesForKey = async (req, res) => {
     const db = client.db(database);
     const parsedQuery = JSON.parse(query);
 
-    console.log("parsedQuery", parsedQuery);
-
     const aggregation = await db
       .collection(collection)
       .aggregate([

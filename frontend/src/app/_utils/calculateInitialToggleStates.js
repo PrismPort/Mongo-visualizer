@@ -1,28 +1,35 @@
-// Define a function to calculate the initial toggle states
 import { getUniqueValuesForKey } from "./getUniqueValuesForKey";
+import { getDocumentsFromCollection } from "./getDocumentsFromCollection";
 
-export function calculateInitialToggleStates(
+export async function calculateInitialToggleStates(
   initialKeysData,
   database,
   collection
 ) {
   const newToggleStates = {};
 
-  initialKeysData.forEach((key) => {
+  const documentsData = await getDocumentsFromCollection(database, collection);
+
+  for (const key of initialKeysData) {
     newToggleStates[key.name] = [];
-    getUniqueValuesForKey(database, collection, key.name).then(
-      (uniqueValues) => {
-        uniqueValues.forEach((value) => {
-          newToggleStates[key.name].push({
-            value: value.value,
-            type: key.type,
-            occurance: value.count,
-            checked: true,
-          });
-        });
-      }
+    const uniqueValues = await getUniqueValuesForKey(
+      database,
+      collection,
+      key.name
     );
-  });
+    for (const value of uniqueValues) {
+      const dependents = documentsData
+        .filter((document) => document[key.name] === value.value)
+        .map((document) => document._id);
+      newToggleStates[key.name].push({
+        value: value.value,
+        type: key.type,
+        occurance: value.count,
+        checked: true,
+        dependents: dependents,
+      });
+    }
+  }
 
   console.log("new toggle states", newToggleStates);
 

@@ -5,7 +5,7 @@ import StringList from "./StringList.jsx";
 import RangeBarChart from "./RangeBarChart.jsx";
 
 const GraphComponent = () => {
-  const { selectedKeys, chartsData } = useGraphContext();
+  const { selectedKeys, toggleStates } = useGraphContext();
 
   if (selectedKeys.length === 0) {
     return <div>Select items to view their graphs</div>;
@@ -14,33 +14,33 @@ const GraphComponent = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4  overflow-y-auto">
       {selectedKeys.map((item) => {
-        const chartData = chartsData[item.name];
+        const chartData = toggleStates[item.name];
 
         if (chartData) {
           let chartComponent = null;
 
-          if (chartData.counts.length <= 6 && chartData.type !== "Number") {
+          if (chartData.length <= 6 && chartData[0].type !== "Number") {
             chartComponent = (
               <MyBooleanChart
                 title={item.name}
-                dataValues={chartData.counts}
-                labels={chartData.labels}
+                dataValues={chartData.map((item) => item.occurance)}
+                labels={chartData.map((item) => item.value)}
               />
             );
-          } else if (chartData.type === "Number") {
+          } else if (chartData[0].type === "Number") {
             chartComponent = (
               <RangeBarChart
                 keyName={item.name}
-                labels={chartData.labels}
-                dataValues={chartData.counts}
+                labels={chartData.map((item) => item.value)}
+                dataValues={chartData.map((item) => item.occurance)}
               />
             );
-          } else if (chartData.counts.length > 6) {
+          } else if (chartData.length > 6) {
             chartComponent = (
               <StringList
                 keyName={item.name}
-                labels={chartData.labels}
-                counts={chartData.counts}
+                labels={chartData.map((item) => item.value)}
+                counts={chartData.map((item) => item.occurance)}
               />
             );
           }
