@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import Chart from 'chart.js/auto';
-
+import { Subset } from './subset';
 import { AppContext } from '../adapter';
 import { ChartHeading } from './util/chart_heading';
 import { ChartPortraitDiv } from './util/chart_divs';
 
-export class StringChart {
+class StringChart {
   constructor(subset) {
     this.subset = subset;
   }
@@ -24,13 +24,10 @@ export class StringChart {
     )
   }
 }
-export function stringChallenge(data) {
-  if (data.type instanceof Array
-    && data.type.includes('String')) {
-    return true;
-  } else if (data.type === 'String') {
-    return true;
-  } else {
-    return false;
-  }
+
+function stringChallenge(subset) {
+  return (Subset.typeIncludes(subset, 'String')
+    || Subset.typeIs(subset, 'String'));
 }
+
+export { stringChallenge, StringChart };

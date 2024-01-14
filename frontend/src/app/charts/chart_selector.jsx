@@ -1,14 +1,13 @@
 import { numberChallenge, NumberBarChart } from './components/number_bar_chart';
 import { StringListChart } from './components/string_list_chart';
 import { DateBarChart } from './components/date_bar_chart';
-import { BooleanDoughnutChart } from './components/boolean_doughnut_chart';
+import { booleanChallenge, BooleanDoughnutChart } from './components/boolean_doughnut_chart';
 import { stringChallenge, StringChart } from './components/string_chart';
 import { documentChallenge, DocumentChart } from './components/document_chart';
 import { ArrayListChart } from './components/array_list_chart';
 import { ObjectListChart } from './components/object_list_chart';
 import { NullChart } from './components/null_chart';
 import { AppContext } from './adapter';
-import { Subset } from './components/subset';
 import React, { useContext } from 'react';
 
 class ChartSelector {
@@ -27,12 +26,6 @@ class ChartSelector {
     return new NullChart(subset);
   }
 }
-// Generelle Tasks um an ein Minimalprodukt ran zu kommen im nächsten Schritt: 
-// Wir brauchen erstmal 4 verschiedene Components für die Datentyp Views in unserem Main Chart Window. 
-// Strings (als Liste)
-// Number, Dates (als Chart zwischen min. & max.)
-// Bool (als Chart) 
-// Array, Objects (als Listen)
 
 function OStringChart({ name, path }) {
   const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
@@ -57,7 +50,7 @@ function OStringChart({ name, path }) {
       {values.map(
         (value, index) => (<p key={`string-chart-${name}-value${index}`}>{value}</p>)
       )}
-      <ul>
+      {/* <ul>
         {values.map(
           (value, index) => (
             <Button
@@ -75,22 +68,11 @@ function OStringChart({ name, path }) {
             />
           )
         )}
-      </ul>
+      </ul> */}
     </div>
   );
 }
 
-function booleanChallenge(data) {
-  // console.log('data', data)
-  if (data.type instanceof Array
-    && data.type.includes('Boolean')) {
-    return true;
-  } else if (data.type === 'Boolean') {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 
 
@@ -107,12 +89,15 @@ function DocumentInnerChart({ line }) {
   const Chart = SELECTOR.getChartFor(line);
   return <Chart name={line['name']} path={['types'][0]['types'][0]['values']} />
 }
+
 const SELECTOR = new ChartSelector();
+
 // selector.register((data) => (data.type === "String"), StringListChart);
-// SELECTOR.register(numberChallenge, NumberBarChart);
-// SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
-// SELECTOR.register(stringChallenge, StringChart);
+SELECTOR.register(numberChallenge, NumberBarChart);
+SELECTOR.register(booleanChallenge, BooleanDoughnutChart);
+SELECTOR.register(stringChallenge, StringChart);
 SELECTOR.register(documentChallenge, DocumentChart);
 // selector.register((data) => (data.type === "Date"), DateBarChart);
 // selector.register((data) => (data.type === "Array"), ArrayListChart);
+
 export default SELECTOR;

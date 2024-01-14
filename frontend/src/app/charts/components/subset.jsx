@@ -1,26 +1,19 @@
-class Subset {
-  constuctor(obj) {
-    if (!obj) {
-      throw new TypeError(`Cannot make subset out of ${obj}.`)
-    }
-    this.obj = obj;
-  }
-  typeIncludes(type_) {
-    return (this.obj.type instanceof Array
-      && this.obj.type.includes(type_));
-  }
-  typeIs(type_) {
-    return this.obj.type === type_;
-  }
-  get values() {
-    return this.obj.types[0].values;
-  }
-  getName() {
-    return this.obj?.name || 'no name';
-  }
-  getFields() {
-    return this.obj.types[0].fields;
-  }
+const Subset = {
+  typeIncludes(subset_, type_) {
+    return (subset_.type instanceof Array
+      && subset_.type.includes(type_));
+  },
+  typeIs(subset_, type_) {
+    return subset_.type === type_;
+  },
+  getValues(subset_) {
+    return subset_.types[0].values;
+  },
+  getName(subset_) {
+    return subset_.name;
+  },
+  getFields(subset_) {
+    return subset_.types[0].fields;
+  },
 }
-
 export { Subset };

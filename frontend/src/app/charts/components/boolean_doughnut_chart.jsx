@@ -3,7 +3,7 @@ import { Doughnut } from 'react-chartjs-2';
 
 import { ChartHeading } from './util/chart_heading';
 import { ChartPortraitDiv } from './util/chart_divs';
-
+import { Subset } from './subset';
 
 export class BooleanDoughnutChart {
   constructor(subset) {
@@ -48,4 +48,10 @@ export class BooleanDoughnutChart {
       </ChartPortraitDiv>
     )
   }
+}
+
+
+export function booleanChallenge(subset) {
+  return (Subset.typeIncludes(subset, 'Number')
+    || Subset.typeIs(subset, 'Number'));
 }

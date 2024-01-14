@@ -1,24 +1,16 @@
 import Chart from 'chart.js/auto'; // TODO: implement treeshaking when done.
 import { Bar } from 'react-chartjs-2';
-
+import { Subset } from './subset';
 import { ChartHeading } from './util/chart_heading';
 import { ChartLandscapeDiv } from './util/chart_divs';
-
-function subsetValues(subset) {
-  return subset.types[0].values;
-}
-
-function subsetName(subset) {
-  return subset.name;
-}
 
 class NumberBarChart {
   constructor(subset) {
     this.subset = subset;
   }
   getComponent() {
-    const values = subsetValues(this.subset);
-    const name = subsetName(this.subset);
+    const values = Subset.getValues(this.subset);
+    const name = Subset.getName(this.subset);
     const lab = values.map(v => `i=${v}`)
     const options = {
       responsive: true,
@@ -45,28 +37,8 @@ class NumberBarChart {
 }
 
 function numberChallenge(subset) {
-  return (isTypeNumber(subset) || isTypeNumberAndUndefined(subset));
+  return (Subset.typeIncludes(subset, 'Number')
+    || Subset.typeIs(subset, 'Number'));
 }
 
-function isTypeNumber(subset) {
-  return (isTypeNumberString(subset) || isTypeNumberArray(subset))
-}
-
-function isTypeNumberString(subset) {
-  return subset.type === 'Number';
-}
-
-function isTypeNumberArray(subset) {
-  return (subset.type instanceof Array
-    && subset.type.includes('Number')
-    && subset.type.length === 1);
-}
-
-function isTypeNumberAndUndefined(subset) {
-  return (subset.type instanceof Array
-    && subset.type.includes('Number')
-    && subset.type.includes('Undefined')
-    && subset.type.length === 2);
-}
-
-export { numberChallenge, NumberBarChart }
+export { numberChallenge, NumberBarChart };
