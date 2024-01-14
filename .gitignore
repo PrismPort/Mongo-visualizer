@@ -76,3 +76,4 @@ _site
 out/
 *.log
 node_modules/
+frontend/src/app/charts/data_example.js

@@ -4,13 +4,22 @@ import { Bar } from 'react-chartjs-2';
 import { ChartHeading } from './util/chart_heading';
 import { ChartLandscapeDiv } from './util/chart_divs';
 
+function subsetValues(subset) {
+  return subset.types[0].values;
+}
+
+function subsetName(subset) {
+  return subset.name;
+}
+
 class NumberBarChart {
-  constructor(data) {
-    this.own_data = data;
+  constructor(subset) {
+    this.subset = subset;
   }
   getComponent() {
-    const val = this.own_data.types[0].values;
-    const lab = val.map(v => `i=${v}`)
+    const values = subsetValues(this.subset);
+    const name = subsetName(this.subset);
+    const lab = values.map(v => `i=${v}`)
     const options = {
       responsive: true,
     };
@@ -20,12 +29,12 @@ class NumberBarChart {
         label: '',
         maxBarThickness: 8,
         backgroundColor: '#2A5639',
-        data: val,
+        data: values,
       }]
     };
     return (
       <ChartLandscapeDiv>
-        <ChartHeading inner_text={this.own_data.name} />
+        <ChartHeading inner_text={name} />
         <Bar
           data={data}
           options={options}
@@ -35,29 +44,29 @@ class NumberBarChart {
   }
 }
 
-function numberChallenge(data) {
-  return (isTypeNumber(data) || isTypeNumberAndUndefined(data));
+function numberChallenge(subset) {
+  return (isTypeNumber(subset) || isTypeNumberAndUndefined(subset));
 }
 
-function isTypeNumber(data) {
-  return (isOfTypeNumberString(data) || isOfTypeNumberArray(data))
+function isTypeNumber(subset) {
+  return (isOfTypeNumberString(subset) || isOfTypeNumberArray(subset))
 }
 
-function isOfTypeNumberString(data) {
-  return data.type === 'Number';
+function isOfTypeNumberString(subset) {
+  return subset.type === 'Number';
 }
 
-function isOfTypeNumberArray(data) {
-  return (data.type instanceof Array
-    && data.type.includes('Number')
-    && data.type.length === 1);
+function isOfTypeNumberArray(subset) {
+  return (subset.type instanceof Array
+    && subset.type.includes('Number')
+    && subset.type.length === 1);
 }
 
-function isTypeNumberAndUndefined(data) {
-  return (data.type instanceof Array
-    && data.type.includes('Number')
-    && data.type.includes('Undefined')
-    && data.type.length === 2);
+function isTypeNumberAndUndefined(subset) {
+  return (subset.type instanceof Array
+    && subset.type.includes('Number')
+    && subset.type.includes('Undefined')
+    && subset.type.length === 2);
 }
 
 export { numberChallenge, NumberBarChart }

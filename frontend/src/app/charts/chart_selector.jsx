@@ -2,6 +2,8 @@ import { numberChallenge, NumberBarChart } from './components/number_bar_chart';
 import { StringListChart } from './components/string_list_chart';
 import { DateBarChart } from './components/date_bar_chart';
 import { BooleanDoughnutChart } from './components/boolean_doughnut_chart';
+import { stringChallenge, StringChart } from './components/string_chart';
+import { documentChallenge, DocumentChart } from './components/document_chart';
 import { ArrayListChart } from './components/array_list_chart';
 import { ObjectListChart } from './components/object_list_chart';
 import { NullChart } from './components/null_chart';
@@ -24,14 +26,14 @@ class ChartSelector {
   register(challenge, chart) {
     this.charts.push([challenge, chart]);
   }
-  getChartFor(data) {
+  getChartFor(subset) {
     for (const [challenge, Chart] of this.charts) {
-      if (challenge(data)) {
-        return new Chart(data);
+      if (challenge(subset)) {
+        return new Chart(subset);
       }
     }
-    const initial_data = data;
-    return new NullChart(data);
+    const initial_data = subset;
+    return new NullChart(subset);
   }
 }
 // Generelle Tasks um an ein Minimalprodukt ran zu kommen im nächsten Schritt: 
@@ -64,21 +66,7 @@ class ToggleSwitchManager {
   }
 }
 
-function makeQuery(key, value) {
-  return { [key]: { $ne: value } };
-}
-class StringChart {
-  constructor(data) {
-    this.data = data;
-  }
-  getComponent() {
-    return (
-      <div className="rounded-lg border-black border-solid border-2 bg-green-500 p-4">
-        <p>A string chart:</p>
-      </div>
-    )
-  }
-}
+
 function OStringChart({ name, path }) {
   const { data, sendQuery, updateData, updateStats } = useContext(AppContext);
   const own_data = data.find((item) => {
@@ -125,19 +113,6 @@ function OStringChart({ name, path }) {
   );
 }
 
-function stringChallenge(data) {
-  // console.log('strc', data);
-  // console.log('strc2', data.path);
-  if (data.type instanceof Array
-    && data.type.includes('String')) {
-    return true;
-  } else if (data.type === 'String') {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 function booleanChallenge(data) {
   // console.log('data', data)
   if (data.type instanceof Array
@@ -150,39 +125,9 @@ function booleanChallenge(data) {
   }
 }
 
-function documentChallenge(data) {
-  if (data.type instanceof Array
-    && data.type.includes('Document')) {
-    return true;
-  } else if (data.type === 'Document') {
-    return true;
-  } else {
-    return false;
-  }
-}
 
-class DocumentChart {
-  constructor(data) {
-    this.own_data = data;
-  }
-  getComponent() {
-    const components = [];
-    this.own_data?.types[0].fields?.forEach((document, index) => {
-      const chart = SELECTOR.getChartFor(document);
-      // chart.setComponentKey(`chart-${index}`)
-      const Component = chart.getComponent();
-      components.push(Component);
-    });
-    return (
-      <>
-        <div className='aspect-[3/4] rounded-lg border-2 border-black p-12'>
-          <h1>{this.own_data.name}</h1>
-          {components}
-        </div>
-      </>
-    )
-  }
-}
+
+
 
 function RegularChart({ line }) {
   const properties = Array.from(Object.entries(line));
