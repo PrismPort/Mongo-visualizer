@@ -19,7 +19,7 @@ const GraphComponent = () => {
         if (chartData) {
           let chartComponent = null;
 
-          if (chartData.length <= 6 && chartData[0].type !== "Number") {
+          if (chartData.length <= 4 && chartData[0].type !== "Number") {
             chartComponent = (
               <MyBooleanChart
                 title={item.name}
@@ -35,7 +35,7 @@ const GraphComponent = () => {
                 dataValues={chartData.map((item) => item.occurance)}
               />
             );
-          } else if (chartData.length > 6) {
+          } else if (chartData.length > 4) {
             chartComponent = (
               <StringList
                 keyName={item.name}

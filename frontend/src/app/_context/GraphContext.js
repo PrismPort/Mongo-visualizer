@@ -32,7 +32,7 @@ export const GraphProvider = ({ children }) => {
 
   useEffect(() => {
     if (initialKeysData) {
-      // console.log("initialData in GraphContext", initialKeysData);
+      console.log("initialData in GraphContext", initialKeysData);
 
       getDocumentsFromCollection(database, collection).then(
         async (documentsData) => {
@@ -159,21 +159,51 @@ export const GraphProvider = ({ children }) => {
     setToggleStates((prevStates) => {
       const newStates = { ...prevStates, [key]: toggles };
 
-      console.log("toggles in updateToggleState", toggles);
-
+      // Calculate the occurrences of each dependent key across all toggles
+      const occurrences = {};
       for (const toggle of toggles) {
         if (toggle.checked) {
-          console.log(`turn all dependents for ${toggle.value} on`);
-          toggle.dependents.forEach((dependent) => {});
-        } else if (!toggle.checked) {
-          console.log(`turn all dependents for ${toggle.value} off`);
           toggle.dependents.forEach((dependent) => {
-            const updateMe = toggleDependencies.filter(
-              (doc) => doc._id === dependent
-            );
-            console.log("updateMe", updateMe);
+            Object.keys(dependent).forEach((dependentKey) => {
+              if (!occurrences[dependentKey]) {
+                occurrences[dependentKey] = {};
+              }
+              if (!occurrences[dependentKey][dependent[dependentKey]]) {
+                occurrences[dependentKey][dependent[dependentKey]] = 0;
+              }
+              occurrences[dependentKey][dependent[dependentKey]]++;
+            });
           });
         }
+      }
+
+      // Update the checked and occurance properties of each toggle
+      for (const toggle of toggles) {
+        toggle.dependents.forEach((dependent) => {
+          Object.keys(dependent).forEach((dependentKey) => {
+            if (newStates[dependentKey]) {
+              newStates[dependentKey] = newStates[dependentKey].map(
+                (stateToggle) => ({
+                  ...stateToggle,
+                  checked:
+                    stateToggle.value === dependent[dependentKey]
+                      ? toggle.checked ||
+                        (occurrences[dependentKey]
+                          ? occurrences[dependentKey][dependent[dependentKey]] >
+                            0
+                          : false)
+                      : stateToggle.checked,
+                  occurance:
+                    stateToggle.value === dependent[dependentKey]
+                      ? (occurrences[dependentKey]
+                          ? occurrences[dependentKey][dependent[dependentKey]]
+                          : 0) || 0
+                      : stateToggle.occurance,
+                })
+              );
+            }
+          });
+        });
       }
 
       return newStates;
@@ -182,9 +212,7 @@ export const GraphProvider = ({ children }) => {
 
   const GraphContextValue = {
     initialKeysData,
-
     selectedKeys,
-
     handleSelectkey,
     query,
     toggleStates,

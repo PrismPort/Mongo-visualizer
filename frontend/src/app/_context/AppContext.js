@@ -8,17 +8,19 @@ import { useSession } from "next-auth/react";
 
 import { handleLoadCollections } from "../_utils/handleLoadCollections";
 import { handleShowDatabases } from "../_utils/handleShowDatabases";
+import { handleAnalyzeCollection } from "../_utils/handleAnalyzeCollection";
 
 export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-  const [stats, setStats] = useState([]);
   const [database, setDatabase] = useState("all");
   const [databases, setDatabases] = useState([]);
   const [collection, setCollection] = useState("all");
   const [collections, setCollections] = useState({});
   const [data, setData] = useState();
   const [collectionDbMap, setCollectionDbMap] = useState({});
+  const [keysAndDocsInfo, setKeysAndDocsInfo] = useState({});
+
   const [loadingDatabases, setLoadingDatabases] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -39,10 +41,18 @@ const AppProvider = ({ children }) => {
       console.log("Fetching databases...");
       console.log("database", database);
       if (loadingDatabases) {
-        fetchCollectionsForDatabase(database);
+        for (const db of databases) {
+          fetchCollectionsForDatabase(db);
+        }
       }
     }
   }, [isLoggedIn, loadingDatabases]); // Empty dependency array means this runs once on component mount
+
+  useEffect(() => {
+    if (Object.keys(collections).length > 0) {
+      enrichCollectionsWithKeysAndDocs(collections);
+    }
+  }, [collections]); // Depend on collections state
 
   const fetchCollectionsForDatabase = async (database) => {
     try {
@@ -81,9 +91,25 @@ const AppProvider = ({ children }) => {
       console.error("Failed to load collections:", error);
     }
   };
+  // Function to enrich collections with keys and documents info
+  const enrichCollectionsWithKeysAndDocs = async (collections) => {
+    const enrichedCollections = {};
+    for (const dbName in collections) {
+      const dbCollections = collections[dbName];
+      enrichedCollections[dbName] = {};
 
-  const updateStats = (newStats) => {
-    setStats(newStats);
+      for (const collection of dbCollections) {
+        // Assuming handleAnalyzeCollection returns an object with keys and document counts
+        const analysis = await handleAnalyzeCollection(dbName, collection);
+        if (analysis) {
+          enrichedCollections[dbName][collection] = {
+            keys: Object.keys(analysis),
+            documentCounts: Object.values(analysis).map((item) => item.count),
+          };
+        }
+      }
+    }
+    setKeysAndDocsInfo(enrichedCollections);
   };
 
   const updateDatabase = (newDatabase) => {
@@ -96,28 +122,11 @@ const AppProvider = ({ children }) => {
     console.log(`collection updated to: ${newCollection}`);
   };
 
-  const handleAnalyzeCollections = async (database, collection) => {
+  const analyzeCollections = async (database, collection) => {
     setLoading(true);
-    try {
-      const response = await fetch(
-        `http://localhost:4000/analyze/${database}/${collection}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // const datalocal = await response.json();
-      const responseData = await response.json();
-      console.log("Parsed response data:", responseData);
-      setData(responseData);
-      setStats(responseData);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    const data = await handleAnalyzeCollection(database, collection);
+    setData(data);
+    setLoading(false);
   };
 
   // Pass the fetchDataAndUpdateContext function to the children
@@ -125,7 +134,6 @@ const AppProvider = ({ children }) => {
     session,
     loadSession,
     data,
-    stats,
     database,
     databases,
     updateDatabase,
@@ -133,14 +141,14 @@ const AppProvider = ({ children }) => {
     collection,
     collections,
     fetchCollectionsForDatabase,
-    handleAnalyzeCollections,
-    updateStats,
+    analyzeCollections,
     collectionDbMap,
     isLoggedIn,
     loadingDatabases,
+    keysAndDocsInfo,
   };
 
-  //console.log(contextValue);
+  console.log(contextValue);
 
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

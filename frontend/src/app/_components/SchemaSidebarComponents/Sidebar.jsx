@@ -13,7 +13,7 @@ export default function Sidebar() {
     collection,
     collections,
     data,
-    handleAnalyzeCollections,
+    analyzeCollections,
     collectionDbMap,
   } = useContext(AppContext);
 
@@ -30,7 +30,7 @@ export default function Sidebar() {
       const selectedDatabase =
         database !== "all" ? database : findDatabaseForCollection(collection);
       if (selectedDatabase) {
-        handleAnalyzeCollections(selectedDatabase, collection);
+        analyzeCollections(selectedDatabase, collection);
       }
     }
   }, [collection, database, collections, collectionDbMap]); // Include collectionDbMap in dependencies

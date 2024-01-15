@@ -18,9 +18,9 @@ export async function calculateInitialToggleStates(
       key.name
     );
     for (const value of uniqueValues) {
-      const dependents = documentsData
-        .filter((document) => document[key.name] === value.value)
-        .map((document) => document._id);
+      const dependents = documentsData.filter(
+        (document) => document[key.name] === value.value
+      );
       newToggleStates[key.name].push({
         value: value.value,
         type: key.type,
