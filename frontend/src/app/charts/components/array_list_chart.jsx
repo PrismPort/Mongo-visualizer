@@ -16,7 +16,7 @@ class ArrayChart {
       <ChartPortraitDiv>
         <ChartHeading inner_text={this.subset.name} />
         <ul>
-          {Subset.getArrayValues(this.subset)
+          {Subset.getArraySubsets(this.subset)
             .map((value, index) =>
               <li>
                 <ChartLandscapeDiv key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
@@ -40,7 +40,7 @@ class ArrayChart {
       <ChartPortraitDiv>
         <ChartHeading inner_text={this.subset.name} />
         <ul>
-          {Subset.getArrayValues(this.subset)
+          {Subset.getArraySubsets(this.subset)
             .map((value, index) =>
               <li>
                 <ChartLandscapeDiv key={`array-chart-${Subset.getName(this.subset)}-${index}`}>

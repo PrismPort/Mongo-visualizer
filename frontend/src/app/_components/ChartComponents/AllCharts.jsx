@@ -7,6 +7,7 @@ export function AllCharts() {
   const { data } = useContext(AppContext);
   const components = [];
   data?.forEach((document, index) => {
+    console.log('document:', document);
     const chart = SELECTOR.getChartFor(document);
     const Component = chart.getComponent();
     components.push(Component);

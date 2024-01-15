@@ -9,7 +9,7 @@ const Subset = {
   getValues(subset_) {
     return subset_.types[0].values;
   },
-  getArrayValues(subset_) {
+  getArraySubsets(subset_) {
     let ret = [];
     const lengths = subset_.types[0].lengths;
     const values = subset_.types[0].types[0].values;
