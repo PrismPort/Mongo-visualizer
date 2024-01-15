@@ -13,13 +13,16 @@ const Subset = {
     let ret = [];
     const lengths = subset_.types[0].lengths;
     const values = subset_.types[0].types[0].values;
-    // TODO: refactor this pos
+    // TODO: refactor this. It turns this:
+    // values: [1, 2, 3, 4, 5, 6, 7], lengths: [2, 2, 3]
+    // into this:
+    // ret = [[1, 2], [3, 4], [5, 6, 7]]
     let i = 0;
     let j = 0;
     while (i < values.length && i < 1000) {
       let k = i;
       let arr = [];
-      while (k < lengths[j] + i && k < 1000) { 
+      while (k < lengths[j] + i && k < 1000) {
         arr.push(values[k])
         k++;
       }

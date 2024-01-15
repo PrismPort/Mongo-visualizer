@@ -3,7 +3,7 @@ import Chart from 'chart.js/auto';  // TODO: implement treeshaking when done.
 import { Subset } from './subset';
 import { AppContext } from '../adapter';
 import { ChartHeading } from './util/chart_heading';
-import { ChartPortraitDiv } from './util/chart_divs';
+import { ChartPortraitDiv, ChartLandscapeDiv } from './util/chart_divs';
 
 class ArrayChart {
   constructor(subset) {
@@ -17,17 +17,19 @@ class ArrayChart {
         <ul>
           {Subset.getArrayValues(this.subset)
             .map((value, index) =>
-              <div key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
-                <li>
+              <li>
+                <ChartLandscapeDiv>
+
                   <h2><b>{index}</b></h2>
                   <ul>
                     {value.map((v, i) => <li key={`array-chart-${Subset.getName(this.subset)}-${index}-${i}`}>
                       {v}
                     </li>)}
                   </ul>
-                </li>
-              </div>)}
-        </ul>
+                </ChartLandscapeDiv>
+              </li>
+            )}
+        </ul >
       </ChartPortraitDiv >
     )
   }
