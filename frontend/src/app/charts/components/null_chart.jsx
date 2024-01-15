@@ -12,7 +12,7 @@ class NullChart {
     return (
       <ChartPortraitDivRed>
         <ChartHeading inner_text={'There is no Chart registered for this subset.'} />
-        <code><pre>{Subset.toPrettyString(this.subset)}</pre></code>
+        <code><pre>{Subset.toString(this.subset)}</pre></code>
       </ChartPortraitDivRed>
     );
   }

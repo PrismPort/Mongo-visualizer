@@ -32,7 +32,7 @@ class NumberBarChart {
           options={options}
         />
       </ChartLandscapeDiv>
-    )
+    );
   }
 }
 

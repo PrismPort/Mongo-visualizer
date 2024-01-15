@@ -18,7 +18,7 @@ class StringChart {
           {Subset.getValues(this.subset).map((value, index) => <li key={`string-chart-${index}`}>{value}</li>)}
         </ul>
       </ChartPortraitDiv >
-    )
+    );
   }
 }
 

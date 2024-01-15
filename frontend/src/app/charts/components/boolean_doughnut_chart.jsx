@@ -46,7 +46,7 @@ class BooleanDoughnutChart {
           options={options}
         />
       </ChartPortraitDiv>
-    )
+    );
   }
 }
 

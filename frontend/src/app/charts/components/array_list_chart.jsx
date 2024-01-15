@@ -18,8 +18,8 @@ class ArrayChart {
         <ul>
           {Subset.getArraySubsets(this.subset)
             .map((value, index) =>
-              <li>
-                <ChartLandscapeDiv key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
+              <li key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
+                <ChartLandscapeDiv>
                   <h2><b>{index}</b></h2>
                   <ul>
                     {value.map((v, i) =>
@@ -32,7 +32,7 @@ class ArrayChart {
             )}
         </ul >
       </ChartPortraitDiv >
-    )
+    );
   }
   getComponentO() {
     // TODO: use better key
@@ -42,7 +42,7 @@ class ArrayChart {
         <ul>
           {Subset.getArraySubsets(this.subset)
             .map((value, index) =>
-              <li>
+              <li key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
                 <ChartLandscapeDiv key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
                   <h2><b>{index}</b></h2>
                   <ul>
@@ -56,7 +56,7 @@ class ArrayChart {
             )}
         </ul >
       </ChartPortraitDiv >
-    )
+    );
   }
 }
 

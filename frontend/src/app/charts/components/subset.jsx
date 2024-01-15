@@ -41,7 +41,7 @@ const Subset = {
   getFields(subset_) {
     return subset_.types[0].fields;
   },
-  toPrettyString(subset_) {
+  toString(subset_) {
     return JSON.stringify(subset_, null, 4);
   }
 }
