@@ -5,7 +5,7 @@ import { ChartHeading } from './util/chart_heading';
 import { ChartPortraitDiv } from './util/chart_divs';
 import { Subset } from './subset';
 
-export class BooleanDoughnutChart {
+class BooleanDoughnutChart {
   constructor(subset) {
     this.subset = subset;
   }
@@ -51,7 +51,9 @@ export class BooleanDoughnutChart {
 }
 
 
-export function booleanChallenge(subset) {
+function booleanChallenge(subset) {
   return (Subset.typeIncludes(subset, 'Boolean')
     || Subset.typeIs(subset, 'Boolean'));
 }
+
+export { booleanChallenge, BooleanDoughnutChart };
