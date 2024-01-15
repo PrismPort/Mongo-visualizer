@@ -5,10 +5,8 @@ import { AppContext } from "./AppContext";
 
 import { getDocumentsFromCollection } from "../_utils/getDocumentsFromCollection";
 import { getUniqueValuesForKey } from "../_utils/getUniqueValuesForKey";
-import { getValueDistributionForKey } from "../_utils/getValueDistributionForKey";
 import { getDocumentCountForKey } from "../_utils/getDocumentCountForKey";
 import { calculateInitialToggleStates } from "../_utils/calculateInitialToggleStates";
-import { get } from "http";
 
 const GraphContext = createContext();
 
