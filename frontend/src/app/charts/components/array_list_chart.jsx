@@ -4,6 +4,7 @@ import { Subset } from './subset';
 import { AppContext } from '../adapter';
 import { ChartHeading } from './util/chart_heading';
 import { ChartPortraitDiv, ChartLandscapeDiv } from './util/chart_divs';
+import SELECTOR from '../chart_selector';
 
 class ArrayChart {
   constructor(subset) {
@@ -18,13 +19,13 @@ class ArrayChart {
           {Subset.getArrayValues(this.subset)
             .map((value, index) =>
               <li>
-                <ChartLandscapeDiv>
-
+                <ChartLandscapeDiv key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
                   <h2><b>{index}</b></h2>
                   <ul>
-                    {value.map((v, i) => <li key={`array-chart-${Subset.getName(this.subset)}-${index}-${i}`}>
-                      {v}
-                    </li>)}
+                    {value.map((v, i) =>
+                      <li key={`array-chart-${Subset.getName(this.subset)}-${index}-${i}`}>
+                        {v}
+                      </li>)}
                   </ul>
                 </ChartLandscapeDiv>
               </li>
