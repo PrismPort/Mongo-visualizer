@@ -28,7 +28,7 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main style={{ overflowY: 'scroll', height: 'calc(100vh - 100px)', padding: '20px' }}>
+        <main className="flex flex-wrap overflow-y-auto h-screen w-screen justify-center bg-white items-center">
           <AllCharts />
           <ToggleSwitch />
         </main>
