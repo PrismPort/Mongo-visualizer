@@ -34,6 +34,30 @@ class ArrayChart {
       </ChartPortraitDiv >
     )
   }
+  getComponentO() {
+    // TODO: use better key
+    return (
+      <ChartPortraitDiv>
+        <ChartHeading inner_text={this.subset.name} />
+        <ul>
+          {Subset.getArrayValues(this.subset)
+            .map((value, index) =>
+              <li>
+                <ChartLandscapeDiv key={`array-chart-${Subset.getName(this.subset)}-${index}`}>
+                  <h2><b>{index}</b></h2>
+                  <ul>
+                    {value.map((v, i) =>
+                      <li key={`array-chart-${Subset.getName(this.subset)}-${index}-${i}`}>
+                        {v}
+                      </li>)}
+                  </ul>
+                </ChartLandscapeDiv>
+              </li>
+            )}
+        </ul >
+      </ChartPortraitDiv >
+    )
+  }
 }
 
 function arrayChallenge(subset) {
