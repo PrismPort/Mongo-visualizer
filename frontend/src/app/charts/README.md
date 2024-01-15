@@ -150,3 +150,7 @@ const a_subset = {
   }]
 }
 ```
+
+## Array Chart
+
+I don't know what will be in the Array. It would be nice if that didn't matter. To archive this, an Array Chart provides only the outer shell and creates charts itself. This way, If we can handle a data construct on the outer layer, we can handle it inside of an array.
