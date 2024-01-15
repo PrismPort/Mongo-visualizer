@@ -17,6 +17,8 @@ const Subset = {
     // values: [1, 2, 3, 4, 5, 6, 7], lengths: [2, 2, 3]
     // into this:
     // ret = [[1, 2], [3, 4], [5, 6, 7]]
+
+    // Maybe this should return a list of subsets. That way, we can reuse the SELECTOR to select each element of the Array.
     let i = 0;
     let j = 0;
     while (i < values.length && i < 1000) {
