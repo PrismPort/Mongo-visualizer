@@ -44,19 +44,20 @@ export default function Sidebar() {
   }
   return (
     <>
-      <div className="w-full flex-shrink-0 bg-gray-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black">
+
+      <div className="w-full flex-shrink-1 bg-white-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black p-4">
         <div className="p-2">
-          <u>
-            <b>SCHEMA</b>
-          </u>
+          <u><b>SCHEMA</b></u>
         </div>
-        {items.map((item, index) => (
-          <SidebarItem
-            key={index}
-            item={item}
-            visibility={sidebarItemsVisibility[item.name] || false}
-          />
-        ))}
+        <table className='w-full text-left table-auto min-w-max'>
+          {items.map((item, index) => (
+            <SidebarItem
+              key={index}
+              item={item}
+              visibility={sidebarItemsVisibility[item.name] || false}
+            />
+          ))}
+        </table>
       </div>
     </>
   );

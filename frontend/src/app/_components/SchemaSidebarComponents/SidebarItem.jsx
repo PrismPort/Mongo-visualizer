@@ -4,7 +4,7 @@ import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 import { useGraphContext } from "../../_context/GraphContext.js";
 
-export default function SidebarItem({ item: key, visibility }) {
+export default function SidebarItem({ bordercolor = null, item: key, visibility }) {
   const [open, setOpen] = useState(false);
   const { handleSelectkey, setSidebarItemsVisibility } = useGraphContext(); // Use handleSelectItem instead of selectItems
 
@@ -49,9 +49,9 @@ export default function SidebarItem({ item: key, visibility }) {
   };
 
   return (
-    <div className={`p-3 ${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
-      <div className="flex items-center justify-between text-sm">
-        <div className="m-1">
+    <>
+      <tr className={`${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
+        <td className=''>
           <EyeIcon
             label={key.name}
             name={eyeId}
@@ -59,34 +59,76 @@ export default function SidebarItem({ item: key, visibility }) {
             visibility={visibility}
             setVisibility={handleVisibilityChange}
           />
-        </div>
-        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {key.name}
-        </div>
-        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
+        </td>
+        {bordercolor === null ?
+          <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+            <b>{key.name}</b>
+          </td>
+          :
+          <td className={`border-l-[2px] border-solid border-${bordercolor} ${visibility ? "text-black" : "text-gray-400"}`}>
+            <b>{key.name}</b>
+          </td>
+        }
+        <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+          {hasNestedFields(key) && (
+            <div className="" onClick={toggleOpen}>
+              {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            </div>
+          )}
+        </td>
+        <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
           {Array.isArray(key.type) ? key.type[0] : key.type}
-        </div>
-        <div className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
+        </td>
+        <td className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
           {Math.round(key.probability * 100)}%
-        </div>
-        {hasNestedFields(key) && (
-          <div className="m-1 cursor-pointer" onClick={toggleOpen}>
-            {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
-          </div>
-        )}
-      </div>
+        </td>
+      </tr>
+
       {hasNestedFields(key) && open && (
-        <div className="pt-1 h-auto overflow-auto">
-          {key.types[0].bsonType === "Array" &&
-          key.types[0].types[0].bsonType === "Document"
+        <>{
+          key.types[0].bsonType === "Array" &&
+            key.types[0].types[0].bsonType === "Document"
             ? key.types[0].types[0].fields.map((nestedField, index) => (
-                <SidebarItem key={`array-doc-${index}`} item={nestedField} />
-              ))
+              <SidebarItem bordercolor={'blue'} key={`array-doc-${index}`} item={nestedField} />
+            ))
             : key.types[0].fields.map((nestedField, index) => (
-                <SidebarItem key={`doc-${index}`} item={nestedField} />
-              ))}
-        </div>
+              <SidebarItem bordercolor={'blue'} key={`doc-${index}`} item={nestedField} />
+            ))
+        }</>
       )}
-    </div>
+    </>
+  );
+}
+
+function GreenCell({visibility, children}){
+
+}
+
+function Cell({ visibility, children }) {
+  return visibility
+    ?
+    <CellVisible>
+      {children}
+    </CellVisible>
+    :
+    <CellInvisible>
+      {children}
+    </CellInvisible>
+
+}
+
+function CellInvisible({ children }) {
+  return (
+    <td className={'text-gray-400'}>
+      {children}
+    </td>
+  );
+}
+
+function CellVisible({ children }) {
+  return (
+    <td className={'text-black'}>
+      {children}
+    </td>
   );
 }
