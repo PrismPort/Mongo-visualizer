@@ -39,6 +39,7 @@ export default function Sidebar() {
 
   return (
     <>
+<<<<<<< HEAD
       <div className="flex h-screen justify-end">
         <div className="w-full flex-shrink-0 bg-gray-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black">
           <div className="p-2">
@@ -56,6 +57,22 @@ export default function Sidebar() {
             );
           })}
         </div>
+=======
+
+      <div className="w-full flex-shrink-1 bg-white-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black p-4">
+        <div className="p-2">
+          <u><b>SCHEMA</b></u>
+        </div>
+        <table className='w-full text-left table-auto min-w-max'>
+          {items.map((item, index) => (
+            <SidebarItem
+              key={index}
+              item={item}
+              visibility={sidebarItemsVisibility[item.name] || false}
+            />
+          ))}
+        </table>
+>>>>>>> 3c60ca5a (Squashed commits that edit SchemaSidebarComponents)
       </div>
     </>
   );

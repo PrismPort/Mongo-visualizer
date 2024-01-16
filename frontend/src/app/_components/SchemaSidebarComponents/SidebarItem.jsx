@@ -6,7 +6,7 @@ import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 import { toggleKeyVisibility } from "../../../lib/actions.js";
 
-export default function SidebarItem({
+export default function SidebarItem({ bordercolor = null, item: key,
   collectionKey,
   visibility,
   keyPath = [],
@@ -64,59 +64,85 @@ export default function SidebarItem({
   };
 
   return (
-    <div className={`p-3 ${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
-      <div className="flex items-center justify-between text-sm">
-        <div className="m-1">
+    <>
+      <tr className={`${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
+        <td className=''>
           <EyeIcon
             name={collectionKey.name}
             id={collectionKey.name} // Use the adjusted keyName
             onClick={handleVisibility}
             visibility={visibility}
           />
-        </div>
-        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {collectionKey.name}
-        </div>
-        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {collectionKey.types[0].bsonType === "Array" &&
-          collectionKey.types[0].types[0].bsonType !== "Document"
-            ? `[${collectionKey.types[0].types[0].bsonType}]`
-            : Array.isArray(collectionKey.type)
-            ? collectionKey.type[0]
-            : collectionKey.type}
-        </div>
-        <div className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
-          {Math.round(collectionKey.probability * 100)}%
-        </div>
-        {hasNestedFields(collectionKey) && (
-          <div className="m-1 cursor-pointer" onClick={toggleOpen}>
-            {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
-          </div>
-        )}
-      </div>
-      {hasNestedFields(collectionKey) && open && (
-        <div className="ml-4">
-          {collectionKey.types[0].bsonType === "Document" &&
-            collectionKey.types[0].fields.map((field, index) => (
-              <SidebarItem
-                key={index}
-                collectionKey={field}
-                keyPath={[...keyPath, collectionKey.name]}
-                visibility={calculateNestedVisibility(field.name)}
-              />
-            ))}
-          {collectionKey.types[0].bsonType === "Array" &&
-            collectionKey.types[0].types[0].bsonType === "Document" &&
-            collectionKey.types[0].types[0].fields.map((field, index) => (
-              <SidebarItem
-                key={index}
-                collectionKey={field}
-                keyPath={[...keyPath, collectionKey.name]}
-                visibility={calculateNestedVisibility(field.name)}
-              />
-            ))}
-        </div>
+        </td>
+        {bordercolor === null ?
+          <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+            <b>{key.name}</b>
+          </td>
+          :
+          <td className={`border-l-[2px] border-solid border-${bordercolor} ${visibility ? "text-black" : "text-gray-400"}`}>
+            <b>{key.name}</b>
+          </td>
+        }
+        <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+          {hasNestedFields(key) && (
+            <div className="" onClick={toggleOpen}>
+              {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            </div>
+          )}
+        </td>
+        <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+          {Array.isArray(key.type) ? key.type[0] : key.type}
+        </td>
+        <td className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
+          {Math.round(key.probability * 100)}%
+        </td>
+      </tr>
+
+      {hasNestedFields(key) && open && (
+        <>{
+          key.types[0].bsonType === "Array" &&
+            key.types[0].types[0].bsonType === "Document"
+            ? key.types[0].types[0].fields.map((nestedField, index) => (
+              <SidebarItem bordercolor={'blue'} key={`array-doc-${index}`} item={nestedField} />
+            ))
+            : key.types[0].fields.map((nestedField, index) => (
+              <SidebarItem bordercolor={'blue'} key={`doc-${index}`} item={nestedField} />
+            ))
+        }</>
       )}
-    </div>
+    </>
+  );
+}
+
+function GreenCell({visibility, children}){
+
+}
+
+function Cell({ visibility, children }) {
+  return visibility
+    ?
+    <CellVisible>
+      {children}
+    </CellVisible>
+    :
+    <CellInvisible>
+      {children}
+    </CellInvisible>
+
+}
+
+function CellInvisible({ children }) {
+  return (
+    <td className={'text-gray-400'}>
+      {children}
+    </td>
+  );
+}
+
+function CellVisible({ children }) {
+  return (
+    <td className={'text-black'}>
+      {children}
+    </td>
   );
 }
