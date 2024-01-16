@@ -50,8 +50,8 @@ export default function SidebarItem({ bordercolor = null, item: key, visibility 
 
   return (
     <>
-      <tr className={`${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
-        <td className=''>
+      <div className={`table-row ${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
+        <div className='table-cell p-2 px-4'>
           <EyeIcon
             label={key.name}
             name={eyeId}
@@ -59,30 +59,32 @@ export default function SidebarItem({ bordercolor = null, item: key, visibility 
             visibility={visibility}
             setVisibility={handleVisibilityChange}
           />
-        </td>
+        </div>
         {bordercolor === null ?
-          <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+          <div className={`table-cell p-2 ${visibility ? "text-black" : "text-gray-400"}`}>
             <b>{key.name}</b>
-          </td>
+          </div>
           :
-          <td className={`border-l-[2px] border-solid border-${bordercolor} ${visibility ? "text-black" : "text-gray-400"}`}>
+          <div className={`table-cell px-2 ${visibility ? "text-black" : "text-gray-400"}`}>
+            <div className={`pl-1 p-2 border-l-4 border-solid border-${bordercolor}`}>
             <b>{key.name}</b>
-          </td>
+            </div>
+          </div>
         }
-        <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+        <div className={`table-cell p-2 ${visibility ? "text-black" : "text-gray-400"}`}>
           {hasNestedFields(key) && (
-            <div className="" onClick={toggleOpen}>
+            <div className={''} onClick={toggleOpen}>
               {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
             </div>
           )}
-        </td>
-        <td className={`${visibility ? "text-black" : "text-gray-400"}`}>
+        </div>
+        <div className={`table-cell p-2 ${visibility ? "text-black" : "text-gray-400"}`}>
           {Array.isArray(key.type) ? key.type[0] : key.type}
-        </td>
-        <td className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
+        </div>
+        <div className={`table-cell p-2 ${visibility ? "text-green-500" : "text-gray-400"}`}>
           {Math.round(key.probability * 100)}%
-        </td>
-      </tr>
+        </div>
+      </div>
 
       {hasNestedFields(key) && open && (
         <>{
