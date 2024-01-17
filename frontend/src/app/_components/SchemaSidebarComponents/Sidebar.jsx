@@ -5,6 +5,8 @@ import SidebarItem from "./SidebarItem.jsx";
 //import items from "../../_dummyData/sidebar.json"
 import { AppContext } from "../../_context/AppContext.js";
 
+import { useGraphContext } from "../../_context/GraphContext.js";
+
 export default function Sidebar() {
   const {
     database,
@@ -14,6 +16,8 @@ export default function Sidebar() {
     handleAnalyzeCollections,
     collectionDbMap,
   } = useContext(AppContext);
+
+  const { sidebarItemsVisibility } = useGraphContext();
 
   const [items, setItems] = useState([]);
 
@@ -33,22 +37,27 @@ export default function Sidebar() {
 
   useEffect(() => {
     setItems(data || []);
-  }, [data]);
+  }, [data, collection]);
 
   if (collection === "all") {
     return null;
   }
   return (
     <>
-      <div className="w-full flex-shrink-0 bg-gray-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black">
+
+      <div className="w-full flex-shrink-1 bg-white-400 h-full overflow-auto text-sm rounded-l-3xl border-2 border-black p-4">
         <div className="p-2">
-          <u>
-            <b>SCHEMA</b>
-          </u>
+          <u><b>SCHEMA</b></u>
         </div>
-        {items.map((item, index) => (
-          <SidebarItem key={index} item={item} />
-        ))}
+        <table className='w-full text-left table-auto min-w-max'>
+          {items.map((item, index) => (
+            <SidebarItem
+              key={index}
+              item={item}
+              visibility={sidebarItemsVisibility[item.name] || false}
+            />
+          ))}
+        </table>
       </div>
     </>
   );

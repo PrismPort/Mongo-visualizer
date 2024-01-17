@@ -1,9 +1,9 @@
-import { Collection } from "mongodb";
 import { parseSchema } from "mongodb-schema";
 
 export const analyzeCollection = async (collection, returnValues) => {
   const parsedSchema = await parseSchema(collection, {
-    storeValues: returnValues,
+    storeValues: returnValues, // store values in schema
+    sampleSize: 1000, // sample size of 1000 documents
   });
 
   const processField = (item) => {

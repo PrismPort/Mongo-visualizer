@@ -1,9 +1,6 @@
 "use client";
-import React, { useState } from "react";
 
-const ToggleSwitch = () => {
-  const [isToggled, setIsToggled] = useState(false);
-
+const ToggleSwitch = ({ checked, onChange, id }) => {
   // set the toggle colours
   const isToggledColor = `#4f4f52`;
   const isNotToggledColor = `#e2e2e2`;
@@ -22,20 +19,20 @@ const ToggleSwitch = () => {
     <div className="flex items-center justify-center py-2">
       <input
         type="checkbox"
-        id="toggle"
+        id={`toggle-${id}`}
         className="sr-only"
-        checked={isToggled}
-        onChange={() => setIsToggled(!isToggled)}
+        checked={checked}
+        onChange={onChange}
       />
       <label
-        htmlFor="toggle"
+        htmlFor={`toggle-${id}`}
         className={`block cursor-pointer transition-colors duration-300 ease-in-out relative shadow-md`}
         style={{
           width: `${trackWidth}em`, // Dynamic width based on the circle's size
           height: `${trackHeight}em`, // Height of 1em
           borderRadius: `${trackHeight / 2}em`, // Fully rounded edges
-          backgroundColor: isToggled ? isToggledColor : isNotToggledColor,
-          border: `2px solid ${isToggled ? isToggledColor : isNotToggledColor}`,
+          backgroundColor: checked ? isToggledColor : isNotToggledColor,
+          border: `2px solid ${checked ? isToggledColor : isNotToggledColor}`,
           boxSizing: "border-box", // Ensures the border is included in the width/height
         }}
       >
@@ -44,14 +41,12 @@ const ToggleSwitch = () => {
           style={{
             width: `${circleSize}em`, // Circle size of 1.618em diameter
             height: `${circleSize}em`, // Circle size of 1.618em diameter
-            transform: isToggled ? translateXValue : "translateX(0)",
+            transform: checked ? translateXValue : "translateX(0)",
             top: "50%",
             left: "calc(50% - 0.5em)", // Half of the circle's size
             marginLeft: `-${circleSize / 2}em`, // Center the circle horizontally
             marginTop: `-${circleSize / 2}em`, // Center the circle vertically
-            border: `2px solid ${
-              isToggled ? isToggledColor : isNotToggledColor
-            }`,
+            border: `2px solid ${checked ? isToggledColor : isNotToggledColor}`,
           }}
         />
       </label>

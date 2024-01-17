@@ -46,6 +46,23 @@ module.exports = {
 
         success: "#0070f3",
         alert: "#0070f3",
+
+        grey: "#808080",
+        blue: "#0000ff",
+        yellow: "#ffff00",
+        purple: "#730073",
+        orange: "#ffa600",
+        cyan: "#00abab",
+        magenta: "#e600e6",
+      },
+      backgroundColor: {
+        grey: "#808080",
+        blue: "#0000ff",
+        yellow: "#ffff00",
+        purple: "#730073",
+        orange: "#ffa600",
+        cyan: "#00abab",
+        magenta: "#e600e6",
       },
       spacing: {
         vw1: "1vw",

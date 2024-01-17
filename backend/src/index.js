@@ -12,6 +12,8 @@ import {
   connectMongoDB,
   getDocumentsFromCollection,
   logout,
+  getDocumentCountForKey,
+  getUniqueValuesForKey,
 } from "./controllers/database.controller.js";
 
 import {
@@ -46,6 +48,13 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Visual MongoDB Backend!");
 });
 
+// API routes for Authentification
+app.post("/connect-to-mongodb", (req, res) => connectMongoDB(req, res, DOCKER));
+
+app.get("/disconnect-mongodb", logout);
+
+// API routes for MongoDB queries
+
 // TODO: rename to just "/query"
 app.get("/query-databases", getDatabases);
 
@@ -57,9 +66,9 @@ app.get("/analyze/:database/:collection", analyzeDatabase);
 
 app.post("/query/:database/:collection", queryDatabase);
 
-app.post("/connect-to-mongodb", (req, res) => connectMongoDB(req, res, DOCKER));
+app.get("/documentcount/:database/:collection/:key", getDocumentCountForKey);
 
-app.get("/disconnect-mongodb", logout);
+app.get("/uniquevalues/:database/:collection/:key", getUniqueValuesForKey);
 
 // experiments with docker api
 // TODO: routes should be deactivated if 'DOCKER = false' in .env

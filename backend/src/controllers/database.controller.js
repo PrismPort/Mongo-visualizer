@@ -30,16 +30,16 @@ export const connectMongoDB = async (req, res) => {
       ? `mongodb://${user}:${password}@${address}:${port}`
       : `mongodb://${address}:${port}`;
 
-  console.log(mongoURL);
+  //console.log(mongoURL);
 
   /*
 //  the code below is not needed because mongo URL is nevver false.
   if (!mongoURL) {
     return res.status(400).json({ error: "MongoDB URL is required" });
   }
+  const uuid = uuidv4();
   */
 
-  const uuid = uuidv4();
   try {
     if (!clientInstance) {
       clientInstance = new MongoClient(mongoURL, { useUnifiedTopology: true });
@@ -153,7 +153,7 @@ export const analyzeDatabase = async (req, res) => {
     const db = client.db(database);
     const collections = await db.collection(collection).find().toArray();
 
-    console.log("Collections Data:", JSON.stringify(collections, null, 2)); // Debugging: Inspect the raw collection data
+    console.log("collections in backend analyzeDatabase", collections);
 
     const schema = await analyzeCollection(collections, true);
 
@@ -185,5 +185,43 @@ export const queryDatabase = async (req, res) => {
   } catch (error) {
     console.error("Error querying data from MongoDB:", error);
     res.status(500).json({ error: "Failed to query data from MongoDB" });
+  }
+};
+
+export const getDocumentCountForKey = async (req, res) => {
+  const { database, collection, key } = req.params;
+  const client = getClientInstance();
+
+  try {
+    const db = client.db(database);
+    const count = await db
+      .collection(collection)
+      .countDocuments({ [key]: { $exists: true } });
+    res.json({ key, count });
+  } catch (error) {
+    console.error("Error counting documents for key:", error);
+    res.status(500).json({ error: "Failed to count documents for key" });
+  }
+};
+
+export const getUniqueValuesForKey = async (req, res) => {
+  const { database, collection, key } = req.params;
+  const client = getClientInstance();
+
+  try {
+    const db = client.db(database);
+    const aggregation = await db
+      .collection(collection)
+      .aggregate([
+        { $match: { [key]: { $exists: true } } },
+        { $group: { _id: `$${key}`, count: { $sum: 1 } } },
+        { $sort: { count: -1 } }, // Optional: sort by count
+      ])
+      .toArray();
+
+    res.json(aggregation);
+  } catch (error) {
+    console.error("Error getting unique values for key:", error);
+    res.status(500).json({ error: "Failed to get unique values for key" });
   }
 };

@@ -1,16 +1,25 @@
 "use client";
-
-import React, { useState } from "react";
-import { EyeIcon } from "./EyeIcon.jsx"; // Make sure this import is correct
+import React, { useState, useContext } from "react";
+import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
+import { useGraphContext } from "../../_context/GraphContext.js";
 
-export default function SidebarItem({ item }) {
+export default function SidebarItem({ bordercolor = null, item: key, visibility }) {
   const [open, setOpen] = useState(false);
-  const [visibility, setVisibility] = useState(true);
+  const { handleSelectkey, setSidebarItemsVisibility } = useGraphContext(); // Use handleSelectItem instead of selectItems
 
   const toggleOpen = () => setOpen(!open);
 
-  // Generate random ID for the EyeIcon
+  const handleVisibilityChange = () => {
+    handleSelectkey(key); // Pass necessary parameters
+
+    // Update the visibility state in the parent component
+    setSidebarItemsVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [key.name]: !visibility,
+    }));
+  };
+
   function generateRandomString(length) {
     let result = "";
     const characters =
@@ -24,7 +33,6 @@ export default function SidebarItem({ item }) {
 
   const eyeId = generateRandomString(10);
 
-  // Function to determine if the item has nested fields or nested documents in arrays
   const hasNestedFields = (item) => {
     if (item.types && item.types[0]) {
       if (item.types[0].bsonType === "Document" && item.types[0].fields) {
@@ -41,44 +49,88 @@ export default function SidebarItem({ item }) {
   };
 
   return (
-    <div className={`p-3 ${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
-      <div className="flex items-center justify-between text-sm">
-        <div className="m-1">
+    <>
+      <div className={`table-row ${open ? "bg-gray-100" : "bg-white"} rounded-lg`}>
+        <div className='table-cell p-2 px-4'>
           <EyeIcon
-            label={item.name}
-            name={eyeId} // eyeId should be a unique identifier
+            label={key.name}
+            name={eyeId}
             id={eyeId}
             visibility={visibility}
-            setVisibility={setVisibility}
+            setVisibility={handleVisibilityChange}
           />
         </div>
-        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {item.name}
-        </div>
-        <div className={`${visibility ? "text-black" : "text-gray-400"}`}>
-          {Array.isArray(item.type) ? item.type[0] : item.type}
-        </div>
-        <div className={`${visibility ? "text-green-500" : "text-gray-400"}`}>
-          {Math.round(item.probability * 100)}%
-        </div>
-        {hasNestedFields(item) && (
-          <div className="m-1 cursor-pointer" onClick={toggleOpen}>
-            {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
+        {bordercolor === null ?
+          <div className={`table-cell p-2 ${visibility ? "text-black" : "text-gray-400"}`}>
+            <b>{key.name}</b>
           </div>
-        )}
-      </div>
-      {hasNestedFields(item) && open && (
-        <div className="pt-1 h-auto overflow-auto">
-          {item.types[0].bsonType === "Array" &&
-          item.types[0].types[0].bsonType === "Document"
-            ? item.types[0].types[0].fields.map((nestedField, index) => (
-                <SidebarItem key={`array-doc-${index}`} item={nestedField} />
-              ))
-            : item.types[0].fields.map((nestedField, index) => (
-                <SidebarItem key={`doc-${index}`} item={nestedField} />
-              ))}
+          :
+          <div className={`table-cell px-2 ${visibility ? "text-black" : "text-gray-400"}`}>
+            <div className={`pl-1 p-2 border-l-4 border-solid border-${bordercolor}`}>
+            <b>{key.name}</b>
+            </div>
+          </div>
+        }
+        <div className={`table-cell p-2 ${visibility ? "text-black" : "text-gray-400"}`}>
+          {hasNestedFields(key) && (
+            <div className={''} onClick={toggleOpen}>
+              {open ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            </div>
+          )}
         </div>
+        <div className={`table-cell p-2 ${visibility ? "text-black" : "text-gray-400"}`}>
+          {Array.isArray(key.type) ? key.type[0] : key.type}
+        </div>
+        <div className={`table-cell p-2 ${visibility ? "text-green-500" : "text-gray-400"}`}>
+          {Math.round(key.probability * 100)}%
+        </div>
+      </div>
+
+      {hasNestedFields(key) && open && (
+        <>{
+          key.types[0].bsonType === "Array" &&
+            key.types[0].types[0].bsonType === "Document"
+            ? key.types[0].types[0].fields.map((nestedField, index) => (
+              <SidebarItem bordercolor={'blue'} key={`array-doc-${index}`} item={nestedField} />
+            ))
+            : key.types[0].fields.map((nestedField, index) => (
+              <SidebarItem bordercolor={'blue'} key={`doc-${index}`} item={nestedField} />
+            ))
+        }</>
       )}
-    </div>
+    </>
+  );
+}
+
+function GreenCell({visibility, children}){
+
+}
+
+function Cell({ visibility, children }) {
+  return visibility
+    ?
+    <CellVisible>
+      {children}
+    </CellVisible>
+    :
+    <CellInvisible>
+      {children}
+    </CellInvisible>
+
+}
+
+function CellInvisible({ children }) {
+  return (
+    <td className={'text-gray-400'}>
+      {children}
+    </td>
+  );
+}
+
+function CellVisible({ children }) {
+  return (
+    <td className={'text-black'}>
+      {children}
+    </td>
   );
 }
