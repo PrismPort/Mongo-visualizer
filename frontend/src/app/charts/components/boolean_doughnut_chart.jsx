@@ -12,17 +12,18 @@ class BooleanDoughnutChart {
   getComponent() {
     const lab = ['true', 'false', 'undefined'];
     const values = [];
-    for (const value of this.subset.types[0].values) {
+    for (const value of Subset.getValues(this.subset)) {
       values.push(value);
     }
-    for (let i = 0; i < this.subset.types[1].count; i++) {
+    const undefined_values = Subset.getUndefinedValues(this.subset);
+    for (let i = 0; i < undefined_values.length; i++) {
       values.push('undefined');
     }
-    const title = this.subset.name;
+    const title = Subset.getName(this.subset);
 
-    const truthy = values.filter(value => value === true);
-    const falsy = values.filter(value => value === false);
-    const un_defined = values.filter(value => value === 'undefined');
+    const true_count = values.filter(value => value === true);
+    const false_count = values.filter(value => value === false);
+    const undefined_count = values.filter(value => value === 'undefined');
 
     const options = {
       responsive: true,
@@ -35,7 +36,7 @@ class BooleanDoughnutChart {
           '#2A5639',
           '#AAAAAA',
         ],
-        data: [truthy.length, falsy.length, un_defined.length],
+        data: [true_count.length, false_count.length, undefined_count.length],
       }],
     };
     return (

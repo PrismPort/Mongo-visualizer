@@ -9,10 +9,26 @@ const Subset = {
   getValues(subset_) {
     return subset_.types[0].values;
   },
+  getUndefinedValues(subset_) {
+    if (subset_.types[1].values === undefined) {
+      console.warn('undefined values are undefined', subset_);
+      return [];
+    } else {
+      return subset_.types[1].values;
+    }
+  },
   getArraySubsets(subset_) {
     let ret = [];
     const lengths = subset_.types[0].lengths;
-    const values = subset_.types[0].types[0].values;
+    let values = subset_.types[0].types[0];
+    if (values.values !== undefined) {
+      values = subset_.types[0].types[0].values;
+    }
+    else if (values.fields !== undefined) {
+      values = subset_.types[0].types[0].fields;
+    } else {
+      throw new TypeError('subset has no fields and no values', subset_);
+    }
     // TODO: refactor this. It turns this:
     // values: [1, 2, 3, 4, 5, 6, 7], lengths: [2, 2, 3]
     // into this:
