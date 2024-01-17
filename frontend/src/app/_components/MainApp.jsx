@@ -39,9 +39,9 @@ export default function MainApp() {
 
             <GraphComponent></GraphComponent>
           </div>
+        </main>
         <main className="flex flex-wrap overflow-y-auto h-screen w-screen justify-center bg-white items-center">
           <AllCharts />
-          <ToggleSwitch />
         </main>
         <CollectionDashboard />
       </>
