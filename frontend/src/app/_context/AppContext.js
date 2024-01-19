@@ -30,8 +30,11 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchDatabases = async () => {
-      const dbList = await handleShowDatabases();
+      let dbList = await handleShowDatabases();
       if (dbList) {
+        dbList = dbList.filter(
+          (db) => !["admin", "local", "config"].includes(db)
+        );
         setDatabases(dbList);
         setLoadingDatabases(true);
       }
@@ -92,6 +95,7 @@ const AppProvider = ({ children }) => {
     }
   };
   // Function to enrich collections with keys and documents info
+  // Function to enrich collections with keys and documents info
   const enrichCollectionsWithKeysAndDocs = async (collections) => {
     const enrichedCollections = {};
     for (const dbName in collections) {
@@ -100,18 +104,25 @@ const AppProvider = ({ children }) => {
 
       for (const collection of dbCollections) {
         // Assuming handleAnalyzeCollection returns an object with keys and document counts
-        const analysis = await handleAnalyzeCollection(dbName, collection);
-        if (analysis) {
-          enrichedCollections[dbName][collection] = {
-            keys: Object.keys(analysis),
-            documentCounts: Object.values(analysis).map((item) => item.count),
-          };
+        if (dbName !== "all") {
+          const analysis = await handleAnalyzeCollection(dbName, collection);
+          console.log("analysis", analysis);
+          if (Array.isArray(analysis)) {
+            enrichedCollections[dbName][collection] = {
+              keys: analysis.map((item) => ({
+                key: item.name,
+                count: item.count,
+                type: item.type,
+              })),
+            };
+          } else {
+            console.error("Expected array but got:", analysis);
+          }
         }
       }
     }
     setKeysAndDocsInfo(enrichedCollections);
   };
-
   const updateDatabase = (newDatabase) => {
     setDatabase(newDatabase);
     console.log(`database updated to: ${newDatabase}`);

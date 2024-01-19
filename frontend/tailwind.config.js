@@ -43,6 +43,7 @@ module.exports = {
         "brand-accent-2": "#1A6577",
         "brand-accent-3": "#333333",
         "brand-accent-4": "#fcd539",
+        "button-color-red": "#eb1e63ff",
 
         success: "#0070f3",
         alert: "#0070f3",
@@ -189,6 +190,8 @@ module.exports = {
         sm: "0.25rem",
         md: "0.375rem",
         lg: "1rem",
+        "3xl": "3rem",
+        "4xl": "4rem",
       },
       boxShadow: {
         small: "0 5px 10px rgba(0, 0, 0, 0.12)",

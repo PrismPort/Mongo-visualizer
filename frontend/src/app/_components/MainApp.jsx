@@ -4,17 +4,17 @@ import React, { useEffect, useContext } from "react";
 
 import { useRouter } from "next/navigation";
 
-import ToggleSwitch from "./AtomarComponents/ToggleSwitch";
-
 import SideNavigation from "./NavBarComponents/SideNavigation";
 import CollectionDashboard from "./SchemaSidebarComponents/CollectionDashboard";
 
 import GraphComponent from "./ChartComponents/GraphComponent";
 import AllDatabasesList from "./AllDatabasesList";
+import AllCollectionsList from "./AllCollectionsList";
+import HeaderBar from "./HeaderBar";
 import { AppContext } from "../_context/AppContext";
 
 export default function MainApp() {
-  const { session, loadSession } = useContext(AppContext);
+  const { session, loadSession, collection, database } = useContext(AppContext);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,11 +29,17 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main className="flex h-screen overflow-y-scroll w-screen justify-center bg-white items-center">
-          <div className="text-black h-vh80 ">
-            <h2 className=" text-center text-2xl bold m-12">mongovisualizer</h2>
-            {/* <AllDatabasesList /> */}
-            <GraphComponent />
+        <main className="flex flex-col overflow-y-scroll w-screen justify-center bg-white items-center">
+          <div className="w-pz90 sticky -mb-pz5 mt-pz5">
+            <HeaderBar />
+          </div>
+          <div className="text-black h-screen flex justify-center items-center ">
+            {database === "all" && collection === "all" ? (
+              <AllDatabasesList />
+            ) : database !== "all" && collection === "all" ? (
+              <AllCollectionsList />
+            ) : null}
+            {collection !== "all" ? <GraphComponent /> : null}
           </div>
         </main>
 
