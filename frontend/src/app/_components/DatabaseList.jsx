@@ -1,21 +1,39 @@
-"use client";
-
-import React, { useContext } from "react";
-import { AppContext } from "../_context/AppContext";
+import React, { useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDatabases, fetchDatabaseMap } from "../../lib/actions";
 
 const DatabaseList = () => {
-  const { databases } = useContext(AppContext);
+  const dispatch = useDispatch();
+  const {
+    databases: reduxDatabases,
+    loadingDatabases,
+    databasesError,
+    databaseMap,
+  } = useSelector((state) => state.app);
 
-  if (!databases || databases.length === 0) {
-    return <div>No databases found.</div>;
+  useEffect(() => {
+    // Dispatch the fetchDatabases action when the component mounts
+    dispatch(fetchDatabases());
+    dispatch(fetchDatabaseMap());
+  }, [dispatch]);
+
+  console.log("redux databaseMap", databaseMap);
+
+  if (loadingDatabases) {
+    return <div>Loading databases...</div>;
   }
 
+  if (databasesError) {
+    return <div>Error loading databases: {databasesError}</div>;
+  }
+
+  // Render the list of databases from Redux store (reduxDatabases)
   return (
     <div>
       <h2>All Databases</h2>
       <ul>
-        {databases.map((database, index) => (
-          <li key={index}>{database}</li> // Assuming 'database' is a string
+        {reduxDatabases.map((database, index) => (
+          <li key={index}>{database}</li>
         ))}
       </ul>
     </div>

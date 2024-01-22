@@ -11,6 +11,7 @@ import GraphComponent from "./ChartComponents/GraphComponent";
 import AllDatabasesList from "./AllDatabasesList";
 import AllCollectionsList from "./AllCollectionsList";
 import HeaderBar from "./HeaderBar";
+import DatabaseList from "./DatabaseList";
 import { AppContext } from "../_context/AppContext";
 
 export default function MainApp() {
@@ -29,7 +30,7 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main className="flex flex-col overflow-y-scroll w-screen justify-center bg-white items-center">
+        {/* <main className="flex flex-col overflow-y-scroll w-screen justify-center bg-white items-center">
           <div className="w-pz90 sticky -mb-pz5 mt-pz5">
             <HeaderBar />
           </div>
@@ -41,7 +42,9 @@ export default function MainApp() {
             ) : null}
             {collection !== "all" ? <GraphComponent /> : null}
           </div>
-        </main>
+        </main> */}
+
+        <DatabaseList />
 
         <CollectionDashboard />
       </>

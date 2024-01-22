@@ -47,7 +47,6 @@ export default function AllCollectionsList() {
               </table>
             </div>
           </div>
-          // </div>
         );
       })}
     </div>

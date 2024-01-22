@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useEffect } from "react";
+import StoreProvider from "../storeProvider";
 
 // EXPERIMENTAL: importing utility functions into global state
 
@@ -95,7 +96,6 @@ const AppProvider = ({ children }) => {
     }
   };
   // Function to enrich collections with keys and documents info
-  // Function to enrich collections with keys and documents info
   const enrichCollectionsWithKeysAndDocs = async (collections) => {
     const enrichedCollections = {};
     for (const dbName in collections) {
@@ -162,7 +162,9 @@ const AppProvider = ({ children }) => {
   console.log(contextValue);
 
   return (
-    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
+    <StoreProvider>
+      <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
+    </StoreProvider>
   );
 };
 
