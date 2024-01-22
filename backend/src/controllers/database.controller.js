@@ -244,3 +244,42 @@ export const getUniqueValuesForKey = async (req, res) => {
       .json({ error: "Failed to get unique values and types for key" });
   }
 };
+
+export const getDatabaseMap = async (req, res) => {
+  try {
+    const client = getClientInstance();
+    const databaseMap = {};
+
+    // Get the list of databases
+    const adminDb = client.db("admin"); // Access the 'admin' database
+    const databases = await adminDb.admin().listDatabases();
+    const databaseNames = databases.databases
+      .map((db) => db.name)
+      .filter((db) => !["admin", "local", "config"].includes(db));
+
+    // Iterate through each database
+    for (const database of databaseNames) {
+      // Get the list of collections for the current database
+      const db = client.db(database);
+      const collections = await db.listCollections().toArray();
+
+      // Analyze each collection and store the results in an array
+      const collectionsData = await Promise.all(
+        collections.map(async (collection) => {
+          const cursor = db.collection(collection.name).find();
+          const collectionData = await analyzeCollection(cursor, true);
+          return { [collection.name]: collectionData };
+        })
+      );
+
+      // Build the object for the current database with collections and their data
+      databaseMap[database] = collectionsData;
+    }
+
+    // Send the database map as JSON response
+    res.json(databaseMap);
+  } catch (error) {
+    console.error("Error generating database map:", error);
+    res.status(500).json({ error: "Failed to generate database map" });
+  }
+};
