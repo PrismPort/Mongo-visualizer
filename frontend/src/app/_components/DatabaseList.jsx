@@ -4,12 +4,7 @@ import { fetchDatabases, fetchDatabaseMap } from "../../lib/actions";
 
 const DatabaseList = () => {
   const dispatch = useDispatch();
-  const {
-    databases: reduxDatabases,
-    loadingDatabases,
-    databasesError,
-    databaseMap,
-  } = useSelector((state) => state.app);
+  const { databaseMap } = useSelector((state) => state.app);
 
   useEffect(() => {
     // Dispatch the fetchDatabases action when the component mounts

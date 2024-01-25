@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useEffect, useContext } from "react";
-
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import SideNavigation from "./NavBarComponents/SideNavigation";
 import CollectionDashboard from "./SchemaSidebarComponents/CollectionDashboard";
-
 import GraphComponent from "./ChartComponents/GraphComponent";
 import AllDatabasesList from "./AllDatabasesList";
 import AllCollectionsList from "./AllCollectionsList";
 import HeaderBar from "./HeaderBar";
-import DatabaseList from "./DatabaseList";
-import { AppContext } from "../_context/AppContext";
 
 export default function MainApp() {
-  const { session, loadSession, collection, database } = useContext(AppContext);
   const router = useRouter();
+  const { data: session, status: loadSession } = useSession();
+
+  const { database, collection } = useSelector((state) => state.app);
 
   useEffect(() => {
     // Redirect if not in a session and not loading the session
@@ -30,7 +30,7 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        {/* <main className="flex flex-col overflow-y-scroll w-screen justify-center bg-white items-center">
+        <main className="flex flex-col overflow-y-scroll w-screen justify-center bg-white items-center">
           <div className="w-pz90 sticky -mb-pz5 mt-pz5">
             <HeaderBar />
           </div>
@@ -42,9 +42,7 @@ export default function MainApp() {
             ) : null}
             {collection !== "all" ? <GraphComponent /> : null}
           </div>
-        </main> */}
-
-        <DatabaseList />
+        </main>
 
         <CollectionDashboard />
       </>
