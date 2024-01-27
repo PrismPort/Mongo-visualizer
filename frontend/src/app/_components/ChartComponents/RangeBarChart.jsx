@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useGraphContext } from "../../_context/GraphContext.js";
+
 import { Bar } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import ToggleSwitch from "../AtomarComponents/ToggleSwitch";
 
 const RangeBarChart = ({ title, dataValues, labels }) => {
-  const { updateToggleState, toggleStates } = useGraphContext();
-
   const [chartToggles, setChartToggles] = useState([]);
 
   const colors = [

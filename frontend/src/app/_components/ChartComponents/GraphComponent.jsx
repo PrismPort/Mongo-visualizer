@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import MyBooleanChart from "./MyBooleanChart.jsx";
 import StringList from "./StringList.jsx";
@@ -9,9 +9,9 @@ import RangeBarChart from "./RangeBarChart.jsx";
 const GraphComponent = () => {
   const { collection, selectedKeys } = useSelector((state) => state.app);
 
-  if (selectedKeys.length === 0) {
-    return <div>Select items to view their graphs</div>;
-  }
+  // if (selectedKeys.length === 0) {
+  //   return <div>Select items to view their graphs</div>;
+  // }
 
   return <div>Graph Component</div>;
 

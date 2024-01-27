@@ -4,8 +4,6 @@ import { fetchDatabaseMap } from "./actions"; // Import the async actions
 const initialState = {
   database: "all",
   collection: "all",
-  selectedKeys: [],
-
   // Add a new state to handle database fetching status
   databasesLoading: false,
   databasesError: null,
@@ -13,6 +11,7 @@ const initialState = {
   databaseMapLoading: false,
   databaseMapError: null,
   databaseMap: {}, // Initialize the database map state
+  keyVisibilities: {},
 };
 
 const appSlice = createSlice({
@@ -27,10 +26,6 @@ const appSlice = createSlice({
       state.collection = action.payload;
     },
 
-    setSelectedKeys: (state, action) => {
-      state.selectedKeys = action.payload;
-    },
-
     setLoadingDatabases: (state, action) => {
       state.databasesLoading = action.payload;
     },
@@ -38,6 +33,30 @@ const appSlice = createSlice({
       state.databaseMapLoading = action.payload;
     },
     // Define other reducers here
+    toggleKeyVisibility: (state, action) => {
+      const keyPath = action.payload; // Expecting an array representing the path
+      const currentDatabase = state.database;
+      const currentCollection = state.collection;
+      let currentVisibility = state.keyVisibilities;
+
+      if (!state.keyVisibilities[currentDatabase]) {
+        state.keyVisibilities[currentDatabase] = {};
+      }
+
+      if (!state.keyVisibilities[currentDatabase][currentCollection]) {
+        state.keyVisibilities[currentDatabase][currentCollection] = {};
+      }
+
+      for (let i = 0; i < keyPath.length; i++) {
+        const key = keyPath[i];
+        if (i === keyPath.length - 1) {
+          currentVisibility[key] = !currentVisibility[key];
+        } else {
+          currentVisibility = currentVisibility[key] =
+            currentVisibility[key] || {};
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,13 +75,12 @@ const appSlice = createSlice({
       });
   },
 });
-
 export const {
   setDatabase,
   setCollection,
-  setSelectedKeys,
   setLoadingDatabaseMap,
   setLoadingDatabases,
+  updateVisibility,
 } = appSlice.actions;
 
 export default appSlice.reducer;

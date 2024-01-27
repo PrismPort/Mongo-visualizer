@@ -24,7 +24,7 @@ export default function MainApp() {
     if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [status, router]); // Include status and router in the dependency array
+  }, [status]);
 
   // Render content if in a session or loading the session
   if (status === "authenticated") {

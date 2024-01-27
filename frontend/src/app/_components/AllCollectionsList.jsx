@@ -33,7 +33,7 @@ export default function AllDatabasesList() {
         return (
           <div
             key={index}
-            onClick={() => dispatch(setCollection(collection))}
+            onClick={() => dispatch(setCollection(Object.keys(collection)[0]))}
             className="flex flex-col items-center justify-center border-brand-accent-3 border-4 p-6 rounded-3xl cursor-pointer"
           >
             <div className="flex flex-col justify-center items-center gap-6 p-4">

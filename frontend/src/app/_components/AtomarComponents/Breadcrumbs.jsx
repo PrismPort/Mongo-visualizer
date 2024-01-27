@@ -50,7 +50,7 @@ export default function Breadcrumbs() {
       {collection === "all" ? (
         <p>{` \\  all collections`}</p>
       ) : (
-        <p>{` \\ ${Object.keys(collection)}`}</p>
+        <p>{` \\ ${collection}`}</p>
       )}
     </div>
   );

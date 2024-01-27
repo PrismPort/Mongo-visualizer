@@ -1,26 +1,27 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SidebarItem from "./SidebarItem.jsx";
-import { setSelectedKeys } from "../../../lib/reducers";
 
 export default function Sidebar() {
-  const dispatch = useDispatch();
-  const { collection, selectedKeys } = useSelector((state) => state.app); // Include selectedKeys in the state
+  const { databaseMap, collection, database, keyVisibilities } = useSelector(
+    (state) => state.app
+  ); // Include selectedKeys in the state
+  let collectionData;
 
   if (collection === "all") {
     return null;
+  } else {
+    //console.log("databaseMap", databaseMap);
+    collectionData = Object.entries(databaseMap)
+      .filter((item) => {
+        return item[0] === database;
+      })[0][1]
+      .filter((item) => {
+        return Object.keys(item)[0] === collection;
+      })[0];
   }
 
-  let keyData = Object.values(collection)[0];
-  console.log("keyData", keyData);
-
-  const handleVisibilityToggle = (keyName) => {
-    if (selectedKeys.includes(keyName)) {
-      dispatch(setSelectedKeys(selectedKeys.filter((key) => key !== keyName)));
-    } else {
-      dispatch(setSelectedKeys([...selectedKeys, keyName]));
-    }
-  };
+  let keyData = Object.values(collectionData)[0];
 
   return (
     <>
@@ -31,16 +32,14 @@ export default function Sidebar() {
               <b>SCHEMA</b>
             </u>
           </div>
-          {keyData.map((item, index) => {
-            const keyName = item.parentKey
-              ? `${item.parentKey}.${item.name}`
-              : item.name;
+          {keyData.map((key, index) => {
             return (
               <SidebarItem
                 key={index}
-                item={item}
-                onVisibilityToggle={handleVisibilityToggle} // Pass the new handler function
-                visibility={selectedKeys.includes(keyName)} // Set visibility based on whether the key is in selectedKeys
+                collectionKey={key}
+                visibility={
+                  keyVisibilities[database]?.[collection]?.[key.name] ?? false
+                }
               />
             );
           })}

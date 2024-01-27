@@ -69,8 +69,9 @@ export default function SideNavigation() {
 
   useEffect(() => {
     // Dispatch the fetchDatabases action when the component mounts
+    console.log("fetching database map");
     dispatch(fetchDatabaseMap());
-  }, [dispatch]);
+  }, []);
 
   // Render a loading message or a spinner while data is being fetched
 
@@ -169,9 +170,12 @@ export default function SideNavigation() {
                         <CustomButton
                           key={Object.keys(currentCollection)}
                           text={Object.keys(currentCollection)}
-                          onClick={() =>
-                            handleCollectionClick(currentCollection)
-                          }
+                          onClick={() => {
+                            handleDatabaseClick(databaseName);
+                            handleCollectionClick(
+                              Object.keys(currentCollection)[0]
+                            );
+                          }}
                           variant={
                             collection === currentCollection
                               ? "collectionSelected"
@@ -187,16 +191,18 @@ export default function SideNavigation() {
                   ([databaseName, collections]) => (
                     <React.Fragment key={databaseName}>
                       {collections.map((currentCollection, index) => {
-                        if (currentCollection === collection) {
+                        if (Object.keys(currentCollection)[0] === collection) {
                           return (
                             <CustomButton
                               key={Object.keys(currentCollection)}
                               text={Object.keys(currentCollection)}
                               onClick={() =>
-                                handleCollectionClick(currentCollection)
+                                handleCollectionClick(
+                                  Object.keys(currentCollection)[0]
+                                )
                               }
                               variant={
-                                collection === currentCollection
+                                collection === Object.keys(currentCollection)[0]
                                   ? "collectionSelected"
                                   : "inactive"
                               }
@@ -215,26 +221,33 @@ export default function SideNavigation() {
                             key={Object.keys(currentCollection)}
                             text={Object.keys(currentCollection)}
                             onClick={() =>
-                              handleCollectionClick(currentCollection)
+                              handleCollectionClick(
+                                Object.keys(currentCollection)[0]
+                              )
                             }
                             variant={
-                              collection === currentCollection
+                              collection === Object.keys(currentCollection)[0]
                                 ? "collectionSelected"
                                 : "inactive"
                             }
                           ></CustomButton>
                         ))
                       : databaseMap[database].map((currentCollection) => {
-                          if (currentCollection === collection) {
+                          if (
+                            collection === Object.keys(currentCollection)[0]
+                          ) {
                             return (
                               <CustomButton
                                 key={Object.keys(currentCollection)}
                                 text={Object.keys(currentCollection)}
                                 onClick={() =>
-                                  handleCollectionClick(currentCollection)
+                                  handleCollectionClick(
+                                    Object.keys(currentCollection)[0]
+                                  )
                                 }
                                 variant={
-                                  collection === currentCollection
+                                  collection ===
+                                  Object.keys(currentCollection)[0]
                                     ? "collectionSelected"
                                     : "inactive"
                                 }

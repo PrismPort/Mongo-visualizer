@@ -8,6 +8,8 @@ const EyeIcon = ({ name, id, visibility, onClick }) => {
   const visibleIcon = <LuEye className="text-gray-400" />;
   const notVisibleIcon = <LuEyeOff className="text-gray-600" />;
 
+  // Create a new handler function
+
   return (
     <div className="relative">
       <input
