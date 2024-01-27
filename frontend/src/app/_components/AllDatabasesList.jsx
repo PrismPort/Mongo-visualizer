@@ -3,21 +3,17 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { setDatabase } from "../../lib/reducers";
-import Link from "next/link";
 
 export default function AllDatabasesList() {
   const dispatch = useDispatch();
   const { databaseMap } = useSelector((state) => state.app);
-  console.log(databaseMap);
 
   return (
     <div className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 p-5">
-      {Object.entries(databaseMap).map((database) => {
-        console.log("database at", database);
-
+      {Object.entries(databaseMap).map((database, index) => {
         return (
           <div
-            key={database[0]}
+            key={index}
             onClick={() => dispatch(setDatabase(database[0]))}
             className="flex flex-col items-center justify-center border-brand-accent-3 border-4 p-6 rounded-3xl cursor-pointer"
           >
@@ -36,8 +32,8 @@ export default function AllDatabasesList() {
                 </thead>
 
                 <tbody className="text-left">
-                  {database[1].map((collection) => (
-                    <tr key={collection}>
+                  {database[1].map((collection, index) => (
+                    <tr key={index}>
                       <td className="pr-2">{Object.keys(collection)}</td>
                       <td className="px-2 text-center">
                         {Object.values(collection)[0].length}

@@ -1,6 +1,13 @@
 import React from "react";
 
-export default function InputField({ label, type, id, value, onChange }) {
+export default function InputField({
+  label,
+  type,
+  id,
+  value,
+  onChange,
+  autoComplete,
+}) {
   return (
     <div className="rounded-xl pt-4 text-black flex flex-col items-center">
       <label className="text-slate-700" htmlFor={id}></label>
@@ -13,6 +20,7 @@ export default function InputField({ label, type, id, value, onChange }) {
         placeholder={label}
         value={value} // controlled component
         onChange={onChange} // event handler
+        autoComplete={autoComplete}
       />
     </div>
   );

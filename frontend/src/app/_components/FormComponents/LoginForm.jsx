@@ -64,6 +64,7 @@ export default function LoginForm() {
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
           />
           <InputField
             label="Password"
@@ -71,6 +72,7 @@ export default function LoginForm() {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
           />
           <InputField
             label="Host"
@@ -78,6 +80,7 @@ export default function LoginForm() {
             id="address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            autoComplete={"on"}
           />
           <InputField
             label="Port"
@@ -85,6 +88,7 @@ export default function LoginForm() {
             id="port"
             value={port}
             onChange={(e) => setPort(e.target.value)}
+            autoComplete={"on"}
           />
           <button
             type="submit"

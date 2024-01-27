@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 
-const EyeIcon = ({ label, name, id, visibility, setVisibility }) => {
+const EyeIcon = ({ name, id, visibility, onClick }) => {
   // set the toggle icons
   const visibleIcon = <LuEye className="text-gray-400" />;
   const notVisibleIcon = <LuEyeOff className="text-gray-600" />;
@@ -16,7 +16,7 @@ const EyeIcon = ({ label, name, id, visibility, setVisibility }) => {
         id={id}
         className="sr-only peer"
         checked={visibility}
-        onChange={() => setVisibility(!visibility)}
+        onChange={onClick} // Use the new handler function
       />
       <label
         htmlFor={id} // Make sure this matches the id of the input

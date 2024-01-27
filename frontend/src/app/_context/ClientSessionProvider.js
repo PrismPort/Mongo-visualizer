@@ -1,13 +1,12 @@
 // ClientSessionProvider.jsx
 import { SessionProvider } from "next-auth/react";
-
-import AppProvider from "../_context/AppContext";
+import StoreProvider from "../storeProvider";
 
 const ClientSessionProvider = ({ children }) => {
   return (
-    <SessionProvider>
-      <AppProvider>{children}</AppProvider>
-    </SessionProvider>
+    <StoreProvider>
+      <SessionProvider>{children}</SessionProvider>
+    </StoreProvider>
   );
 };
 

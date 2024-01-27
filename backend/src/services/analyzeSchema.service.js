@@ -6,6 +6,8 @@ export const analyzeCollection = async (collection, returnValues) => {
     sampleSize: 1000, // sample size of 1000 documents
   });
 
+  console.log("parsedSchema in backend", parsedSchema);
+
   const processField = (item) => {
     const field = {
       count: item.count,

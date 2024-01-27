@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchDatabases, fetchDatabaseMap } from "./actions"; // Import the async actions
+import { fetchDatabaseMap } from "./actions"; // Import the async actions
 
 const initialState = {
   database: "all",
   collection: "all",
+  selectedKeys: [],
 
   // Add a new state to handle database fetching status
   databasesLoading: false,
@@ -24,6 +25,10 @@ const appSlice = createSlice({
 
     setCollection: (state, action) => {
       state.collection = action.payload;
+    },
+
+    setSelectedKeys: (state, action) => {
+      state.selectedKeys = action.payload;
     },
 
     setLoadingDatabases: (state, action) => {
@@ -55,9 +60,9 @@ const appSlice = createSlice({
 export const {
   setDatabase,
   setCollection,
+  setSelectedKeys,
   setLoadingDatabaseMap,
-  databaseMap, // Add this action
-  // Export other actions
+  setLoadingDatabases,
 } = appSlice.actions;
 
 export default appSlice.reducer;

@@ -53,10 +53,6 @@ export default function SideNavigation() {
 
   const handleDatabaseClick = (selectedDatabase) => {
     dispatch(setDatabase(selectedDatabase));
-  };
-
-  const handleAllDatabaseClick = (selectedDatabase) => {
-    dispatch(setDatabase(selectedDatabase));
     dispatch(setCollection("all"));
   };
 
@@ -118,13 +114,13 @@ export default function SideNavigation() {
               imageSrc="/images/allDBIcon.svg"
               imageSize={25}
               variant={database === `all` ? "dbSelected" : "inactive"}
-              onClick={() => handleAllDatabaseClick(`all`)}
+              onClick={() => handleDatabaseClick(`all`)}
             ></CustomButton>
             {allDatabasesIsExpanded ? (
               <div className="flex flex-col max-h-full overflow-y-auto">
-                {Object.keys(databaseMap).map((eachDatabase, index) => (
+                {Object.keys(databaseMap).map((eachDatabase) => (
                   <CustomButton
-                    key={index}
+                    key={eachDatabase} // Use eachDatabase as key
                     text={eachDatabase}
                     onClick={() => handleDatabaseClick(eachDatabase)}
                     variant={
@@ -134,11 +130,11 @@ export default function SideNavigation() {
                 ))}
               </div>
             ) : (
-              Object.keys(databaseMap).map((eachDB, index) => {
+              Object.keys(databaseMap).map((eachDB) => {
                 if (eachDB === database) {
                   return (
                     <CustomButton
-                      key={index}
+                      key={eachDB}
                       text={eachDB}
                       onClick={() => handleDatabaseClick(eachDB)}
                       variant={database === eachDB ? "dbSelected" : "inactive"}
@@ -167,11 +163,11 @@ export default function SideNavigation() {
             />
             {database === "all" && allCollectionsIsExpanded
               ? Object.entries(databaseMap).map(
-                  ([databaseName, collections], index) => (
-                    <>
+                  ([databaseName, collections]) => (
+                    <React.Fragment key={databaseName}>
                       {collections.map((currentCollection, index) => (
                         <CustomButton
-                          key={index}
+                          key={Object.keys(currentCollection)}
                           text={Object.keys(currentCollection)}
                           onClick={() =>
                             handleCollectionClick(currentCollection)
@@ -183,18 +179,18 @@ export default function SideNavigation() {
                           }
                         ></CustomButton>
                       ))}
-                    </>
+                    </React.Fragment>
                   )
                 )
               : database === "all" && !allCollectionsIsExpanded
               ? Object.entries(databaseMap).map(
-                  ([databaseName, collections], index) => (
-                    <>
+                  ([databaseName, collections]) => (
+                    <React.Fragment key={databaseName}>
                       {collections.map((currentCollection, index) => {
                         if (currentCollection === collection) {
                           return (
                             <CustomButton
-                              key={index}
+                              key={Object.keys(currentCollection)}
                               text={Object.keys(currentCollection)}
                               onClick={() =>
                                 handleCollectionClick(currentCollection)
@@ -208,48 +204,44 @@ export default function SideNavigation() {
                           );
                         }
                       })}
-                    </>
+                    </React.Fragment>
                   )
                 )
               : databaseMap[database] && (
                   <div className="flex flex-col justify-center max-h-full overflow-y-auto">
                     {allCollectionsIsExpanded
-                      ? databaseMap[database].map(
-                          (currentCollection, index) => (
-                            <CustomButton
-                              key={index}
-                              text={Object.keys(currentCollection)}
-                              onClick={() =>
-                                handleCollectionClick(currentCollection)
-                              }
-                              variant={
-                                collection === currentCollection
-                                  ? "collectionSelected"
-                                  : "inactive"
-                              }
-                            ></CustomButton>
-                          )
-                        )
-                      : databaseMap[database].map(
-                          (currentCollection, index) => {
-                            if (currentCollection === collection) {
-                              return (
-                                <CustomButton
-                                  key={index}
-                                  text={Object.keys(currentCollection)}
-                                  onClick={() =>
-                                    handleCollectionClick(currentCollection)
-                                  }
-                                  variant={
-                                    collection === currentCollection
-                                      ? "collectionSelected"
-                                      : "inactive"
-                                  }
-                                ></CustomButton>
-                              );
+                      ? databaseMap[database].map((currentCollection) => (
+                          <CustomButton
+                            key={Object.keys(currentCollection)}
+                            text={Object.keys(currentCollection)}
+                            onClick={() =>
+                              handleCollectionClick(currentCollection)
                             }
+                            variant={
+                              collection === currentCollection
+                                ? "collectionSelected"
+                                : "inactive"
+                            }
+                          ></CustomButton>
+                        ))
+                      : databaseMap[database].map((currentCollection) => {
+                          if (currentCollection === collection) {
+                            return (
+                              <CustomButton
+                                key={Object.keys(currentCollection)}
+                                text={Object.keys(currentCollection)}
+                                onClick={() =>
+                                  handleCollectionClick(currentCollection)
+                                }
+                                variant={
+                                  collection === currentCollection
+                                    ? "collectionSelected"
+                                    : "inactive"
+                                }
+                              ></CustomButton>
+                            );
                           }
-                        )}
+                        })}
                   </div>
                 )}
           </div>

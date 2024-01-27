@@ -1,18 +1,19 @@
 import React from "react";
 
-import { AppContext } from "../../_context/AppContext";
+import { useSelector, useDispatch } from "react-redux";
+import { setDatabase, setCollection } from "../../../lib/reducers";
 
 export default function Breadcrumbs() {
-  const { database, collection, updateDatabase, updateCollection } =
-    React.useContext(AppContext);
+  const dispatch = useDispatch();
+  const { collection, database } = useSelector((state) => state.app);
 
   return (
     <div className=" flex justify-center items-center">
       <svg
         className="mr-2 cursor-pointer"
         onClick={() => {
-          updateDatabase("all");
-          updateCollection("all");
+          dispatch(setDatabase("all"));
+          dispatch(setCollection("all"));
         }}
         width="12"
         height="12"
@@ -29,8 +30,8 @@ export default function Breadcrumbs() {
       {database === "all" ? (
         <p
           onClick={() => {
-            updateDatabase("all");
-            updateCollection("all");
+            dispatch(setDatabase("all"));
+            dispatch(setCollection("all"));
           }}
           className="cursor-pointer pr-1"
         >
@@ -39,7 +40,7 @@ export default function Breadcrumbs() {
       ) : (
         <p
           onClick={() => {
-            updateCollection("all");
+            dispatch(setCollection("all"));
           }}
           className="cursor-pointer mr-1"
         >
@@ -49,7 +50,7 @@ export default function Breadcrumbs() {
       {collection === "all" ? (
         <p>{` \\  all collections`}</p>
       ) : (
-        <p>{` \\ ${collection}`}</p>
+        <p>{` \\ ${Object.keys(collection)}`}</p>
       )}
     </div>
   );
