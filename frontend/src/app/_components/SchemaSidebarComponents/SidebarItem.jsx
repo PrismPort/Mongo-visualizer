@@ -21,19 +21,30 @@ export default function SidebarItem({
 
   const calculateNestedVisibility = (fieldKey) => {
     let currentVisibility = keyVisibilities[database]?.[collection];
-    for (const key of [...keyPath, fieldKey]) {
-      currentVisibility = currentVisibility?.[key];
-      if (currentVisibility === undefined) {
+    let path = [...keyPath, collectionKey.name, fieldKey]; // Include the parent keyPath
+
+    for (const key of path) {
+      if (currentVisibility === false) {
         return false;
+      } else if (
+        typeof currentVisibility === "object" &&
+        currentVisibility !== null
+      ) {
+        currentVisibility = currentVisibility[key];
+      } else {
+        continue;
       }
     }
-    return currentVisibility;
-  };
 
+    return currentVisibility ?? false;
+  };
   const handleVisibility = () => {
     dispatch({
       type: "app/toggleKeyVisibility",
-      payload: [...keyPath, collectionKey.name],
+      payload: {
+        keyPath: [...keyPath, collectionKey.name],
+        nestedKeys: collectionKey.types[0].fields, // Pass the nested keys to the action
+      },
     });
   };
 

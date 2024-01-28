@@ -11,8 +11,26 @@ const initialState = {
   databaseMapLoading: false,
   databaseMapError: null,
   databaseMap: {}, // Initialize the database map state
+
   keyVisibilities: {},
 };
+
+// Helper functions
+function isAnyChildVisible(visibilityObject) {
+  return Object.values(visibilityObject).some(
+    (val) => val === true || (typeof val === "object" && isAnyChildVisible(val))
+  );
+}
+
+function setAllChildrenVisibility(visibilityObject, visibility) {
+  Object.keys(visibilityObject).forEach((key) => {
+    if (typeof visibilityObject[key] === "object") {
+      setAllChildrenVisibility(visibilityObject[key], visibility);
+    } else {
+      visibilityObject[key] = visibility;
+    }
+  });
+}
 
 const appSlice = createSlice({
   name: "app",
@@ -34,26 +52,45 @@ const appSlice = createSlice({
     },
     // Define other reducers here
     toggleKeyVisibility: (state, action) => {
-      const keyPath = action.payload; // Expecting an array representing the path
-      const currentDatabase = state.database;
-      const currentCollection = state.collection;
+      const { keyPath, nestedKeys } = action.payload;
       let currentVisibility = state.keyVisibilities;
 
-      if (!state.keyVisibilities[currentDatabase]) {
-        state.keyVisibilities[currentDatabase] = {};
+      // Ensure the structure for the current database and collection
+      if (!currentVisibility[state.database]) {
+        currentVisibility[state.database] = {};
+      }
+      if (!currentVisibility[state.database][state.collection]) {
+        currentVisibility[state.database][state.collection] = {};
       }
 
-      if (!state.keyVisibilities[currentDatabase][currentCollection]) {
-        state.keyVisibilities[currentDatabase][currentCollection] = {};
-      }
-
+      // Navigate through the nested structure
+      currentVisibility = currentVisibility[state.database][state.collection];
       for (let i = 0; i < keyPath.length; i++) {
         const key = keyPath[i];
         if (i === keyPath.length - 1) {
-          currentVisibility[key] = !currentVisibility[key];
+          // If the key has nested children, update their visibility
+          if (typeof currentVisibility[key] === "object") {
+            const newVisibility = !isAnyChildVisible(currentVisibility[key]);
+            setAllChildrenVisibility(currentVisibility[key], newVisibility);
+          } else {
+            // If no nested children, simply toggle the visibility
+            currentVisibility[key] = !currentVisibility[key];
+          }
+
+          // If nestedKeys are provided, update their visibility
+          if (nestedKeys && Array.isArray(nestedKeys)) {
+            nestedKeys.forEach((nestedKey) => {
+              if (!currentVisibility[key][nestedKey]) {
+                currentVisibility[key][nestedKey] = {};
+              }
+              currentVisibility[key][nestedKey] = !currentVisibility[key];
+            });
+          }
         } else {
-          currentVisibility = currentVisibility[key] =
-            currentVisibility[key] || {};
+          if (!currentVisibility[key]) {
+            currentVisibility[key] = {};
+          }
+          currentVisibility = currentVisibility[key];
         }
       }
     },
@@ -75,6 +112,7 @@ const appSlice = createSlice({
       });
   },
 });
+
 export const {
   setDatabase,
   setCollection,

@@ -3,8 +3,6 @@ import { MongoClient } from "mongodb";
 // services
 import { analyzeCollection } from "../services/analyzeSchema.service.js";
 
-import { v4 as uuidv4 } from "uuid"; // For ES modules
-
 let clientInstance = null; // mongo client instance, which will be reused throughout a session
 
 export const connectMongoDB = async (req, res) => {
@@ -246,6 +244,8 @@ export const getUniqueValuesForKey = async (req, res) => {
 };
 
 export const getDatabaseMap = async (req, res) => {
+  // Parse the 'withProperties' query parameter as a boolean
+
   try {
     const client = getClientInstance();
     const databaseMap = {};

@@ -73,6 +73,7 @@ app.get("/uniquevalues/:database/:collection/:key/", getUniqueValuesForKey);
 
 // Add a new route for /database-map
 app.get("/database-map", getDatabaseMap);
+
 // experiments with docker api
 // TODO: routes should be deactivated if 'DOCKER = false' in .env
 app.get("/docker/list-containers", (res) => listDockerContainers(res));

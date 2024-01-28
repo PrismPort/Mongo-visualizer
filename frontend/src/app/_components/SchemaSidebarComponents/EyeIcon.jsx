@@ -17,7 +17,7 @@ const EyeIcon = ({ name, id, visibility, onClick }) => {
         name={name}
         id={id}
         className="sr-only peer"
-        checked={visibility}
+        checked={visibility ? true : false}
         onChange={onClick} // Use the new handler function
       />
       <label

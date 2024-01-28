@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import SidebarItem from "./SidebarItem.jsx";
 
 export default function Sidebar() {
@@ -23,6 +23,20 @@ export default function Sidebar() {
 
   let keyData = Object.values(collectionData)[0];
 
+  console.log("keyData", keyData);
+
+  const calculateParentVisibility = (parentKey) => {
+    const parentVisibility =
+      keyVisibilities[database]?.[collection]?.[parentKey];
+    if (typeof parentVisibility === "object") {
+      // Check if at least one child is true
+      return Object.values(parentVisibility).some(
+        (visibility) => visibility === true
+      );
+    }
+    return parentVisibility ?? false;
+  };
+
   return (
     <>
       <div className="flex h-screen justify-end">
@@ -37,9 +51,7 @@ export default function Sidebar() {
               <SidebarItem
                 key={index}
                 collectionKey={key}
-                visibility={
-                  keyVisibilities[database]?.[collection]?.[key.name] ?? false
-                }
+                visibility={calculateParentVisibility(key.name)}
               />
             );
           })}
