@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EyeIcon } from "./EyeIcon.jsx";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
+import { toggleKeyVisibility } from "../../../lib/actions.js";
 
 export default function SidebarItem({
   collectionKey,
@@ -39,13 +40,12 @@ export default function SidebarItem({
     return currentVisibility ?? false;
   };
   const handleVisibility = () => {
-    dispatch({
-      type: "app/toggleKeyVisibility",
-      payload: {
-        keyPath: [...keyPath, collectionKey.name],
-        nestedKeys: collectionKey.types[0].fields, // Pass the nested keys to the action
-      },
-    });
+    dispatch(
+      toggleKeyVisibility(
+        [...keyPath, collectionKey.name],
+        collectionKey.types[0].fields
+      ) // Pass the nested keys to the action
+    );
   };
 
   // SidebarItem.jsx

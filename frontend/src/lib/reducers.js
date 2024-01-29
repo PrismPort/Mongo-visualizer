@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchDatabaseMap } from "./actions"; // Import the async actions
+import { fetchDatabaseMap, fetchDocuments } from "./actions"; // Import the async actions
+import {
+  initializeKeyVisibilities,
+  setAllChildrenVisibility,
+  isAnyChildVisible,
+} from "./helper";
 
 const initialState = {
   database: "all",
@@ -14,23 +19,6 @@ const initialState = {
 
   keyVisibilities: {},
 };
-
-// Helper functions
-function isAnyChildVisible(visibilityObject) {
-  return Object.values(visibilityObject).some(
-    (val) => val === true || (typeof val === "object" && isAnyChildVisible(val))
-  );
-}
-
-function setAllChildrenVisibility(visibilityObject, visibility) {
-  Object.keys(visibilityObject).forEach((key) => {
-    if (typeof visibilityObject[key] === "object") {
-      setAllChildrenVisibility(visibilityObject[key], visibility);
-    } else {
-      visibilityObject[key] = visibility;
-    }
-  });
-}
 
 const appSlice = createSlice({
   name: "app",
@@ -105,10 +93,26 @@ const appSlice = createSlice({
       .addCase(fetchDatabaseMap.fulfilled, (state, action) => {
         state.databaseMapLoading = false;
         state.databaseMap = action.payload; // Update the state with fetched database map
+        state.keyVisibilities = initializeKeyVisibilities(action.payload);
       })
       .addCase(fetchDatabaseMap.rejected, (state, action) => {
         state.databaseMapLoading = false;
         state.databaseMapError = action.error.message;
+      });
+
+    builder
+      .addCase(fetchDocuments.pending, (state) => {
+        state.documentsLoading = true;
+        state.documentsError = null;
+        state.documents = [];
+      })
+      .addCase(fetchDocuments.fulfilled, (state, action) => {
+        state.documentsLoading = false;
+        state.documents = action.payload;
+      })
+      .addCase(fetchDocuments.rejected, (state, action) => {
+        state.documentsLoading = false;
+        state.documentsError = action.error.message;
       });
   },
 });

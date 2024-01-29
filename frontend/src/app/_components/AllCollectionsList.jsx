@@ -13,6 +13,8 @@ export default function AllDatabasesList() {
     (curDB) => curDB[0] === database
   )[0][1];
 
+  console.log("databaseMap", databaseMap);
+
   return (
     <div
       className={`grid gap-5 grid-cols-1 md:${
@@ -54,9 +56,18 @@ export default function AllDatabasesList() {
 
                 <tbody className="text-left">
                   {Object.values(collection)[0].map((key, index) => (
+                    //  console.log("key", key),
                     <tr key={index}>
                       <td className="pr-2">{key.name}</td>
-                      <td className="px-2 text-center">{key.type}</td>
+                      <td className="px-2 text-center">
+                        {key.type == "Array"
+                          ? `[${key.types[0].types[0].bsonType}]`
+                          : Array.isArray(key.type)
+                          ? key.type
+                              .filter((item) => item !== "Undefined")
+                              .join(" ")
+                          : key.type}
+                      </td>
                       <td
                         className={`pl-2 text-center ${getColourClass(
                           key.probability * 100
