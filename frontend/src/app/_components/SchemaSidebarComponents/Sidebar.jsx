@@ -45,13 +45,15 @@ export default function Sidebar() {
           <u><b>SCHEMA</b></u>
         </div>
         <table className='w-full text-left table-auto min-w-max'>
-          {items.map((item, index) => (
-            <SidebarItem
-              key={index}
-              item={item}
-              visibility={sidebarItemsVisibility[item.name] || false}
-            />
-          ))}
+        {keyData.map((key, index) => {
+            return (
+              <SidebarItem
+                key={index}
+                collectionKey={key}
+                visibility={calculateParentVisibility(key.name)}
+              />
+            );
+          })}
         </table>
       </div>
     </>
