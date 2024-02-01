@@ -64,6 +64,18 @@ module.exports = {
         cyan: "#00abab",
         magenta: "#e600e6",
       },
+      textColor: {
+        "color-90": "#029C1B",
+        "color-80": "#229E00",
+        "color-70": "#7FA600",
+        "color-60": "#A8A200",
+        "color-50": "#D9A809",
+        "color-40": "#DA8900",
+        "color-30": "#BF5300",
+        "color-20": "#C33A01",
+        "color-10": "#A80B00",
+        "color-0": "#730118",
+      },
       spacing: {
         vw1: "1vw",
         vw2: "2vw",

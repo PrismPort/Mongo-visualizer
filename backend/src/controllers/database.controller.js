@@ -95,7 +95,11 @@ export const getDatabases = async (req, res) => {
 
     const databases = await adminDb.admin().listDatabases();
 
-    const databaseNames = databases.databases.map((db) => db.name);
+    const databaseNames = databases.databases
+      .map((db) => db.name)
+      .filter((db) => !["admin", "local", "config"].includes(db));
+
+    //const databaseNames = databases.databases.map((db) => db.name);
     res.json(databaseNames);
   } catch (error) {
     console.error("Error querying data from MongoDB:", error);
@@ -146,14 +150,9 @@ export const analyzeDatabase = async (req, res) => {
   const { database, collection } = req.params;
   const client = getClientInstance();
 
-  console.log("Analyze schema");
-  console.log("Database: " + database + ", Collection: " + collection);
-
   try {
     const db = client.db(database);
     const collections = await db.collection(collection).find().toArray();
-
-    console.log("collections in backend analyzeDatabase", collections);
 
     const schema = await analyzeCollection(collections, true);
 

@@ -3,7 +3,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Visualize MongoDB",
+  title: "Peek",
   description: "Made with Love by PrismPort",
 };
 
@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-white overflow-y-hidden justify-center flex`}
+        className={`${inter.className} bg-white h-screen justify-center flex`}
       >
         {children}
       </body>

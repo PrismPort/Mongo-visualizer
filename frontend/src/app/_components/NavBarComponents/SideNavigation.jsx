@@ -48,6 +48,7 @@ export default function SideNavigation() {
 
   const handleDatabaseClick = (selectedDatabase) => {
     updateDatabase(selectedDatabase);
+    updateCollection("all");
 
     fetchCollectionsForDatabase(selectedDatabase).then(() => {
       // Check if collections data for selectedDatabase is available
@@ -56,12 +57,7 @@ export default function SideNavigation() {
           updateCollection("all");
         }
       } else {
-        // Handle the case where collections data isn't available yet
-        // For example, set some default state or handle the error
-        console.error(
-          "Collections data not available yet for",
-          selectedDatabase
-        );
+        // Handle the case where collections data isn't available
         // Optionally, reset the collection as a fallback
         updateCollection("all");
       }
@@ -116,7 +112,7 @@ export default function SideNavigation() {
             >
               <CustomButton
                 text={username}
-                imageSrc="/images/sampleUser.jpg"
+                imageSrc="/images/sampleUser.png"
                 rounded={true}
                 IconComponent={LoginIconComponent}
                 variant={loginIsExpanded ? "active" : "inactive"}

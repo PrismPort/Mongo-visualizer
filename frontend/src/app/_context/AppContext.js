@@ -42,7 +42,7 @@ const AppProvider = ({ children }) => {
         fetchCollectionsForDatabase(database);
       }
     }
-  }, [isLoggedIn, loadingDatabases]); // Empty dependency array means this runs once on component mount
+  }, [isLoggedIn, loadingDatabases]);
 
   const fetchCollectionsForDatabase = async (database) => {
     try {
@@ -110,7 +110,6 @@ const AppProvider = ({ children }) => {
       );
       // const datalocal = await response.json();
       const responseData = await response.json();
-      console.log("Parsed response data:", responseData);
       setData(responseData);
       setStats(responseData);
     } catch (error) {
@@ -140,7 +139,7 @@ const AppProvider = ({ children }) => {
     loadingDatabases,
   };
 
-  //console.log(contextValue);
+  console.log("contextValue: ", contextValue);
 
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
