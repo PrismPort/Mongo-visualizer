@@ -1,4 +1,4 @@
-# $CoolName – A visual interface for human readable MongoDB queries
+# Peek – A visual interface for human readable MongoDB queries
 
 final version is on branch "final-final-showtime"
 
