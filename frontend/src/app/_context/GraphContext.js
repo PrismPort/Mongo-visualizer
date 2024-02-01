@@ -95,9 +95,11 @@ export const GraphProvider = ({ children }) => {
           const type = schemaItem?.types?.[0]?.bsonType || "string";
           // Initialize countsMap with all possible values for the key, with counts set to 0
           let countsMap = {};
-          toggleStates[key.name].forEach((toggle) => {
-            countsMap[toggle.value] = 0;
-          });
+          toggleStates[key.name]
+            ? toggleStates[key.name].forEach((toggle) => {
+                countsMap[toggle.value] = 0;
+              })
+            : null;
 
           // Update countsMap with actual counts
           valuesArray.forEach((value) => {

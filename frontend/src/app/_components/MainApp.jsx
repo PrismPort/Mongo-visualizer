@@ -30,19 +30,20 @@ export default function MainApp() {
     return (
       <>
         <SideNavigation />
-        <main className="flex flex-col h-screen overflow-y-scroll w-screen justify-between bg-white items-center">
+        <main className="flex flex-col h-screen overflow-y-scroll w-screen justify-start bg-white items-center">
           <HeaderBar />
-          <div className="flex justify-center my-auto">
+          <div className="flex justify-center ">
             {database === "all" && collection === "all" ? (
               <AllDatabasesList />
             ) : database !== "all" && collection === "all" ? (
               <AllCollectionsList />
             ) : (
-              <div className="text-black h-vh80 ">
+              <div className="text-black h-vh85 ">
                 <GraphComponent></GraphComponent>
               </div>
             )}
           </div>
+          <div className="p-4 mt-auto">© 2022, made with ♥ by PrismPort</div>
 
           {/* <div className=" p-4">© 2024, made with ♥ by PrismPort</div> */}
         </main>

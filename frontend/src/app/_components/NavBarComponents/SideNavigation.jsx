@@ -73,6 +73,9 @@ export default function SideNavigation() {
     updateCollection(selectedCollection);
     updateDatabase(findDatabaseForCollection(selectedCollection));
   };
+  const handleCollectionClickAll = (selectedCollection) => {
+    updateCollection(selectedCollection);
+  };
 
   const toggleDatabaseExpansion = () => {
     setAllDatabasesIsExpanded(!allDatabasesIsExpanded); // Toggle the state
@@ -118,7 +121,7 @@ export default function SideNavigation() {
             >
               <CustomButton
                 text={username}
-                imageSrc="/images/sampleUser.png"
+                imageSrc="/images/sample-user.png"
                 rounded={true}
                 IconComponent={LoginIconComponent}
                 variant={loginIsExpanded ? "active" : "inactive"}
@@ -196,7 +199,7 @@ export default function SideNavigation() {
                 variant={
                   collection === "all" ? "collectionSelected" : "inactive"
                 }
-                onClick={() => handleCollectionClick(`all`)}
+                onClick={() => handleCollectionClickAll(`all`)}
               />
               {collections[database] && (
                 <div className="flex flex-col max-h-full overflow-y-auto">

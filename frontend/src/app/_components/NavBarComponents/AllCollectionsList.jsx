@@ -19,9 +19,9 @@ export default function AllCollectionsList() {
     };
 
     fetchData();
-  }, [collections, database]);
+  }, [collections]);
 
-  console.log("collections List", collections);
+  console.log("collections List data", data);
 
   return (
     <div
@@ -42,14 +42,18 @@ export default function AllCollectionsList() {
       {data.map((collectionData, index) => {
         let numberOfKeys = collectionData.length;
         let numberOfDocuments = collectionData[0].count;
-        console.log("data", collectionData);
+        console.log("collectionData", collectionData);
         return (
           //<div key={index}>`collection ${index}`</div>
           <div
             key={index}
             // onClick={updateCollection(collection)}
             className="flex flex-col items-center justify-center border-brand-accent-3 border-4 p-6 rounded-3xl cursor-pointer"
-            onClick={() => updateCollection(collections[database][index])}
+            onClick={() =>
+              updateCollection(
+                collections[database] ? collections[database][index] : "all"
+              )
+            }
           >
             <div className="flex flex-col justify-center items-center gap-6 p-4">
               <h2 className="text-2xl font-bold">
