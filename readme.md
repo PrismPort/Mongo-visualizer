@@ -1,10 +1,6 @@
 # $CoolName – A visual interface for human readable MongoDB queries
 
-[A short project description comes here]
-
-[Our names]
-
-[University context]
+final version is on branch "final-final-showtime"
 
 ## Installation
 
