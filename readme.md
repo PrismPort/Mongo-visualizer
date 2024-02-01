@@ -40,7 +40,3 @@ After successfully building the project consists of several Docker containers
 * Default Port 27017 is exposed
 * A persistent Docker volume `mongodb-data` for databases 
 
-## Usage
-
-???
-
