@@ -54,16 +54,25 @@ const RangeBarChart = ({ title, dataValues, labels }) => {
         beginAtZero: true,
       },
     },
+    legend: {
+      display: false,
+    },
     // Additional chart options can be added here as needed
   };
 
   console.log("data in Barchart", data);
 
   return (
-    <div className="my-bar-chart">
-      <h2>{title}</h2>
-      <Bar data={data} options={options} />
-    </div>
+    <>
+      <div className="flex flex-col items-center justify-center border-4 p-6 rounded-xl">
+        <div>
+          <h2 className="m-4 text-xl bold">{title}</h2>
+        </div>
+        <div className="my-bar-chart">
+          <Bar data={data} options={options} />
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -20,6 +20,7 @@ export default function SideNavigation() {
     collections,
     fetchCollectionsForDatabase,
     loadingDatabases,
+    collectionDbMap,
   } = useContext(AppContext);
 
   const [loginIsExpanded, setLoginIsExpanded] = useState(false);
@@ -64,8 +65,13 @@ export default function SideNavigation() {
     });
   };
 
+  const findDatabaseForCollection = (collectionName) => {
+    return collectionDbMap[collectionName] || null; // Use the mapping to find the database
+  };
+
   const handleCollectionClick = (selectedCollection) => {
     updateCollection(selectedCollection);
+    updateDatabase(findDatabaseForCollection(selectedCollection));
   };
 
   const toggleDatabaseExpansion = () => {

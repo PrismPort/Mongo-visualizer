@@ -20,7 +20,7 @@ const ToggleSwitch = ({ checked, onChange, id }) => {
       <input
         type="checkbox"
         id={`toggle-${id}`}
-        className="sr-only"
+        className="sr-only relative"
         checked={checked}
         onChange={onChange}
       />

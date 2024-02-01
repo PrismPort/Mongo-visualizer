@@ -8,7 +8,6 @@ export default function AllDatabasesList() {
     collections,
     databases,
     fetchCollectionsForDatabase,
-    loadingDatabases,
   } = useContext(AppContext);
   const [data, setData] = useState([]);
 
@@ -17,6 +16,7 @@ export default function AllDatabasesList() {
       const data = await Promise.all(
         databases.map(async (database) => {
           await fetchCollectionsForDatabase(database);
+
           const dbCollections = collections[database] || [];
           const analyzedData = await Promise.all(
             dbCollections.map((collection) =>
@@ -36,22 +36,17 @@ export default function AllDatabasesList() {
     fetchData();
   }, [databases]);
 
-  console.log("databases in alllist", data);
+  console.log("databases in alllist", databases);
   return (
     <div
-      className={`grid gap-5 grid-cols-1 md:${
-        data.length == 1
-          ? " grid-cols-1"
-          : data.length == 2
-          ? "grid-cols-2"
-          : "grid-cols-2"
-      } 2xl:${
-        data.length == 1
-          ? " grid-cols-1"
-          : data.length == 2
-          ? "grid-cols-2"
-          : "grid-cols-3"
-      }  p-5`}
+      className={`grid gap-5 grid-cols-1 md:grid-cols-2
+       xl:${
+         databases.length == 1
+           ? " grid-cols-1"
+           : databases.length == 2
+           ? "grid-cols-2"
+           : "grid-cols-3"
+       }  p-5`}
     >
       {data.map((database, index) => {
         return (

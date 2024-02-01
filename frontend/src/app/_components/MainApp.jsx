@@ -32,15 +32,17 @@ export default function MainApp() {
         <SideNavigation />
         <main className="flex flex-col h-screen overflow-y-scroll w-screen justify-between bg-white items-center">
           <HeaderBar />
-          {database === "all" && collection === "all" ? (
-            <AllDatabasesList />
-          ) : database !== "all" && collection === "all" ? (
-            <AllCollectionsList />
-          ) : (
-            <div className="text-black h-vh80 ">
-              <GraphComponent></GraphComponent>
-            </div>
-          )}
+          <div className="flex justify-center my-auto">
+            {database === "all" && collection === "all" ? (
+              <AllDatabasesList />
+            ) : database !== "all" && collection === "all" ? (
+              <AllCollectionsList />
+            ) : (
+              <div className="text-black h-vh80 ">
+                <GraphComponent></GraphComponent>
+              </div>
+            )}
+          </div>
 
           {/* <div className=" p-4">© 2024, made with ♥ by PrismPort</div> */}
         </main>
