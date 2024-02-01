@@ -1,10 +1,24 @@
-# $CoolName – A visual interface for human readable MongoDB queries
+# Peek – database discovery and query building for mongoDB
 
-[A short project description comes here]
+<img src="peek_logo.png" width="100"/>
 
-[Our names]
+Peek is a proof of concept for a database discovery tool, which is also capable of generating
+MQL (mongoDB Query Language) queries.
 
-[University context]
+**Features:**
+
+- connect to your mongoDB database *
+- infer schema for a chosen collection
+- visualize aggregations for chosen keys
+- generate queries, based on chosen key configurations
+
+
+*only username / password authentication supported
+
+A project by Marlin Jai Pohl, Leif Benedikt Rehtanz, Tobias Bayer, Laura Bärtschi, Matthis Ehrhardt, Alexej Bormatenkow
+
+Developed during the winter term of 2023/24 as part of the International Media and Computing BSc programe.
+
 
 ## Installation
 
@@ -43,8 +57,3 @@ After successfully building the project consists of several Docker containers
 * MongoDB database
 * Default Port 27017 is exposed
 * A persistent Docker volume `mongodb-data` for databases 
-
-## Usage
-
-???
-
