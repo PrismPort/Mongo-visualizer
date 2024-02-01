@@ -81,7 +81,7 @@ const RangeBarChart = ({ title, dataValues, labels }) => {
         <h2 className="m-4 text-xl bold">{title}</h2>
       </div>
       <Bar data={data} options={options} />
-      <div className="my-4">
+      <div className="my-4 h-72 w-full overflow-y-scroll">
         <table>
           <thead>
             <tr>
@@ -90,7 +90,7 @@ const RangeBarChart = ({ title, dataValues, labels }) => {
               <th className="px-4">Toggle</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className=" h-64 overflow-auto">
             {labels.map((label, index) => (
               <tr key={index} className="h-5">
                 <td className="h-8 flex justify-center items-center">

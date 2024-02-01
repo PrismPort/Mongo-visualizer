@@ -217,7 +217,7 @@ export const GraphProvider = ({ children }) => {
     setSidebarItemsVisibility,
   };
 
-  //console.log("GraphContextValue", GraphContextValue);
+  console.log("GraphContextValue", GraphContextValue);
 
   return (
     <GraphContext.Provider value={GraphContextValue}>

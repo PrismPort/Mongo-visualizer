@@ -32,13 +32,13 @@ export default function MainApp() {
         <SideNavigation />
         <main className="flex flex-col h-screen overflow-y-scroll w-screen justify-start bg-white items-center">
           <HeaderBar />
-          <div className="flex justify-center ">
+          <div className="flex justify-center w-full">
             {database === "all" && collection === "all" ? (
               <AllDatabasesList />
             ) : database !== "all" && collection === "all" ? (
               <AllCollectionsList />
             ) : (
-              <div className="text-black h-vh85 ">
+              <div className="text-black h-vh85 w-full px-8 ">
                 <GraphComponent></GraphComponent>
               </div>
             )}

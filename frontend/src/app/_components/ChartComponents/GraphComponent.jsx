@@ -8,11 +8,15 @@ const GraphComponent = () => {
   const { selectedKeys, chartsData } = useGraphContext();
 
   if (selectedKeys.length === 0) {
-    return <div>Select items to view their graphs</div>;
+    return (
+      <div className="flex justify-center items-center h-vh85 text-2xl ">
+        <p>Select keys to view their graphs</p>
+      </div>
+    );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4 h-full overflow-y-scroll">
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4 h-full overflow-y-scroll w-full">
       {selectedKeys.map((item) => {
         const chartData = chartsData[item.name];
 

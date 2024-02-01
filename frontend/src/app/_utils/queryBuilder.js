@@ -13,7 +13,7 @@ export const buildQuery = (selectedKeys, toggleStates) => {
         .filter((toggle) => toggle.checked)
         .map((toggle) => {
           if (toggle.type === "Number") {
-            toggle.value = parseInt(toggle.value);
+            toggle.value = parseFloat(toggle.value);
           } else if (toggle.type === "Date") {
             toggle.value = new Date(toggle.value);
           } else if (toggle.type === "Boolean") {
