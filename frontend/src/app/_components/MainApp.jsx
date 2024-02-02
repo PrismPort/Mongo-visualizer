@@ -43,7 +43,7 @@ export default function MainApp() {
               </div>
             )}
           </div>
-          <div className="p-4 mt-auto">© 2022, made with ♥ by PrismPort</div>
+          <div className="p-4 mt-auto">© 2024, made with ♥ by PrismPort</div>
 
           {/* <div className=" p-4">© 2024, made with ♥ by PrismPort</div> */}
         </main>
