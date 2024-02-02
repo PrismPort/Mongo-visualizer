@@ -19,7 +19,7 @@ export default function AllCollectionsList() {
     };
 
     fetchData();
-  }, [collections]);
+  }, [collections, database]);
 
   console.log("collections List data", data);
 
